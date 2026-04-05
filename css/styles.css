@@ -192,6 +192,7 @@ display: flex;
     .logo {
     width: 200px;
     display: flex;
+    margin-right: 20px;
   }
 
   .H1NV {
