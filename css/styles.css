@@ -150,10 +150,13 @@ footer {
 }
 
 /* mobile */
-@media (max-width: 1085px) {
+@media (max-width: 1080px) {
 
 .menu-btn {
     display: block;
+    margin-right: 5%;
+    font-size: 80px;
+    margin-left: auto;
   }
 
   .menu {
@@ -165,7 +168,15 @@ footer {
     background: #141418;
     padding: 15px;
     border-radius: 10px;
+    margin-top: 80px;
   }
+
+    .menu a {
+  font: bold 50px Arial, sans-serif;
+  margin: 10px;
+  text-decoration: none;
+  color: #ffffff;
+}
 
   .navbar {
   position: relative;
@@ -174,21 +185,17 @@ display: flex;
   justify-content: space-between;
 }
 
-  .menu a {
-    margin: 10px 0;
-  }
-
   .menu.active {
     display: flex;
   }
 
     .logo {
-    width: 70px;
+    width: 200px;
     display: flex;
   }
 
   .H1NV {
-    font-size: 20px;
+    font-size: 40px;
     display: flex;
   }
 
@@ -198,7 +205,4 @@ display: flex;
     transform: translateX(-50%);
   }
 
-  .menu-btn {
-    margin-left: auto;
-  }
 }
