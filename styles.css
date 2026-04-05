@@ -1,0 +1,222 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #30333a, #28292c);
+    color: white;
+}
+
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+#autos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.auto {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.auto:hover {
+  transform: scale(1.03);
+}
+
+.auto img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: green;
+  color: white;
+  padding: 15px;
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.card {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: gold;
+    color: black;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background: #141418;
+  border: 1px solid #b1ae256e;
+}
+
+/* contenedor izquierdo */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* menú centrado REAL */
+.menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+/* enlaces */
+.menu a {
+  font: bold 20px Arial, sans-serif;
+  margin: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+
+.logo {
+ width: 100px;
+ padding: 1px;
+}
+
+.H1NV {
+    justify-self: start;
+  font-size: 24px;
+  font-weight: bold;
+  color: #cfaf1f;
+}
+
+footer {
+    margin-top: 20px;
+    background: #141418;
+    border:  1px solid #b1ae256e;
+}
+
+
+
+
+/* Medias Queries */
+@media (max-width: 1170px) {
+  .logo {
+    width: 80px;
+  }
+
+  .H1NV {
+    font-size: 15px;
+  }
+
+  .menu a {
+  font: bold 15px Arial, sans-serif;
+  margin: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+}
+}
+
+@media (max-width: 890px) {
+  .logo {
+    width: 60px;
+  }
+
+  .H1NV {
+    font-size: 10px;
+  }
+
+  .menu a {
+  font: bold 15px Arial, sans-serif;
+  margin: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+}
+}
+
+
+/* botón hamburguesa */
+.menu-btn {
+  display: none;
+  font-size: 28px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+
+.menu-btn {
+    display: block;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: #141418;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .navbar {
+  position: relative;
+display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+  .menu a {
+    margin: 10px 0;
+  }
+
+  .menu.active {
+    display: flex;
+  }
+
+    .logo {
+    width: 70px;
+    display: flex;
+  }
+
+  .H1NV {
+    font-size: 20px;
+    display: flex;
+  }
+
+   .left {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .menu-btn {
+    margin-left: auto;
+  }
+}
