@@ -157,16 +157,6 @@ footer {
 }
 
 
-@media (max-width: 768px) {
-  .logo {
-    width: 50px;
-  }
-
-  .H1NV {
-    font-size: 0.1px;
-  }
-}
-
 /* botón hamburguesa */
 .menu-btn {
   display: none;
@@ -178,7 +168,7 @@ footer {
 }
 
 /* mobile */
-@media (max-width: 700px) {
+@media (max-width: 768px) {
 
 .menu-btn {
     display: block;
