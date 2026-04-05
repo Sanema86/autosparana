@@ -121,3 +121,112 @@ footer {
 
 
 
+/* Medias Queries */
+@media (max-width: 1170px) {
+  .logo {
+    width: 80px;
+  }
+
+  .H1NV {
+    font-size: 15px;
+  }
+
+  .menu a {
+  font: bold 15px Arial, sans-serif;
+  margin: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+}
+}
+
+@media (max-width: 890px) {
+  .logo {
+    width: 60px;
+  }
+
+  .H1NV {
+    font-size: 10px;
+  }
+
+  .menu a {
+  font: bold 15px Arial, sans-serif;
+  margin: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+}
+}
+
+
+@media (max-width: 768px) {
+  .logo {
+    width: 50px;
+  }
+
+  .H1NV {
+    font-size: 0.1px;
+  }
+}
+
+/* botón hamburguesa */
+.menu-btn {
+  display: none;
+  font-size: 28px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* mobile */
+@media (max-width: 700px) {
+
+.menu-btn {
+    display: block;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: #141418;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .navbar {
+  position: relative;
+display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+  .menu a {
+    margin: 10px 0;
+  }
+
+  .menu.active {
+    display: flex;
+  }
+
+    .logo {
+    width: 70px;
+    display: flex;
+  }
+
+  .H1NV {
+    font-size: 20px;
+    display: flex;
+  }
+
+   .left {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .menu-btn {
+    margin-left: auto;
+  }
+}
