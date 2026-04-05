@@ -150,7 +150,7 @@ footer {
 }
 
 /* mobile */
-@media (max-width: 1080px) {
+@media (max-width: 1085px) {
 
 .menu-btn {
     display: block;
