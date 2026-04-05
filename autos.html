@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Autos Paraná</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<nav class="navbar">
+  
+  <div class="left">
+    <img src="logoAP.png" alt="Logo" class="logo">
+    <h1 class="H1NV">AUTOS PARANÁ</h1>
+  </div>
+
+  <div class="menu">
+    <a href="index.html" class="hover:text-yellow-400">Inicio</a>
+    <a href="autos.html" class="hover:text-yellow-400">Autos</a>
+    <a href="#camionetas" class="hover:text-yellow-400">Camionetas</a>
+    <a href="#utilitarios" class="hover:text-yellow-400">Utilitarios</a>
+    <a href="#motos" class="hover:text-yellow-400">Motos</a>
+  </div>
+
+</nav>
+
+<body class="bg-gray-900 text-white">
+<div class="max-w-6xl mx-auto p-4">
+
+  <h2 class="text-2xl font-bold mb-6">Todos los autos</h2>
+
+  <input type="text" id="buscador"
+    placeholder="Buscar por marca, modelo o año..."
+    class="w-full p-3 mb-6 text-black rounded">
+
+  <div id="autos-container" class="grid md:grid-cols-3 gap-6"></div>
+
+</div>
+
+<script src="js/app.js"></script>
+<body>
+</html>
