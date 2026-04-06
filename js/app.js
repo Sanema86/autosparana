@@ -53,10 +53,10 @@ function mostrarAutos(lista) {
 
         <img src="${auto.imagen}" class="w-full h-48 object-cover rounded-t-lg">
 
-        <div class="p-4">
-          <h3 class="text-[35px]">${auto.marca} ${auto.modelo}</h3>
-          <h3 class="text-[35px]">${auto.año}</h3>
-          <p class="text-blue-600 font-bold text-[35px]">$${auto.precio}</p>
+        <div class="p-4 text-[35px]">
+          <h3>${auto.marca} ${auto.modelo}</h3>
+          <h3>${auto.año}</h3>
+          <p class="text-blue-600 font-bold">$${auto.precio}</p>
         </div>
 
       </div>
