@@ -2,13 +2,16 @@ const URL = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFp
 
 // 👉 ID
 const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const slug = params.get("slug");
 
 // 👉 DATA
 fetch(URL)
   .then(res => res.json())
   .then(data => {
-    const auto = data.find(a => a.id == id);
+
+    const auto = data.find(a => 
+      String(a.slug).trim().toLowerCase() === String(slug).trim().toLowerCase()
+    );
 
     if (!auto) {
       document.getElementById("detalle-auto").innerHTML =

@@ -88,26 +88,26 @@ function mostrarDestacados(lista) {
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
 
-    cont.innerHTML += `
-      <div onclick="irAuto(${auto.id})"
-        class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
+   cont.innerHTML += `
+  <div onclick="irAuto('${auto.slug}')"
+    class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
-        <div class="relative">
-          <img src="${auto.imagen}" class="w-full h-72 object-cover">
+    <div class="relative">
+      <img src="${auto.imagen}" class="w-full h-72 object-cover">
 
-          ${esVendido ? svgVendido : ""}
-          ${!esVendido && esReservado ? svgReservado : ""}
-        </div>
+      ${esVendido ? svgVendido : ""}
+      ${!esVendido && esReservado ? svgReservado : ""}
+    </div>
 
-        <div class="p-5 text-center">
-          <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
-          <p class="text-2xl text-white">${auto.año}</p>
-          <p class="text-3xl text-yellow-400 font-bold">$${auto.precio}</p>
-        </div>
+    <div class="p-5 text-center">
+      <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
+      <p class="text-2xl text-white">${auto.año}</p>
+      <p class="text-3xl text-yellow-400 font-bold">$${auto.precio}</p>
+    </div>
 
-      </div>
-    `;
-  });
+  </div>
+`;
+    });
 }
 
 // 🚗 TODAS LAS SECCIONES
@@ -122,7 +122,7 @@ function mostrarAutos(lista) {
     const esReservado = auto.reservado?.toUpperCase() === "SI";
 
     cont.innerHTML += `
-      <div onclick="irAuto(${auto.id})"
+      <div onclick="irAuto('${auto.slug}')"
         class="bg-white text-black border border-blue-500 rounded-lg shadow cursor-pointer hover:scale-105 hover:shadow-lg transition max-w-sm mx-auto w-full ${esVendido ? 'opacity-60' : ''}">
 
         <div class="relative">
@@ -188,8 +188,8 @@ if (buscador) {
 }
 
 // 👉 IR A DETALLE
-function irAuto(id) {
-  window.location.href = "auto.html?id=" + id;
+function irAuto(slug) {
+  window.location.href = "auto.html?slug=" + slug;
 }
 
 // 👉 MENU HAMBURGUESA
