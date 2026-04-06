@@ -1,5 +1,8 @@
 const URL = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
 
+// 👉 TU NÚMERO
+const MI_NUMERO = "5493435311312"; // ← CAMBIAR
+
 // 👉 ID
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
@@ -25,6 +28,20 @@ fetch(URL)
 function mostrarAuto(auto) {
 
   const esDestacado = auto.destacado?.toUpperCase() === "SI";
+  const esIntermediario = auto.intermediario?.toUpperCase() === "SI";
+
+  // 👉 TELÉFONO
+  const telefonoFinal = esIntermediario
+    ? MI_NUMERO
+    : (auto.telefono || MI_NUMERO);
+
+  // 👉 MENSAJE
+  const mensaje = esIntermediario
+    ? `Hola, te consulto por este vehículo: ${window.location.href}`
+    : `Hola, vi este vehículo en Autos Paraná: ${window.location.href} ¿Sigue disponible?`
+
+  const linkWhatsApp = `https://wa.me/${telefonoFinal}?text=${encodeURIComponent(mensaje)}`;
+
   const cont = document.getElementById("detalle-auto");
 
   const imagenes = auto.imagen
@@ -80,7 +97,8 @@ function mostrarAuto(auto) {
       <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
 
       <!-- WHATSAPP -->
-      <a href="https://wa.me/549XXXXXXXXXX?text=Hola%20me%20interesa%20el%20${auto.marca}%20${auto.modelo}"
+      <a href="${linkWhatsApp}"
+         target="_blank"
          class="block mt-6 bg-green-500 text-white text-center py-4 rounded-lg font-bold text-lg hover:bg-green-600">
          Consultar por WhatsApp
       </a>
@@ -97,29 +115,23 @@ function mostrarAuto(auto) {
 
   // 👉 ACTUALIZAR IMAGEN
   function actualizarImagen() {
-
-    // fade out
     img.style.opacity = 0;
 
     setTimeout(() => {
       img.src = imagenes[current];
 
-      // 👉 LIMPIAR TODAS
       document.querySelectorAll(".thumb").forEach(el => {
         el.classList.remove("border-blue-500");
         el.classList.add("border-transparent");
       });
 
-      // 👉 ACTIVAR SOLO LA ACTUAL
       const activa = document.getElementById(`thumb-${current}`);
       if (activa) {
         activa.classList.remove("border-transparent");
         activa.classList.add("border-blue-500");
       }
 
-      // fade in
       img.style.opacity = 1;
-
     }, 150);
   }
 
@@ -134,13 +146,13 @@ function mostrarAuto(auto) {
     actualizarImagen();
   };
 
-  // 👉 CLICK MINIATURA
+  // 👉 MINIATURAS
   window.irA = function (index) {
     current = index;
     actualizarImagen();
   };
 
-  // 👉 SWIPE MEJORADO
+  // 👉 SWIPE
   let startX = 0;
 
   img.addEventListener("touchstart", e => {
@@ -172,7 +184,7 @@ function mostrarAuto(auto) {
   });
 }
 
-// 👉 MENÚ HAMBURGUESA (FIX REAL)
+// 👉 MENÚ HAMBURGUESA
 document.addEventListener("DOMContentLoaded", () => {
   const menuBtn = document.getElementById("menuBtn");
   const menu = document.getElementById("menu");
