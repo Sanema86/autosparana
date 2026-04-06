@@ -207,7 +207,7 @@ display: flex;
     transform: translateX(-50%);
   }
 
-  h3 {
+  .H3-autos {
     font-size: 30px;
   }
 

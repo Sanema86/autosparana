@@ -31,9 +31,9 @@ function mostrarDestacados(lista) {
         <img src="${auto.imagen}" class="w-full h-72 object-cover">
 
         <div class="p-5">
-          <h3>${auto.marca} ${auto.modelo}</h3>
-          <p>${auto.año}</p>
-          <p class="text-blue-400 font-bold">$${auto.precio}</p>
+          <h3 class="H3-autos text-center">${auto.marca} ${auto.modelo}</h3>
+          <p class="text-[35px] text-center">${auto.año}</p>
+          <p class="text-[35px] text-yellow-400 font-bold text-center">$${auto.precio}</p>
         </div>
 
       </div>
@@ -54,8 +54,8 @@ function mostrarAutos(lista) {
         <img src="${auto.imagen}" class="w-full h-48 object-cover rounded-t-lg">
 
         <div class="p-4">
-          <h3>${auto.marca} ${auto.modelo}</h3>
-          <h3>${auto.año}</h3>
+          <h3 class="H3-autos">${auto.marca} ${auto.modelo}</h3>
+          <h3 class="H3-autos">${auto.año}</h3>
           <p class="text-blue-600 font-bold text-[35px]">$${auto.precio}</p>
         </div>
 

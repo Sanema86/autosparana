@@ -56,7 +56,7 @@ const esDestacado = auto.destacado?.toUpperCase() === "SI";
       <p class="text-lg mb-2">KM: ${auto.km}</p>
       <p class="text-lg mb-2">Combustible: ${auto.combustible}</p>
 
-      <p class="text-2xl text-blue-400 font-bold mb-4">$${auto.precio}</p>
+      <p class="text-2xl text-blue-500 font-bold mb-4">$${auto.precio}</p>
 
       <p class="mt-4">${auto.descripcion || "Sin descripción"}</p>
 
