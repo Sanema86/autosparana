@@ -184,6 +184,7 @@ footer {
 display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 9999;
 }
 
   .menu.active {
@@ -210,5 +211,13 @@ display: flex;
   .H3-autos {
     font-size: 30px;
   }
+
+  .miniatura {
+  border: 2px solid transparent;
+}
+
+.miniatura.active {
+  border: 2px solid blue;
+}
 
 }

@@ -1,17 +1,18 @@
 const URL = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
 
-// Obtener ID desde la URL
+// 👉 ID
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// Traer autos
+// 👉 DATA
 fetch(URL)
   .then(res => res.json())
   .then(data => {
     const auto = data.find(a => a.id == id);
 
     if (!auto) {
-      document.body.innerHTML = "<h2 style='color:white;text-align:center;'>Auto no encontrado</h2>";
+      document.getElementById("detalle-auto").innerHTML =
+        "<h2 style='color:white;text-align:center;'>Auto no encontrado</h2>";
       return;
     }
 
@@ -19,10 +20,9 @@ fetch(URL)
   });
 
 function mostrarAuto(auto) {
-const esDestacado = auto.destacado?.toUpperCase() === "SI";
 
+  const esDestacado = auto.destacado?.toUpperCase() === "SI";
   const cont = document.getElementById("detalle-auto");
-
 
   const imagenes = auto.imagen
     ? auto.imagen.split(",").map(img => img.trim())
@@ -34,31 +34,47 @@ const esDestacado = auto.destacado?.toUpperCase() === "SI";
     <div class="max-w-5xl mx-auto bg-gray-800 text-white p-6 rounded-2xl shadow-2xl">
 
       <!-- CARRUSEL -->
-    <div class="relative">
+      <div class="relative">
 
-  ${esDestacado ? `
-    <div class="absolute top-3 left-3 bg-gray-600 text-black px-4 py-1 rounded-lg font-bold shadow-lg z-10">
-      ⭐ Destacado
-    </div>
-    
-  ` : ""}
-        <img id="img-principal" src="${imagenes[0]}" class="w-full h-96 object-cover rounded-lg mb-6">
+        ${esDestacado ? `
+          <div class="absolute top-3 left-3 bg-yellow-400 text-black px-4 py-1 rounded-lg font-bold shadow-lg z-20">
+            ⭐ Destacado
+          </div>
+        ` : ""}
+
+        <img id="img-principal" 
+             src="${imagenes[0]}" 
+             class="w-full h-96 object-cover rounded-lg mb-4 cursor-pointer transition-opacity duration-300">
 
         ${imagenes.length > 1 ? `
-          <button onclick="prev()" class="absolute left-2 top-1/2 bg-black/40 px-5 py-2 rounded text-[50px]">‹</button>
-          <button onclick="next()" class="absolute right-2 top-1/2 bg-black/40 px-5 py-2 rounded text-[50px]">›</button>
+          <button onclick="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 px-4 py-2 rounded text-3xl z-20">‹</button>
+          <button onclick="next()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 px-4 py-2 rounded text-3xl z-20">›</button>
         ` : ""}
+
+      </div>
+
+      <!-- MINIATURAS -->
+      <div class="flex gap-2 overflow-x-auto mb-6">
+        ${imagenes.map((img, i) => `
+          <img src="${img}" 
+               class="thumb h-20 w-28 object-cover rounded cursor-pointer border-2 transition-all duration-200 ${i === 0 ? 'border-blue-500' : 'border-transparent'}"
+               onclick="irA(${i})"
+               id="thumb-${i}">
+        `).join("")}
       </div>
 
       <!-- INFO -->
       <h1 class="text-3xl font-bold mb-2">${auto.marca} ${auto.modelo}</h1>
-      <p class="text-lg mb-2">Año: ${auto.año}</p>
-      <p class="text-lg mb-2">KM: ${auto.km}</p>
-      <p class="text-lg mb-2">Combustible: ${auto.combustible}</p>
 
-      <p class="text-2xl text-blue-500 font-bold mb-4">$${auto.precio}</p>
+      <div class="grid grid-cols-2 gap-4 text-gray-300 mt-4">
+        <p><b>Año:</b> ${auto.año}</p>
+        <p><b>KM:</b> ${auto.km}</p>
+        <p><b>Combustible:</b> ${auto.combustible}</p>
+      </div>
 
-      <p class="mt-4">${auto.descripcion || "Sin descripción"}</p>
+      <p class="text-2xl text-blue-400 font-bold mt-4">$${auto.precio}</p>
+
+      <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
 
       <!-- WHATSAPP -->
       <a href="https://wa.me/549XXXXXXXXXX?text=Hola%20me%20interesa%20el%20${auto.marca}%20${auto.modelo}"
@@ -67,16 +83,100 @@ const esDestacado = auto.destacado?.toUpperCase() === "SI";
       </a>
 
     </div>
+
+    <!-- FULLSCREEN -->
+    <div id="fullscreen" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+      <img id="img-full" class="max-h-full max-w-full">
+    </div>
   `;
 
-  // 👉 FUNCIONES DEL CARRUSEL
-  window.next = function() {
+  const img = document.getElementById("img-principal");
+
+  // 👉 ACTUALIZAR IMAGEN
+  function actualizarImagen() {
+
+    // fade out
+    img.style.opacity = 0;
+
+    setTimeout(() => {
+      img.src = imagenes[current];
+
+      // 👉 LIMPIAR TODAS
+      document.querySelectorAll(".thumb").forEach(el => {
+        el.classList.remove("border-blue-500");
+        el.classList.add("border-transparent");
+      });
+
+      // 👉 ACTIVAR SOLO LA ACTUAL
+      const activa = document.getElementById(`thumb-${current}`);
+      if (activa) {
+        activa.classList.remove("border-transparent");
+        activa.classList.add("border-blue-500");
+      }
+
+      // fade in
+      img.style.opacity = 1;
+
+    }, 150);
+  }
+
+  // 👉 BOTONES
+  window.next = function () {
     current = (current + 1) % imagenes.length;
-    document.getElementById("img-principal").src = imagenes[current];
+    actualizarImagen();
   };
 
-  window.prev = function() {
+  window.prev = function () {
     current = (current - 1 + imagenes.length) % imagenes.length;
-    document.getElementById("img-principal").src = imagenes[current];
+    actualizarImagen();
   };
+
+  // 👉 CLICK MINIATURA
+  window.irA = function (index) {
+    current = index;
+    actualizarImagen();
+  };
+
+  // 👉 SWIPE MEJORADO
+  let startX = 0;
+
+  img.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  img.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? next() : prev();
+    }
+  });
+
+  // 👉 FULLSCREEN
+  const fullscreen = document.getElementById("fullscreen");
+  const imgFull = document.getElementById("img-full");
+
+  img.addEventListener("click", () => {
+    imgFull.src = imagenes[current];
+    fullscreen.classList.remove("hidden");
+    fullscreen.classList.add("flex");
+  });
+
+  fullscreen.addEventListener("click", () => {
+    fullscreen.classList.add("hidden");
+    fullscreen.classList.remove("flex");
+  });
 }
+
+// 👉 MENÚ HAMBURGUESA (FIX REAL)
+document.addEventListener("DOMContentLoaded", () => {
+  const menuBtn = document.getElementById("menuBtn");
+  const menu = document.getElementById("menu");
+
+  if (menuBtn && menu) {
+    menuBtn.addEventListener("click", () => {
+      menu.classList.toggle("active");
+    });
+  }
+});
