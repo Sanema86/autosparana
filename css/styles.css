@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #30333a, #28292c);
     color: white;
 }
@@ -157,6 +157,7 @@ footer {
     margin-right: 5%;
     font-size: 80px;
     margin-left: auto;
+    color: #cfaf1f;
   }
 
   .menu {
@@ -204,6 +205,10 @@ display: flex;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  h3 {
+    font-size: 30px;
   }
 
 }

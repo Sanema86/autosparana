@@ -34,7 +34,7 @@ const esDestacado = auto.destacado?.toUpperCase() === "SI";
     <div class="max-w-5xl mx-auto bg-gray-800 text-white p-6 rounded-2xl shadow-2xl">
 
       <!-- CARRUSEL -->
-   <div class="relative">
+    <div class="relative">
 
   ${esDestacado ? `
     <div class="absolute top-3 left-3 bg-gray-600 text-black px-4 py-1 rounded-lg font-bold shadow-lg z-10">
@@ -45,8 +45,8 @@ const esDestacado = auto.destacado?.toUpperCase() === "SI";
         <img id="img-principal" src="${imagenes[0]}" class="w-full h-96 object-cover rounded-lg mb-6">
 
         ${imagenes.length > 1 ? `
-          <button onclick="prev()" class="absolute left-2 top-1/2 bg-black/70 px-3 py-2 rounded">‹</button>
-          <button onclick="next()" class="absolute right-2 top-1/2 bg-black/70 px-3 py-2 rounded">›</button>
+          <button onclick="prev()" class="absolute left-2 top-1/2 bg-black/40 px-5 py-2 rounded text-[50px]">‹</button>
+          <button onclick="next()" class="absolute right-2 top-1/2 bg-black/40 px-5 py-2 rounded text-[50px]">›</button>
         ` : ""}
       </div>
 

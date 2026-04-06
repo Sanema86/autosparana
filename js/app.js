@@ -56,7 +56,7 @@ function mostrarAutos(lista) {
         <div class="p-4">
           <h3>${auto.marca} ${auto.modelo}</h3>
           <h3>${auto.año}</h3>
-          <p class="text-blue-600 font-bold">$${auto.precio}</p>
+          <p class="text-blue-600 font-bold text-[35px]">$${auto.precio}</p>
         </div>
 
       </div>
