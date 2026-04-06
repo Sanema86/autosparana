@@ -206,8 +206,4 @@ display: flex;
     transform: translateX(-50%);
   }
 
-  h3 {
-    font-size: 30px;
-  }
-
 }
