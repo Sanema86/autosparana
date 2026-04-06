@@ -27,18 +27,32 @@ fetch(URL)
 
 function mostrarAuto(auto) {
 
-  const esDestacado = auto.destacado?.toUpperCase() === "SI";
-  const esIntermediario = auto.intermediario?.toUpperCase() === "SI";
+  const esDestacado = String(auto.destacado || "").trim().toUpperCase() === "SI";
 
-  // 👉 TELÉFONO
+  const esIntermediario = String(auto.intermediario || "")
+    .trim()
+    .toUpperCase() === "SI";
+
+  // 👉 LIMPIAR TELÉFONO (ANTI ERRORES SHEETS)
+  const telefonoLimpio = String(auto.telefono || "")
+    .replace(/\D/g, "")
+    .trim();
+
+  // 👉 DECISIÓN FINAL
   const telefonoFinal = esIntermediario
     ? MI_NUMERO
-    : (auto.telefono || MI_NUMERO);
+    : (telefonoLimpio.length > 8 ? telefonoLimpio : MI_NUMERO);
+
+  // 👉 DEBUG (después podés borrarlo)
+  console.log("Intermediario:", esIntermediario);
+  console.log("Teléfono original:", auto.telefono);
+  console.log("Teléfono limpio:", telefonoLimpio);
+  console.log("Teléfono final:", telefonoFinal);
 
   // 👉 MENSAJE
   const mensaje = esIntermediario
     ? `Hola, te consulto por este vehículo: ${window.location.href}`
-    : `Hola, vi este vehículo en Autos Paraná: ${window.location.href} ¿Sigue disponible?`
+    : `Hola, vi este vehículo en Autos Paraná: ${window.location.href} ¿Sigue disponible?`;
 
   const linkWhatsApp = `https://wa.me/${telefonoFinal}?text=${encodeURIComponent(mensaje)}`;
 
@@ -113,7 +127,6 @@ function mostrarAuto(auto) {
 
   const img = document.getElementById("img-principal");
 
-  // 👉 ACTUALIZAR IMAGEN
   function actualizarImagen() {
     img.style.opacity = 0;
 
@@ -135,7 +148,6 @@ function mostrarAuto(auto) {
     }, 150);
   }
 
-  // 👉 BOTONES
   window.next = function () {
     current = (current + 1) % imagenes.length;
     actualizarImagen();
@@ -146,13 +158,11 @@ function mostrarAuto(auto) {
     actualizarImagen();
   };
 
-  // 👉 MINIATURAS
   window.irA = function (index) {
     current = index;
     actualizarImagen();
   };
 
-  // 👉 SWIPE
   let startX = 0;
 
   img.addEventListener("touchstart", e => {
@@ -168,7 +178,6 @@ function mostrarAuto(auto) {
     }
   });
 
-  // 👉 FULLSCREEN
   const fullscreen = document.getElementById("fullscreen");
   const imgFull = document.getElementById("img-full");
 
