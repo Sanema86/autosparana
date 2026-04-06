@@ -2,17 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Detalle del Auto</title>
+  <title>Autos Paraná</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- CSS -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
-<body class="bg-gray-900">
-
 <nav class="navbar">
   
   <div class="left">
@@ -35,17 +30,25 @@
 
 </nav>
 
-<div id="detalle-auto" class="p-4"></div>
 
-<script src="js/auto.js"></script>
-<!-- <script>
-  const btn = document.getElementById("menuBtn");
-  const menu = document.getElementById("menu");
+<body class="bg-gray-900 text-white">
+<div class="max-w-6xl mx-auto p-4">
 
-  btn.addEventListener("click", () => {
-    menu.classList.toggle("active");
-  });
-</script> -->
+  <h2 class="text-2xl font-bold mb-6">Camionetas</h2>
 
-</body>
+  <input type="text" id="buscador"
+    placeholder="Buscar por marca, modelo o año..."
+    class="w-full p-3 mb-6 text-black rounded">
+
+  <div id="autos-container" class="grid gap-6 
+            grid-cols-1 
+            sm:grid-cols-2 
+            md:grid-cols-3 
+            lg:grid-cols-4 
+            justify-items-center"></div>
+
+</div>
+
+<script src="js/main.js"></script>
+<body>
 </html>

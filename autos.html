@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Autos Paraná</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css">
@@ -10,8 +11,8 @@
 <nav class="navbar">
   
   <div class="left">
-    <img src="logoAP.png" alt="Logo" class="logo">
-    <h1 class="H1NV">AUTOS PARANÁ</h1>
+  <a href="index.html"> <img src="logoAP.png" alt="Logo" class="logo"></a>
+        <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
   </div>
 
   <!-- botón hamburguesa -->
@@ -19,12 +20,12 @@
     ☰
   </button>
 
-  <div id="menu" class="menu">
+   <div id="menu" class="menu">
     <a href="index.html">Inicio</a>
     <a href="autos.html">Autos</a>
-    <a href="#camionetas">Camionetas</a>
-    <a href="#utilitarios">Utilitarios</a>
-    <a href="#motos">Motos</a>
+    <a href="camionetas.html">Camionetas</a>
+    <a href="utilitarios.html">Utilitarios</a>
+    <a href="motos.html">Motos</a>
   </div>
 
 </nav>
@@ -39,10 +40,15 @@
     placeholder="Buscar por marca, modelo o año..."
     class="w-full p-3 mb-6 text-black rounded">
 
-  <div id="autos-container" class="grid md:grid-cols-3 gap-6"></div>
+  <div id="autos-container" class="grid gap-6 
+            grid-cols-1 
+            sm:grid-cols-2 
+            md:grid-cols-3 
+            lg:grid-cols-4 
+            justify-items-center"></div>
 
 </div>
 
-<script src="js/app.js"></script>
+<script src="js/main.js"></script>
 <body>
 </html>
