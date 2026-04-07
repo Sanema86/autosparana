@@ -41,7 +41,11 @@ fetch(URL)
     }
 
     mostrarAuto(auto);
+
+     // SIMILARES DATA INFO
+    mostrarSimilares(auto, data);
   });
+  
 
 function mostrarAuto(auto) {
 
@@ -257,3 +261,68 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+function mostrarSimilares(autoActual, lista) {
+
+  const cont = document.getElementById("autos-similares");
+  if (!cont) return;
+
+  // 👉 LIMPIAR
+  cont.innerHTML = "<h2 class='text-white text-2xl mb-4'>Te puede interesar...</h2>";
+
+  const precioActual = Number(autoActual.precio) || 0;
+
+  // 👉 FILTRAR
+  let similares = lista.filter(a => {
+
+    if (a.slug === autoActual.slug) return false;
+
+    // mismo tipo
+    if (a.tipo !== autoActual.tipo) return false;
+
+    // misma marca (suma puntos)
+    let score = 0;
+
+    if (a.marca === autoActual.marca) score += 2;
+
+    // precio parecido
+    const precio = Number(a.precio) || 0;
+    if (precio > precioActual * 0.7 && precio < precioActual * 1.3) {
+      score += 1;
+    }
+
+    a.score = score;
+    return score > 0;
+
+  });
+
+  // 👉 ORDENAR
+  similares.sort((a, b) => b.score - a.score);
+
+  // 👉 LIMITAR
+  similares = similares.slice(0, 4);
+
+  if (similares.length === 0) {
+    cont.innerHTML += "<p class='text-gray-400'>No hay autos similares.</p>";
+    return;
+  }
+
+  // 👉 HTML
+  cont.innerHTML += `
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      ${similares.map(a => `
+        <div onclick="irAuto('${a.slug}')"
+          class="bg-white text-black rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition">
+
+          <img src="${a.imagen.split(',')[0]}" class="w-full h-40 object-cover">
+
+          <div class="p-2 text-center">
+            <p class="font-bold">${a.marca} ${a.modelo} ${a.año}</p>
+            <p>$${a.precio}</p>
+          </div>
+
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
