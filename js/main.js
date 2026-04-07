@@ -2,6 +2,29 @@ const URL = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFp
 
 let autos = [];
 
+function estaVencido(auto) {
+
+  const esIntermediario = String(auto.intermediario || "")
+    .trim()
+    .toUpperCase() === "SI";
+
+  // 👉 SI sos intermediario → nunca vence
+  if (esIntermediario) return false;
+
+  // 👉 si no tiene datos → no vence
+  if (!auto.fecha_inicio || !auto.dias) return false;
+
+  const hoy = new Date();
+  const inicio = new Date(auto.fecha_inicio);
+
+  const dias = parseInt(auto.dias);
+
+  const vencimiento = new Date(inicio);
+  vencimiento.setDate(vencimiento.getDate() + dias);
+
+  return hoy > vencimiento;
+}
+
 // 👉 Detectar página
 const pagina = window.location.pathname.toLowerCase();
 
@@ -94,6 +117,9 @@ function mostrarDestacados(lista) {
 
     <div class="relative">
       <img src="${auto.imagen}" class="w-full h-72 object-cover">
+      <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+  📍 ${auto.ubicacion || ""}
+</div>
 
       ${esVendido ? svgVendido : ""}
       ${!esVendido && esReservado ? svgReservado : ""}
@@ -117,6 +143,8 @@ function mostrarAutos(lista) {
 
   lista.forEach(auto => {
 
+      if (estaVencido(auto)) return;
+
     const esDestacado = auto.destacado?.toUpperCase() === "SI";
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
@@ -128,6 +156,9 @@ function mostrarAutos(lista) {
         <div class="relative">
 
           <img src="${auto.imagen}" class="w-full h-48 object-cover rounded-t-lg">
+          <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+  📍 ${auto.ubicacion || ""}
+</div>
 
           ${esDestacado ? `
             <div class="absolute top-2 left-2 bg-yellow-400 text-black px-2 py-1 rounded text-xs font-bold">
@@ -161,7 +192,8 @@ if (buscador) {
     const filtrados = autos.filter(auto =>
       auto.marca.toLowerCase().includes(texto) ||
       auto.modelo.toLowerCase().includes(texto) ||
-      auto.año.toString().includes(texto)
+      auto.año.toString().includes(texto) ||
+      auto.ubicacion.toLowerCase().includes(texto)
     );
 
     if (document.getElementById("destacados")) {
@@ -201,3 +233,18 @@ if (btn && menu) {
     menu.classList.toggle("active");
   });
 }
+
+// 👉 HERO SLIDER AUTOMÁTICO
+const slides = document.querySelectorAll("#hero-slider img");
+let index = 0;
+
+setInterval(() => {
+  slides[index].classList.remove("opacity-100");
+  slides[index].classList.add("opacity-0");
+
+  index = (index + 1) % slides.length;
+
+  slides[index].classList.remove("opacity-0");
+  slides[index].classList.add("opacity-100");
+
+}, 4000);
