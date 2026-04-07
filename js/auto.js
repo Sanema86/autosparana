@@ -111,7 +111,8 @@ function mostrarAuto(auto) {
         <p><b>Ubicación:</b> ${auto.ubicacion || "No especificada"}</p>
       </div>
 
-      <p class="text-2xl text-blue-400 font-bold mt-4">$${auto.precio}</p>
+      <p class="text-2xl text-blue-400 font-bold mt-4">
+  $${Number(auto.precio).toLocaleString("es-AR")}</p>
 
       <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
 

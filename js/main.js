@@ -128,7 +128,7 @@ function mostrarDestacados(lista) {
     <div class="p-5 text-center">
       <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
       <p class="text-2xl text-white">${auto.año}</p>
-      <p class="text-3xl text-yellow-400 font-bold">$${auto.precio}</p>
+      <p class="text-3xl text-yellow-400 font-bold">$${Number(auto.precio).toLocaleString("es-AR")}</p>
     </div>
 
   </div>
@@ -174,7 +174,7 @@ function mostrarAutos(lista) {
         <div class="p-4 text-center">
           <h3 class="font-bold">${auto.marca} ${auto.modelo}</h3>
           <p>${auto.año}</p>
-          <p class="text-blue-600 font-bold text-2xl">$${auto.precio}</p>
+          <p class="text-blue-600 font-bold text-2xl">$${Number(auto.precio).toLocaleString("es-AR")}</p>
         </div>
 
       </div>
