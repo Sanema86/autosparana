@@ -220,4 +220,11 @@ display: flex;
   border: 2px solid blue;
 }
 
+.input-mobile {
+  font-size: 30px;
+}
+
+.text-sm {
+  font-size: 25px;
+
 }
