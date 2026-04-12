@@ -16,6 +16,13 @@
 }
 
 /* --- BASE --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #30333a, #28292c);
@@ -157,6 +164,7 @@ footer {
     flex-direction: column;
     position: absolute;
     top: 100%;
+    left: 0;
     width: 100%;
     background: var(--dark-bg);
     padding: 2rem;
@@ -181,4 +189,18 @@ footer {
   background: #1f2937;
   padding: 2rem;
   border-radius: 1rem;
+  text-align: center;
+  position: relative;
+  max-width: 90%;
+  width: 450px;
+}
+
+.cerrar-popup {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 2.5rem;
+  color: #fff;
+  cursor: pointer;
+  line-height: 1;
 }

@@ -1,4 +1,4 @@
-const URL = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
+const API_URL_MAIN = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
 
 let autos = [];
 
@@ -49,7 +49,7 @@ const svgReservado = `
 `;
 
 // 👉 FETCH
-fetch(URL)
+fetch(API_URL_MAIN)
   .then(res => res.json())
   .then(data => {
     autos = data;
@@ -90,13 +90,14 @@ function mostrarDestacados(lista) {
 
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
+    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen}" 
+          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} en Paraná"
      class="w-full h-72 object-cover">
 
@@ -112,7 +113,7 @@ function mostrarDestacados(lista) {
           <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
           <p class="text-2xl text-white">${auto.año}</p>
           <p class="text-3xl text-yellow-400 font-bold">
-            $${Number(auto.precio).toLocaleString("es-AR")}
+            $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>
       </div>
@@ -142,13 +143,14 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
 
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
+    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen}" class="w-full h-72 object-cover">
+          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-72 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -162,7 +164,7 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
           <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
           <p class="text-2xl text-white">${auto.año}</p>
           <p class="text-3xl text-yellow-400 font-bold">
-            $${Number(auto.precio).toLocaleString("es-AR")}
+            $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>
       </div>
@@ -184,6 +186,7 @@ function mostrarAutos(lista) {
     const esDestacado = auto.destacado?.toUpperCase() === "SI";
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
+    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
@@ -191,7 +194,7 @@ function mostrarAutos(lista) {
 
         <div class="relative">
 
-          <img src="${auto.imagen}" 
+          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} 
      en Paraná" class="w-full h-72 object-cover rounded-t-lg">
 
@@ -210,7 +213,7 @@ function mostrarAutos(lista) {
           <h3 class="font-bold">${auto.marca} ${auto.modelo}</h3>
           <p>${auto.año}</p>
           <p class="text-blue-600 font-bold text-2xl">
-            $${Number(auto.precio).toLocaleString("es-AR")}
+            $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>
 
@@ -236,7 +239,7 @@ if (buscador) {
 
     filtrados = filtrados.filter(auto => !estaVencido(auto));
 
-    // 🟡 👉 DETECTAR INDEX (BIEN HECHO)
+    // 🟡 👉 DETECTAR INDEX
     const esIndex =
       document.getElementById("autos-destacados") ||
       document.getElementById("motos-destacados") ||
@@ -288,17 +291,8 @@ function irAuto(slug) {
   window.location.href = "auto.html?slug=" + slug;
 }
 
-// 👉 MENU
-const btn = document.getElementById("menuBtn");
-const menu = document.getElementById("menu");
-
-if (btn && menu) {
-  btn.addEventListener("click", () => {
-    menu.classList.toggle("active");
-  });
-}
-
-// 👉 SLIDER
+document.addEventListener("DOMContentLoaded", () => {
+  // 👉 SLIDER (Solo si existe)
 const slides = document.querySelectorAll("#hero-slider img");
 let index = 0;
 
@@ -309,36 +303,47 @@ if (slides.length > 0) {
     slides[index].classList.replace("opacity-0", "opacity-100");
   }, 4000);
 }
+  
+  // 👉 MENU HAMBURGUESA
+  const btn = document.getElementById("menuBtn");
+  const menu = document.getElementById("menu");
 
-document.addEventListener("DOMContentLoaded", () => {
+  if (btn && menu) {
+    btn.addEventListener("click", () => {
+      menu.classList.toggle("active");
+    });
+  }
+
+  // 👉 POPUP (Con seguridad para que no de error si no existe)
   const popup = document.getElementById("popup-publicidad");
   const cerrar = document.getElementById("cerrarPopup");
 
-  const TIEMPO_ESPERA = 5 * 60 * 1000; // 5 minutos
+  if (popup && cerrar) {
+    const TIEMPO_ESPERA = 5 * 60 * 1000; // 5 minutos
+    const ultimaVez = localStorage.getItem("popupTime");
+    const ahora = new Date().getTime();
 
-  const ultimaVez = localStorage.getItem("popupTime");
-  const ahora = new Date().getTime();
+    // 👉 Mostrar o reset 5 minutos
+    if (!ultimaVez || (ahora - ultimaVez) > TIEMPO_ESPERA) {
+      setTimeout(() => {
+        popup.style.display = "flex";
+      }, 1000);
+    }
 
-  // 👉 Mostrar si nunca lo vio o si ya pasaron 5 minutos
-  if (!ultimaVez || (ahora - ultimaVez) > TIEMPO_ESPERA) {
-    setTimeout(() => {
-      popup.style.display = "flex";
-    }, 1000); // delay visual (opcional)
-  }
-
-  // 👉 Cerrar popup
-  cerrar.addEventListener("click", () => {
-    popup.style.display = "none";
-    localStorage.setItem("popupTime", ahora);
-  });
-
-  // 👉 Click afuera
-  popup.addEventListener("click", (e) => {
-    if (e.target === popup) {
+    // 👉 Cerrar popup
+    cerrar.addEventListener("click", () => {
       popup.style.display = "none";
       localStorage.setItem("popupTime", ahora);
-    }
-  });
+    });
+
+    // 👉 Click afuera
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        popup.style.display = "none";
+        localStorage.setItem("popupTime", ahora);
+      }
+    });
+  }
 });
 
 
@@ -375,5 +380,4 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.color = "white";
     }
   });
-
 });
