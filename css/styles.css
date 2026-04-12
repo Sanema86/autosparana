@@ -1,230 +1,234 @@
+/* --- CONFIGURACIÓN DE MARCA --- */
+:root {
+  --primary: #eab308;        /* Amarillo de la marca */
+  --primary-hover: #ca8a04;
+  --dark-bg: #141418;
+  --card-bg: #1f2937;
+  --glass: rgba(20, 20, 24, 0.8);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- BASE --- */
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #30333a, #28292c);
-    color: white;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #30333a, #28292c);
+  color: #f3f4f6;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-
-h1 {
+h1, h2, h3 {
   text-align: center;
+  font-weight: 600;
 }
 
-h2 {
-  text-align: center;
-}
-
-#autos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.auto {
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-
-.auto:hover {
-  transform: scale(1.03);
-}
-
-.auto img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-.whatsapp {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: green;
-  color: white;
-  padding: 15px;
-  border-radius: 50%;
-  text-decoration: none;
-  font-size: 20px;
-}
-
-.card {
-    position: relative;
-}
-
-.badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: gold;
-    color: black;
-    padding: 5px 8px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-
-/* NAVBAR */
+/* --- NAVEGACIÓN (PRO LOOK) --- */
 .navbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 5px;
-  background: #141418;
-  border: 1px solid #b1ae256e;
+  padding: 0.75rem 2rem;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(177, 174, 37, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-/* contenedor izquierdo */
 .left {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* menú centrado REAL */
-.menu {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-}
-
-/* enlaces */
-.menu a {
-  font: bold 20px Arial, sans-serif;
-  margin: 0 20px;
-  text-decoration: none;
-  color: #ffffff;
-}
-
-
 .logo {
- width: 100px;
- padding: 1px;
+  width: 60px;
+  height: auto;
+  transition: var(--transition);
 }
 
 .H1NV {
-    justify-self: start;
-  font-size: 24px;
-  font-weight: bold;
-  color: #cfaf1f;
-}
-
-footer {
-    margin-top: 20px;
-    background: #141418;
-    border:  1px solid #b1ae256e;
-}
-
-
-
-
-/* Medias Queries */
-@media (max-width: 1170px) {
-  .logo {
-    width: 80px;
-  }
-
-  .H1NV {
-    font-size: 15px;
-  }
-
-  .menu a {
-  font: bold 15px Arial, sans-serif;
-  margin: 0 20px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
   text-decoration: none;
-  color: #ffffff;
-}
+  letter-spacing: -0.5px;
 }
 
-/* botón hamburguesa */
+.menu {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.menu a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.menu a:hover {
+  color: var(--primary);
+}
+
+/* --- TARJETAS DE VEHÍCULOS --- */
+#autos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+/* Estilo para los divs inyectados por JS */
+.auto-card {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auto-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  border-color: var(--primary);
+}
+
+/* --- COMPONENTES DE VENTA (PÁGINA VENDER) --- */
+.vender-container {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+.sub {
+  text-align: center;
+  color: #d1d5db;
+}
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.beneficio {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+.pasos {
+  margin: 2rem 0;
+  text-align: center;
+}
+.btn-wsp, .btn-popup {
+  display: inline-block;
+  background: #22c55e;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+  margin-top: 1rem;
+
+}
+
+.cta {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.btn-wsp:hover, .btn-popup:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+/* --- FOOTER --- */
+footer {
+  margin-top: 4rem;
+  padding: 3rem 1rem;
+  background: var(--dark-bg);
+  border-top: 1px solid rgba(177, 174, 37, 0.3);
+}
+
+/* --- RESPONSIVE / MOBILE --- */
 .menu-btn {
   display: none;
-  font-size: 28px;
+  font-size: 2rem;
   background: none;
   border: none;
-  color: white;
+  color: var(--primary);
   cursor: pointer;
 }
 
-/* mobile */
-@media (max-width: 1080px) {
-
-.menu-btn {
+@media (max-width: 1024px) {
+  .menu-btn {
     display: block;
-    margin-right: 5%;
-    font-size: 80px;
-    margin-left: auto;
-    color: #cfaf1f;
   }
 
   .menu {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px;
-    right: 10px;
-    background: #141418;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 80px;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--dark-bg);
+    padding: 2rem;
+    border-bottom: 2px solid var(--primary);
   }
 
-    .menu a {
-  font: bold 50px Arial, sans-serif;
-  margin: 10px;
-  text-decoration: none;
-  color: #ffffff;
+  .menu.active { display: flex; }
+  
+  .menu a {
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .logo { width: 50px; }
 }
 
-  .navbar {
-  position: relative;
-display: flex;
+/* --- POPUPS --- */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
   z-index: 9999;
+  padding: 1rem;
 }
 
-  .menu.active {
-    display: flex;
-  }
-
-    .logo {
-    width: 200px;
-    display: flex;
-    margin-right: 20px;
-  }
-
-  .H1NV {
-    font-size: 35px;
-    display: flex;
-  }
-
-   .left {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .H3-autos {
-    font-size: 30px;
-  }
-
-  .miniatura {
-  border: 2px solid transparent;
+.popup-content {
+  background: #1f2937;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.miniatura.active {
-  border: 2px solid blue;
+.cerrar-popup {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: var(--transition);
 }
 
-.input-mobile {
-  font-size: 30px;
+.cerrar-popup:hover {
+  color: var(--primary);
 }
-
-.text-sm {
-  font-size: 25px;
-
-} 

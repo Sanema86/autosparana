@@ -2,12 +2,44 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Autos Paraná</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>Autos en Paraná | Compra y venta de autos usados en Paraná</title>
 
+<meta name="description" content="Compra y venta de autos usados en Paraná. Encontrá autos, camionetas, motos y utilitarios al mejor precio. Publicá tu vehículo fácil y rápido.">
+
+<meta name="keywords" content="autos en Paraná, autos usados Paraná, comprar autos Paraná, vender autos Paraná, camionetas Paraná, motos Paraná">
+
+<meta name="robots" content="index, follow">
+<meta name="author" content="Autos Paraná">
+<link rel="canonical" href="https://www.autosparana.com.ar/index.html">
+
+<!-- Open Graph (redes sociales) -->
+<meta property="og:title" content="Autos en Paraná">
+<meta property="og:description" content="Compra y venta de autos usados en Paraná. Publicá tu vehículo fácil.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.autosparana.com.ar">
+<meta property="og:image" content="https://www.autosparana.com.ar/logoAP.png">
+
+<!-- Responsive -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AutomotiveBusiness",
+  "name": "Autos Paraná",
+  "url": "https://www.autosparana.com.ar",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Paraná",
+    "addressCountry": "AR"
+  }
+}
+</script>
 
 </head>
 <body class="bg-gray-100 text-white">
@@ -24,14 +56,19 @@
   </button>
 
   <div id="menu" class="menu">
-    <a href="index.html">Inicio</a>
-    <a href="autos.html">Autos</a>
-    <a href="camionetas.html">Camionetas</a>
-    <a href="utilitarios.html">Utilitarios</a>
-    <a href="motos.html">Motos</a>
+    <a id="nav-inicio" href="index.html">Inicio</a>
+    <a id="nav-autos" href="autos.html">Autos</a>
+    <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+    <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+    <a id="nav-motos" href="motos.html">Motos</a>
+    <a id="nav-vender" href="vender.html">Cómo vender?</a>
   </div>
 
 </nav>
+
+<h1 style="display:none;">
+Autos en Paraná - Compra y venta de autos usados en Paraná
+</h1>
 
 <div class="max-w-6xl mx-auto p-4">
 
@@ -67,9 +104,9 @@
   <!-- TEXTO -->
   <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
 
-    <h1 class="text-2xl md:text-4xl font-bold text-yellow-400 mb-2">
+    <h2 class="text-2xl md:text-4xl font-bold text-yellow-400 mb-2">
       WWW.AUTOSPARANA.COM.AR
-    </h1>
+    </h2>
 
     <p class="text-sm md:text-lg text-gray-200 max-w-xl">
       Los mejores vehículos de Paraná y la región, en un solo lugar.
@@ -78,14 +115,40 @@
   </div>
 </div>
 
-  <h2 class="text-4xl font-bold mb-6">Destacados</h2>
+ <div class="inset-0 flex flex-col justify-center items-center text-center px-4 mb-12">
+
+    <h2 class="text-2xl md:text-4xl font-bold text-yellow-400">
+      ¿Querés vender tu auto?
+    </h2>
+
+    <p class="text-sm md:text-lg text-gray-200 max-w-xl">
+      Publicá en AutosParana y llegá a más compradores.
+    </p>
+<a class="text-blue-500 hover:text-blue-700" href="vender.html">Ver cómo funciona...</a>
+  </div>
+
+
+  <h2 class="text-4xl font-bold mb-6">Autos usados destacados en Paraná</h2>
 
    <input type="text" id="buscador"
     placeholder="Buscar por marca, modelo, año o ubicación..."
     class="input-mobile w-full p-3 mb-6 text-black rounded">
 
-  <div id="destacados" class="grid md:grid-cols-2 gap-6"></div>
-
+    <h2>Autos Destacados</h2>
+  <div id="autos-destacados" class="mb-10 grid md:grid-cols-2 gap-6">
+    
+  </div>
+  
+  <h2>Motos Destacadas</h2>
+   <div id="motos-destacados" class="mb-10 grid md:grid-cols-2 gap-6">
+  </div>
+  <h2>Camionetas Destacadas</h2>
+  <div id="camionetas-destacados" class="mb-10 grid md:grid-cols-2 gap-6">
+    
+  </div>
+  <h2>Utilitarios Destacados</h2>
+  <div id="utilitarios-destacados" class="mb-10 grid md:grid-cols-2 gap-6">
+  </div>
 </div>
 
 <footer>
@@ -97,6 +160,26 @@
 </footer>
 
 <script src="js/main.js"></script>
+
+<div id="popup-publicidad" class="popup">
+  <div class="popup-content">
+    <span class="cerrar-popup" id="cerrarPopup">&times;</span>
+
+    <h2 class="m-[1rem] font-size-[4rem] text-yellow-500">¿Querés vender tu auto en Paraná?</h2>
+
+    <p class="m-[1rem]">
+      Publicá en <strong class="text-yellow-500">AutosParana</strong> y llegá a compradores reales.
+    </p>
+
+    <p>
+      ✔ Más visibilidad <br>
+      ✔ Más consultas <br>
+      ✔ Venta más rápida
+    </p>
+
+    <a href="vender.html" class="btn-popup">Cómo publicar?</a>
+  </div>
+</div>
 
 </body>
 </html>

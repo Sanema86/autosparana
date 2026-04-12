@@ -49,8 +49,39 @@ fetch(URL)
 
 function mostrarAuto(auto) {
 
-  const visitas = sumarVisita(auto.slug);
+  // 👉 ACTUALIZAR SEO DINÁMICO
+  document.title = `${auto.marca} ${auto.modelo} ${auto.año} en Paraná | Autos Paraná`;
+  
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) {
+    metaDesc.setAttribute("content", `Comprá este ${auto.marca} ${auto.modelo} ${auto.año} en Paraná. KM: ${auto.km}. Precio: $${Number(auto.precio).toLocaleString("es-AR")}. ¡Consultanos por WhatsApp!`);
+  }
 
+  // 👉 INYECTAR DATOS ESTRUCTURADOS (JSON-LD) PARA GOOGLE
+  const imagenesArray = auto.imagen ? auto.imagen.split(",").map(img => img.trim()) : [];
+  const carSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Car",
+    "name": `${auto.marca} ${auto.modelo} ${auto.año}`,
+    "image": imagenesArray[0],
+    "description": auto.descripcion || `Venta de ${auto.marca} ${auto.modelo} en Paraná`,
+    "brand": { "@type": "Brand", "name": auto.marca },
+    "modelDate": auto.año,
+    "offers": {
+      "@type": "Offer",
+      "price": auto.precio,
+      "priceCurrency": "ARS",
+      "availability": auto.vendido?.toUpperCase() === "SI" ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+      "url": window.location.href
+    }
+  };
+
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.text = JSON.stringify(carSchema);
+  document.head.appendChild(script);
+
+  const visitas = sumarVisita(auto.slug);
   const esDestacado = String(auto.destacado || "").toUpperCase() === "SI";
   const esIntermediario = String(auto.intermediario || "").toUpperCase() === "SI";
 
@@ -318,11 +349,16 @@ function mostrarSimilares(autoActual, lista) {
 
           <div class="p-2 text-center">
             <p class="font-bold">${a.marca} ${a.modelo} ${a.año}</p>
-            <p>$${a.precio}</p>
+            <p>$${Number(a.precio).toLocaleString("es-AR")}</p>
           </div>
 
         </div>
       `).join("")}
     </div>
   `;
+}
+
+// CLICK AUTO SIMILARES
+function irAuto(slug) {
+  window.location.href = "auto.html?slug=" + slug;
 }
