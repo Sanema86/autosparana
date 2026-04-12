@@ -93,12 +93,12 @@ function mostrarDestacados(lista) {
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
-        class="auto-card bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
+        class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
           <img src="${auto.imagen}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} en Paraná"
-     class="w-full h-48 md:h-72 object-cover">
+     class="w-full h-72 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -109,9 +109,9 @@ function mostrarDestacados(lista) {
         </div>
 
         <div class="p-5 text-center">
-          <h3 class="text-white text-lg md:text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
-          <p class="text-xl md:text-2xl text-white">${auto.año}</p>
-          <p class="text-2xl md:text-3xl text-yellow-400 font-bold">
+          <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
+          <p class="text-2xl text-white">${auto.año}</p>
+          <p class="text-3xl text-yellow-400 font-bold">
             $${Number(auto.precio).toLocaleString("es-AR")}
           </p>
         </div>
@@ -145,10 +145,10 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
-        class="auto-card bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
+        class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen}" class="w-full h-40 md:h-72 object-cover">
+          <img src="${auto.imagen}" class="w-full h-72 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -159,9 +159,9 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         </div>
 
         <div class="p-5 text-center">
-          <h3 class="text-white text-lg md:text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
-          <p class="text-xl md:text-2xl text-white">${auto.año}</p>
-          <p class="text-2xl md:text-3xl text-yellow-400 font-bold">
+          <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
+          <p class="text-2xl text-white">${auto.año}</p>
+          <p class="text-3xl text-yellow-400 font-bold">
             $${Number(auto.precio).toLocaleString("es-AR")}
           </p>
         </div>
@@ -187,13 +187,13 @@ function mostrarAutos(lista) {
 
     cont.innerHTML += `
       <div onclick="irAuto('${auto.slug}')"
-        class="auto-card bg-white text-black border border-blue-500 rounded-lg shadow cursor-pointer hover:scale-105 transition w-full ${esVendido ? 'opacity-60' : ''}">
+        class="bg-white text-black border border-blue-500 rounded-lg shadow cursor-pointer hover:scale-105 transition max-w-sm mx-auto w-full ${esVendido ? 'opacity-60' : ''}">
 
         <div class="relative">
 
           <img src="${auto.imagen}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} 
-     en Paraná" class="w-full h-48 object-cover rounded-t-lg">
+     en Paraná" class="w-full h-72 object-cover rounded-t-lg">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
