@@ -1,3 +1,10 @@
+/* --- RESET --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 /* --- CONFIGURACIÓN DE MARCA --- */
 :root {
   --primary: #eab308;
@@ -10,7 +17,6 @@
 
 /* --- BASE --- */
 body {
-  margin: 0;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #30333a, #28292c);
   color: #f3f4f6;
@@ -80,7 +86,7 @@ h1, h2, h3 {
   padding: 1.5rem 0;
 }
 
-/* 🔹 MOBILE */
+/* MOBILE */
 #autos-container {
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -92,7 +98,7 @@ h1, h2, h3 {
   gap: 0.75rem;
 }
 
-/* 🔹 TABLET */
+/* TABLET */
 @media (min-width: 768px) {
   #autos-container {
     grid-template-columns: repeat(2, 1fr);
@@ -105,7 +111,7 @@ h1, h2, h3 {
   }
 }
 
-/* 🔹 DESKTOP */
+/* DESKTOP */
 @media (min-width: 1024px) {
   #autos-container {
     grid-template-columns: repeat(4, 1fr);
@@ -125,6 +131,7 @@ h1, h2, h3 {
   overflow: hidden;
   transition: var(--transition);
   border: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
 }
 
 .auto-card:hover {
@@ -132,32 +139,44 @@ h1, h2, h3 {
   border-color: var(--primary);
 }
 
-/* 🔹 IMÁGENES (CLAVE PARA ARREGLAR EL "ALARGADO") */
+/* 🔥 CLAVE: EVITA ESTIRAMIENTO */
 .auto-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
 }
 
-/* 🔹 MOBILE DETALLE (IMPORTANTE) */
 @media (max-width: 600px) {
   .auto-card img {
     height: 160px;
   }
 }
 
-/* --- VENDER --- */
+/* --- SECCIÓN VENDER (LO QUE AGREGASTE BIEN ORDENADO) --- */
 .vender-container {
   max-width: 1000px;
   margin: 3rem auto;
   padding: 0 1.5rem;
 }
 
+/* ✔ pasos centrados */
 .pasos {
   text-align: center;
-  margin: 2rem;
+  margin: 2rem 0;
 }
 
+/* ✔ subtítulos */
+.sub {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* ✔ botón centrado */
+.cta {
+  text-align: center;
+}
+
+/* beneficios */
 .beneficios {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -171,18 +190,7 @@ h1, h2, h3 {
   text-align: center;
 }
 
-.sub {
- text-align: center;
- margin-bottom: 1rem;
-}
-
 /* --- BOTONES --- */
-
-/* ↓ CENTRA BOTON WSP */
-.cta {  
-  text-align: center;
-}
-
 .btn-wsp,
 .btn-popup {
   display: inline-block;
@@ -193,7 +201,6 @@ h1, h2, h3 {
   text-decoration: none;
   transition: var(--transition);
   margin: 1rem;
-  
 }
 
 .btn-wsp:hover,
