@@ -111,7 +111,7 @@ function mostrarAuto(auto) {
         <img id="img-principal" 
              onclick="abrirZoom()"
              src="${imagenes[0] || FALLBACK_IMG}" 
-             class="w-full h-52 sm:h-80 md:h-96 object-cover rounded-lg mb-4 cursor-pointer transition-opacity duration-300">
+             class="w-full h-50 sm:h-80 md:h-90 object-cover rounded-lg mb-4 cursor-pointer transition-opacity duration-300">
 
         ${imagenes.length > 1 ? `
           <button onclick="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 text-black px-3 py-2 rounded-full text-2xl">‹</button>
@@ -138,11 +138,13 @@ function mostrarAuto(auto) {
         <p><b>Ubicación:</b> ${auto.ubicacion || "No especificada"}</p>
       </div>
 
-      <p class="text-2xl text-blue-400 font-bold mt-4">
+       <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
+
+      <p class="text-4xl text-center text-blue-400 font-bold mt-4">
         $${Number(precioLimpio).toLocaleString("es-AR")}
       </p>
 
-      <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
+     
 
       <a href="${linkWhatsApp}" target="_blank"
          class="block mt-6 bg-green-500 text-white text-center py-4 rounded-lg font-bold text-lg">
@@ -261,14 +263,14 @@ function mostrarSimilares(autoActual, lista) {
   ).slice(0, 4);
 
   cont.innerHTML += `
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div class="grid grid-cols-4 md:grid-cols-4 gap-3 md:gap-4">
       ${similares.map(a => `
         <div onclick="irAuto('${a.slug}')"
           class="bg-white text-black rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition">
           
-          <img src="${a.imagen ? a.imagen.split(',')[0].trim() : FALLBACK_IMG}" class="w-full h-32 sm:h-40 object-cover">
+          <img src="${a.imagen ? a.imagen.split(',')[0].trim() : FALLBACK_IMG}" class="w-full h-32 object-cover">
 
-          <div class="p-2 text-center text-sm sm:text-base">
+          <div class="p-2 text-center text-xs sm:text-sm">
             <p class="font-bold">${a.marca} ${a.modelo}</p>
             <p>$${Number(String(a.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR")}</p>
           </div>

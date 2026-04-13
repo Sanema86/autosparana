@@ -99,7 +99,7 @@ function mostrarDestacados(lista) {
         <div class="relative">
           <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} en Paraná"
-     class="w-full h-72 object-cover">
+     class="w-full h-52 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -150,7 +150,7 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-72 object-cover">
+          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-52 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -196,7 +196,7 @@ function mostrarAutos(lista) {
 
           <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} 
-     en Paraná" class="w-full h-72 object-cover rounded-t-lg">
+     en Paraná" class="w-full h-40 object-cover rounded-t-lg">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
