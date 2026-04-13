@@ -99,7 +99,7 @@ function mostrarDestacados(lista) {
         <div class="relative">
           <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} en Paraná"
-     class="w-full h-52 object-cover">
+     class="w-full h-50 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -150,7 +150,7 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-52 object-cover">
+          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-30 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -161,9 +161,9 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         </div>
 
         <div class="p-5 text-center">
-          <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
+          <h3 class="text-white text-1xl font-bold">${auto.marca} ${auto.modelo}</h3>
           <p class="text-2xl text-white">${auto.año}</p>
-          <p class="text-3xl text-yellow-400 font-bold">
+          <p class="text-2xl text-yellow-400 font-bold">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>
@@ -196,7 +196,7 @@ function mostrarAutos(lista) {
 
           <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
      alt="${auto.marca} ${auto.modelo} ${auto.año} 
-     en Paraná" class="w-full h-40 object-cover rounded-t-lg">
+     en Paraná" class="w-full h-35 object-cover rounded-t-lg">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             📍 ${auto.ubicacion || ""}
@@ -210,9 +210,9 @@ function mostrarAutos(lista) {
         </div>
 
         <div class="p-4 text-center">
-          <h3 class="font-bold">${auto.marca} ${auto.modelo}</h3>
+          <h3 class="font-bold text-[1rem]">${auto.marca} ${auto.modelo}</h3>
           <p>${auto.año}</p>
-          <p class="text-blue-600 font-bold text-2xl">
+          <p class="text-blue-600 font-bold text-[1.2rem]">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>

@@ -175,6 +175,12 @@ footer {
   }
 }
 
+.carrusel-h2 {
+  font-size: 1.5rem;
+}
+
+
+
 /* --- POPUP --- */
 .popup {
   position: fixed;
