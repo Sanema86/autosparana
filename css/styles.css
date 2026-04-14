@@ -109,7 +109,7 @@ h1, h2, h3 {
 /* beneficios */
 .beneficios {
   display: grid;
-  grid-template-columns: repeat(2, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
 }
 
@@ -151,7 +151,15 @@ footer {
   display: none;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 500px) {
+
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+}
+
+
   .menu-btn {
     display: block;
     font-size: 2rem;
@@ -179,15 +187,6 @@ footer {
 .carrusel-h2 {
   font-size: 1.2rem;
 }
-
-/* beneficios */
-.beneficios {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-
 
 /* --- POPUP --- */
 .popup {
