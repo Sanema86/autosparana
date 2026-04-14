@@ -110,7 +110,7 @@ h1, h2, h3 {
 .beneficios {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .beneficio {
@@ -151,14 +151,7 @@ footer {
   display: none;
 }
 
-@media (max-width: 500px) {
-
-.beneficios {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1rem;
-}
-
+@media (max-width: 960px) {
 
   .menu-btn {
     display: block;
