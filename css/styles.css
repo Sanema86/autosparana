@@ -109,7 +109,7 @@ h1, h2, h3 {
 /* beneficios */
 .beneficios {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
   gap: 1.5rem;
 }
 
@@ -178,6 +178,13 @@ footer {
 
 .carrusel-h2 {
   font-size: 1.2rem;
+}
+
+/* beneficios */
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
 }
 
 
