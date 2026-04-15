@@ -36,6 +36,11 @@ h1, h2, h3 {
   font-weight: 600;
 }
 
+.carrusel-h2 {
+  font-size: clamp(1rem, 3.5vw, 2.25rem);
+  line-height: 1.15;
+}
+
 /* --- NAVBAR --- */
 .navbar {
   display: flex;
@@ -197,7 +202,7 @@ footer {
 
 .precio-dest,
 .carrusel-h2 {
-  font-size: 1.1rem;
+  font-size: 1.2rem !important;
 }
 
   .menu-btn {
@@ -230,6 +235,6 @@ footer {
   }
 
   .carrusel-h2 {
-  font-size: 1rem;
+  font-size: 1.1rem !important;
 }
 }

@@ -1,5 +1,28 @@
 const URL_AUTOS = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function safeHttpUrl(value, fallback = "") {
+  const raw = String(value ?? "").trim();
+  if (!raw) return fallback;
+  try {
+    const parsed = new URL(raw, window.location.origin);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.href;
+    }
+  } catch (e) {
+    // ignore invalid URL
+  }
+  return fallback;
+}
+
 // 👉 CONTADOR DE VISITAS
 function sumarVisita(slug) {
   const key = "visitasAutos";
@@ -56,19 +79,52 @@ fetch(URL_AUTOS)
 function mostrarAuto(auto) {
   // Limpieza de precio (quita puntos, comas o $ que vengan del Excel)
   const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+  const marca = escapeHtml(auto.marca);
+  const modelo = escapeHtml(auto.modelo);
+  const anio = escapeHtml(auto.año);
+  const km = escapeHtml(auto.km);
+  const combustible = escapeHtml(auto.combustible);
+  const ubicacion = escapeHtml(auto.ubicacion || "No especificada");
+  const descripcion = escapeHtml(auto.descripcion || "Sin descripción");
 
   // 👉 SEO dinámico (no lo tocamos)
-  document.title = `${auto.marca} ${auto.modelo} ${auto.año} en Paraná | Autos Paraná`;
+  document.title = `${marca} ${modelo} ${anio} en Paraná | Autos Paraná`;
+  const canonicalHref = `https://www.autosparana.com.ar/auto.html?slug=${encodeURIComponent(String(auto.slug || "").trim())}`;
+
+  let canonicalTag = document.querySelector('link[rel="canonical"]');
+  if (!canonicalTag) {
+    canonicalTag = document.createElement("link");
+    canonicalTag.setAttribute("rel", "canonical");
+    document.head.appendChild(canonicalTag);
+  }
+  canonicalTag.setAttribute("href", canonicalHref);
 
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
-    metaDesc.setAttribute("content", `Comprá este ${auto.marca} ${auto.modelo} ${auto.año}. KM: ${auto.km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`);
+    metaDesc.setAttribute("content", `Comprá este ${marca} ${modelo} ${anio}. KM: ${km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`);
   } else {
     const meta = document.createElement('meta');
     meta.name = "description";
-    meta.content = `Comprá este ${auto.marca} ${auto.modelo} ${auto.año}. KM: ${auto.km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`;
+    meta.content = `Comprá este ${marca} ${modelo} ${anio}. KM: ${km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`;
     document.head.appendChild(meta);
   }
+
+  const ogConfig = [
+    { property: "og:title", content: `${marca} ${modelo} ${anio} en Paraná | Autos Paraná` },
+    { property: "og:description", content: `Mirá el detalle de este ${marca} ${modelo} ${anio}, con fotos, precio y contacto directo por WhatsApp.` },
+    { property: "og:url", content: canonicalHref },
+    { property: "og:image", content: safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG) }
+  ];
+
+  ogConfig.forEach((item) => {
+    let tag = document.querySelector(`meta[property="${item.property}"]`);
+    if (!tag) {
+      tag = document.createElement("meta");
+      tag.setAttribute("property", item.property);
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute("content", item.content);
+  });
 
   // 👉 JSON-LD (igual que vos)
   const script = document.createElement('script');
@@ -76,8 +132,8 @@ function mostrarAuto(auto) {
   script.text = JSON.stringify({
     "@context": "https://schema.org/",
     "@type": "Car",
-    "name": `${auto.marca} ${auto.modelo} ${auto.año}`,
-    "image": auto.imagen?.split(",")[0],
+    "name": `${marca} ${modelo} ${anio}`,
+    "image": safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG),
     "offers": {
       "@type": "Offer",
       "price": precioLimpio,
@@ -97,8 +153,11 @@ function mostrarAuto(auto) {
   const cont = document.getElementById("detalle-auto");
 
   const imagenes = auto.imagen
-    ? auto.imagen.split(",").map(img => img.trim())
-    : [];
+    ? auto.imagen
+        .split(",")
+        .map(img => safeHttpUrl(img, ""))
+        .filter(Boolean)
+    : [FALLBACK_IMG];
 
   let current = 0;
 
@@ -128,17 +187,17 @@ function mostrarAuto(auto) {
         `).join("")}
       </div>
 
-      <h1 class="text-3xl font-bold mb-2">${auto.marca} ${auto.modelo}</h1>
+      <h1 class="text-3xl font-bold mb-2">${marca} ${modelo}</h1>
       <p class="text-gray-400">Visitas: ${visitas}</p>
 
       <div class="grid grid-cols-2 gap-4 text-gray-300 mt-4">
-        <p><b>Año:</b> ${auto.año}</p>
-        <p><b>KM:</b> ${auto.km}</p>
-        <p><b>Combustible:</b> ${auto.combustible}</p>
-        <p><b>Ubicación:</b> ${auto.ubicacion || "No especificada"}</p>
+        <p><b>Año:</b> ${anio}</p>
+        <p><b>KM:</b> ${km}</p>
+        <p><b>Combustible:</b> ${combustible}</p>
+        <p><b>Ubicación:</b> ${ubicacion}</p>
       </div>
 
-       <p class="mt-6">${auto.descripcion || "Sin descripción"}</p>
+       <p class="mt-6">${descripcion}</p>
 
       <p class="text-4xl text-center text-blue-400 font-bold mt-4">
         $${Number(precioLimpio).toLocaleString("es-AR")}
@@ -265,13 +324,13 @@ function mostrarSimilares(autoActual, lista) {
   cont.innerHTML += `
     <div class="grid grid-cols-4 md:grid-cols-4 gap-3 md:gap-4">
       ${similares.map(a => `
-        <div onclick="irAuto('${a.slug}')"
+        <div onclick="irAuto('${encodeURIComponent(String(a.slug || "").trim())}')"
           class="bg-white text-black rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition">
           
-          <img src="${a.imagen ? a.imagen.split(',')[0].trim() : FALLBACK_IMG}" class="w-full h-32 object-cover">
+          <img src="${safeHttpUrl(a.imagen ? a.imagen.split(',')[0].trim() : "", FALLBACK_IMG)}" class="w-full h-32 object-cover">
 
           <div class="p-2 text-center text-xs sm:text-sm">
-            <p class="font-bold">${a.marca} ${a.modelo}</p>
+            <p class="font-bold">${escapeHtml(a.marca)} ${escapeHtml(a.modelo)}</p>
             <p>$${Number(String(a.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR")}</p>
           </div>
 

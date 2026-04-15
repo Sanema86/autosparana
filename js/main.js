@@ -2,6 +2,29 @@ const API_URL_MAIN = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3AL
 
 let autos = [];
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function safeHttpUrl(value, fallback = "") {
+  const raw = String(value ?? "").trim();
+  if (!raw) return fallback;
+  try {
+    const parsed = new URL(raw, window.location.origin);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.href;
+    }
+  } catch (e) {
+    // ignore invalid URL
+  }
+  return fallback;
+}
+
 // 👉 VENCIMIENTO
 function estaVencido(auto) {
   const esIntermediario = String(auto.intermediario || "").trim().toUpperCase() === "SI";
@@ -19,15 +42,16 @@ function estaVencido(auto) {
   return hoy > vencimiento;
 }
 
-// 👉 DETECTAR PÁGINA
+// 👉 DETECTAR PÁGINA (por archivo exacto, evita falsos positivos en rutas locales)
 const pagina = window.location.pathname.toLowerCase();
+const archivoActual = pagina.split("/").pop() || "index.html";
 
 let tipoActual = "auto";
 
-if (pagina.includes("motos")) tipoActual = "moto";
-if (pagina.includes("utilitarios")) tipoActual = "utilitario";
-if (pagina.includes("camionetas")) tipoActual = "camioneta";
-if (pagina.includes("autos")) tipoActual = "auto";
+if (archivoActual === "motos.html") tipoActual = "moto";
+if (archivoActual === "utilitarios.html") tipoActual = "utilitario";
+if (archivoActual === "camionetas.html") tipoActual = "camioneta";
+if (archivoActual === "autos.html") tipoActual = "auto";
 
 // 👉 SVG
 const svgVendido = `
@@ -91,18 +115,27 @@ function mostrarDestacados(lista) {
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
     const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
+    const marca = escapeHtml(auto.marca);
+    const modelo = escapeHtml(auto.modelo);
+    const anio = escapeHtml(auto.año);
+    const ubicacion = escapeHtml(auto.ubicacion || "");
+    const imagenPrincipal = safeHttpUrl(
+      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
+      ""
+    );
 
     cont.innerHTML += `
-      <div onclick="irAuto('${auto.slug}')"
+      <div onclick="irAuto('${slugEncoded}')"
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
-     alt="${auto.marca} ${auto.modelo} ${auto.año} en Paraná"
+          <img src="${imagenPrincipal}" 
+     alt="${marca} ${modelo} ${anio} en Paraná"
      class="w-full h-50 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${auto.ubicacion || ""}
+            📍 ${ubicacion}
           </div>
 
           ${esVendido ? svgVendido : ""}
@@ -110,8 +143,8 @@ function mostrarDestacados(lista) {
         </div>
 
         <div class="p-5 text-center">
-          <h3 class="text-white text-xl font-bold">${auto.marca} ${auto.modelo}</h3>
-          <p class="text-2xl text-white">${auto.año}</p>
+          <h3 class="text-white text-xl font-bold">${marca} ${modelo}</h3>
+          <p class="text-2xl text-white">${anio}</p>
           <p class="text-3xl text-yellow-400 font-bold">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
@@ -144,16 +177,25 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
     const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
+    const marca = escapeHtml(auto.marca);
+    const modelo = escapeHtml(auto.modelo);
+    const anio = escapeHtml(auto.año);
+    const ubicacion = escapeHtml(auto.ubicacion || "");
+    const imagenPrincipal = safeHttpUrl(
+      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
+      ""
+    );
 
     cont.innerHTML += `
-      <div onclick="irAuto('${auto.slug}')"
+      <div onclick="irAuto('${slugEncoded}')"
         class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <div class="relative">
-          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" class="w-full h-30 object-cover">
+          <img src="${imagenPrincipal}" class="w-full h-30 object-cover">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${auto.ubicacion || ""}
+            📍 ${ubicacion}
           </div>
 
           ${esVendido ? svgVendido : ""}
@@ -161,8 +203,8 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         </div>
 
         <div class="p-5 text-center">
-          <h3 class="text-white text-1xl font-bold">${auto.marca} ${auto.modelo}</h3>
-          <p class="text-2xl text-white">${auto.año}</p>
+          <h3 class="text-white text-1xl font-bold">${marca} ${modelo}</h3>
+          <p class="text-2xl text-white">${anio}</p>
           <p class="precio-dest text-2xl text-yellow-400 font-bold">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
@@ -187,19 +229,28 @@ function mostrarAutos(lista) {
     const esVendido = auto.vendido?.toUpperCase() === "SI";
     const esReservado = auto.reservado?.toUpperCase() === "SI";
     const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
+    const marca = escapeHtml(auto.marca);
+    const modelo = escapeHtml(auto.modelo);
+    const anio = escapeHtml(auto.año);
+    const ubicacion = escapeHtml(auto.ubicacion || "");
+    const imagenPrincipal = safeHttpUrl(
+      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
+      ""
+    );
 
     cont.innerHTML += `
-      <div onclick="irAuto('${auto.slug}')"
+      <div onclick="irAuto('${slugEncoded}')"
         class="bg-white text-black border border-blue-500 rounded-lg shadow cursor-pointer hover:scale-105 transition max-w-sm mx-auto w-full ${esVendido ? 'opacity-60' : ''}">
 
         <div class="relative">
 
-          <img src="${auto.imagen ? auto.imagen.split(',')[0].trim() : ''}" 
-     alt="${auto.marca} ${auto.modelo} ${auto.año} 
+          <img src="${imagenPrincipal}" 
+     alt="${marca} ${modelo} ${anio} 
      en Paraná" class="w-full h-35 object-cover rounded-t-lg">
 
           <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${auto.ubicacion || ""}
+            📍 ${ubicacion}
           </div>
 
           ${esDestacado ? `<div class="absolute top-2 left-2 bg-yellow-400 text-black px-2 py-1 rounded text-xs font-bold">⭐</div>` : ""}
@@ -210,8 +261,8 @@ function mostrarAutos(lista) {
         </div>
 
         <div class="p-4 text-center">
-          <h3 class="font-bold text-[1rem]">${auto.marca} ${auto.modelo}</h3>
-          <p>${auto.año}</p>
+          <h3 class="font-bold text-[1rem]">${marca} ${modelo}</h3>
+          <p>${anio}</p>
           <p class="text-blue-600 font-bold text-[1.2rem]">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
@@ -351,14 +402,15 @@ if (slides.length > 0) {
 document.addEventListener("DOMContentLoaded", () => {
 
   const path = window.location.pathname.toLowerCase();
+  const archivoMenu = path.split("/").pop() || "index.html";
 
   const map = [
-    { id: "nav-inicio", match: ["index.html", "/"] },
-    { id: "nav-autos", match: ["autos"] },
-    { id: "nav-motos", match: ["motos"] },
-    { id: "nav-camionetas", match: ["camionetas"] },
-    { id: "nav-utilitarios", match: ["utilitarios"] },
-    { id: "nav-vender", match: ["vender"] }
+    { id: "nav-inicio", files: ["", "index.html"] },
+    { id: "nav-autos", files: ["autos.html"] },
+    { id: "nav-motos", files: ["motos.html"] },
+    { id: "nav-camionetas", files: ["camionetas.html"] },
+    { id: "nav-utilitarios", files: ["utilitarios.html"] },
+    { id: "nav-vender", files: ["vender.html"] }
   ];
 
   map.forEach(item => {
@@ -367,11 +419,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let activo = false;
 
-    // 👉 INICIO (caso especial)
     if (item.id === "nav-inicio") {
-      activo = path.endsWith("/") || path.endsWith("index.html");
+      activo = archivoMenu === "" || archivoMenu === "index.html" || path.endsWith("/");
     } else {
-      activo = item.match.some(m => path.includes(m));
+      activo = item.files.includes(archivoMenu);
     }
 
     if (activo) {
