@@ -82,7 +82,7 @@ h1, h2, h3 {
   color: var(--primary);
 }
 
-/* --- SECCIÓN VENDER (LO QUE AGREGASTE BIEN ORDENADO) --- */
+/* --- SECCIÓN VENDER --- */
 .vender-container {
   max-width: 1000px;
   margin: 3rem auto;
