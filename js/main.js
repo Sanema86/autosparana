@@ -163,7 +163,7 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
         <div class="p-5 text-center">
           <h3 class="text-white text-1xl font-bold">${auto.marca} ${auto.modelo}</h3>
           <p class="text-2xl text-white">${auto.año}</p>
-          <p class="text-2xl text-yellow-400 font-bold">
+          <p class="precio-dest text-2xl text-yellow-400 font-bold">
             $${Number(precioLimpio).toLocaleString("es-AR")}
           </p>
         </div>

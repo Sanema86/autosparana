@@ -20,12 +20,12 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden;
 }
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #30333a, #28292c);
+  /* background: linear-gradient(135deg, #30333a, #28292c); */
+  background: url('../bground.png') repeat fixed;
   color: #f3f4f6;
   line-height: 1.6;
   min-height: 100vh;
@@ -45,7 +45,8 @@ h1, h2, h3 {
   background: var(--glass);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(177, 174, 37, 0.2);
-  position: sticky;
+  position: -webkit-sticky; /* Soporte para Safari */
+  position: sticky !important;
   top: 0;
   z-index: 1000;
 }
@@ -194,6 +195,11 @@ footer {
 
 @media (max-width: 960px) {
 
+.precio-dest,
+.carrusel-h2 {
+  font-size: 1.1rem;
+}
+
   .menu-btn {
     display: block;
     font-size: 2rem;
@@ -227,6 +233,3 @@ footer {
   font-size: 1rem;
 }
 }
-
-
-
