@@ -1,0 +1,24 @@
+{
+  "name": "Autos Paraná",
+  "short_name": "Autos Paraná",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#141418",
+  "theme_color": "#141418",
+  "description": "Compra y venta de autos usados en Paraná.",
+  "icons": [
+    {
+      "src": "/logoAP.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logoAP.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

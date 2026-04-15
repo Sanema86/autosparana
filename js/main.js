@@ -1,6 +1,53 @@
 const API_URL_MAIN = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
 
 let autos = [];
+let installPromptEvent = null;
+
+function initPwaInstallInMenu() {
+  const menu = document.getElementById("menu");
+  if (!menu) return;
+
+  const installItem = document.createElement("a");
+  installItem.href = "#";
+  installItem.id = "install-app-btn";
+  installItem.className = "install-app-link";
+  installItem.textContent = "Instalar app";
+  installItem.style.display = "none";
+
+  installItem.addEventListener("click", async (e) => {
+    e.preventDefault();
+    if (!installPromptEvent) return;
+
+    installPromptEvent.prompt();
+    const choice = await installPromptEvent.userChoice;
+    if (choice.outcome === "accepted") {
+      installItem.style.display = "none";
+    }
+    installPromptEvent = null;
+  });
+
+  menu.appendChild(installItem);
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installPromptEvent = e;
+    installItem.style.display = "inline-block";
+  });
+
+  window.addEventListener("appinstalled", () => {
+    installItem.style.display = "none";
+    installPromptEvent = null;
+  });
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      // Silencio para no molestar usuarios
+    });
+  });
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -343,6 +390,9 @@ function irAuto(slug) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initPwaInstallInMenu();
+  registerServiceWorker();
+
   // 👉 SLIDER (Solo si existe)
 const slides = document.querySelectorAll("#hero-slider img");
 let index = 0;
