@@ -1,4 +1,4 @@
-const URL_AUTOS = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
+// Supabase reemplaza opensheet — config en js/supabase-config.js
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -24,6 +24,10 @@ function safeHttpUrl(value, fallback = "") {
 }
 
 // 👉 CONTADOR DE VISITAS
+/**
+ * Gestiona las visitas locales para evitar contar varias veces 
+ * una misma entrada del mismo usuario en la sesión actual.
+ */
 function sumarVisita(slug) {
   const key = "visitasAutos";
   const vistosKey = "autosVistos";
@@ -43,23 +47,33 @@ function sumarVisita(slug) {
 }
 
 // 👉 FALLBACK
-const FALLBACK_IMG = "https://via.placeholder.com/800x600?text=Imagen+no+disponible";
+// Imagen por defecto si el vehículo no tiene fotos
+const FALLBACK_IMG =
+  "https://via.placeholder.com/800x600?text=Imagen+no+disponible";
 
 // 👉 TU NÚMERO
+// Número de respaldo si el dueño no especifica uno
 const MI_NUMERO = "5493435311312";
 
 // 👉 SLUG
+// Obtiene el identificador del auto desde la URL (?slug=...)
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 
 if (!slug) window.location.href = "index.html";
 
-// 👉 DATA
-fetch(URL_AUTOS)
-  .then(res => res.json())
-  .then(data => {
-    const auto = data.find(a =>
-      String(a.slug).trim().toLowerCase() === String(slug).trim().toLowerCase()
+// 👉 DATA (ahora desde Supabase)
+db.from("autos").select("*").then(({ data, error }) => {
+    if (error) {
+      console.error("Error cargando auto:", error);
+      document.getElementById("detalle-auto").innerHTML =
+        "<h2 class='text-white text-center'>Error de conexión</h2>";
+      return;
+    }
+    const auto = data.find(
+      (a) =>
+        String(a.slug).trim().toLowerCase() ===
+        String(slug).trim().toLowerCase(),
     );
 
     if (!auto) {
@@ -70,13 +84,10 @@ fetch(URL_AUTOS)
 
     mostrarAuto(auto);
     mostrarSimilares(auto, data);
-  })
-  .catch(err => {
-    console.error("Error cargando auto:", err);
-    document.getElementById("detalle-auto").innerHTML = "<h2 class='text-white text-center'>Error de conexión</h2>";
   });
 
 function mostrarAuto(auto) {
+  // Limpieza y preparación de datos
   // Limpieza de precio (quita puntos, comas o $ que vengan del Excel)
   const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
   const marca = escapeHtml(auto.marca);
@@ -88,6 +99,7 @@ function mostrarAuto(auto) {
   const descripcion = escapeHtml(auto.descripcion || "Sin descripción");
 
   // 👉 SEO dinámico (no lo tocamos)
+  // --- SEO DINÁMICO ---
   document.title = `${marca} ${modelo} ${anio} en Paraná | Autos Paraná`;
   const canonicalHref = `https://www.autosparana.com.ar/auto.html?slug=${encodeURIComponent(String(auto.slug || "").trim())}`;
 
@@ -101,19 +113,31 @@ function mostrarAuto(auto) {
 
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
-    metaDesc.setAttribute("content", `Comprá este ${marca} ${modelo} ${anio}. KM: ${km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`);
+    metaDesc.setAttribute(
+      "content",
+      `Comprá este ${marca} ${modelo} ${anio}. KM: ${km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`,
+    );
   } else {
-    const meta = document.createElement('meta');
+    const meta = document.createElement("meta");
     meta.name = "description";
     meta.content = `Comprá este ${marca} ${modelo} ${anio}. KM: ${km}. Precio: $${Number(precioLimpio).toLocaleString("es-AR")}`;
     document.head.appendChild(meta);
   }
 
   const ogConfig = [
-    { property: "og:title", content: `${marca} ${modelo} ${anio} en Paraná | Autos Paraná` },
-    { property: "og:description", content: `Mirá el detalle de este ${marca} ${modelo} ${anio}, con fotos, precio y contacto directo por WhatsApp.` },
+    {
+      property: "og:title",
+      content: `${marca} ${modelo} ${anio} en Paraná | Autos Paraná`,
+    },
+    {
+      property: "og:description",
+      content: `Mirá el detalle de este ${marca} ${modelo} ${anio}, con fotos, precio y contacto directo por WhatsApp.`,
+    },
     { property: "og:url", content: canonicalHref },
-    { property: "og:image", content: safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG) }
+    {
+      property: "og:image",
+      content: safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG),
+    },
   ];
 
   ogConfig.forEach((item) => {
@@ -127,101 +151,131 @@ function mostrarAuto(auto) {
   });
 
   // 👉 JSON-LD (igual que vos)
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
+  // Estructura de datos para Google (Schema Car)
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
   script.text = JSON.stringify({
     "@context": "https://schema.org/",
     "@type": "Car",
-    "name": `${marca} ${modelo} ${anio}`,
-    "image": safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG),
-    "offers": {
+    name: `${marca} ${modelo} ${anio}`,
+    image: safeHttpUrl(auto.imagen?.split(",")[0], FALLBACK_IMG),
+    offers: {
       "@type": "Offer",
-      "price": precioLimpio,
-      "priceCurrency": "ARS"
-    }
+      price: precioLimpio,
+      priceCurrency: "ARS",
+    },
   });
   document.head.appendChild(script);
 
+  // Actualiza contador local
   const visitas = sumarVisita(auto.slug);
 
-  const telefonoLimpio = String(auto.telefono || "").replace(/\D/g, "").trim();
+  // Preparación del link de WhatsApp
+  const telefonoLimpio = String(auto.telefono || "")
+    .replace(/\D/g, "")
+    .trim();
   const telefonoFinal = telefonoLimpio.length > 8 ? telefonoLimpio : MI_NUMERO;
 
-  const linkWhatsApp =
-    `https://wa.me/${telefonoFinal}?text=${encodeURIComponent("Hola! Me interesa este auto que vi en la web: " + window.location.href)}`;
+  const linkWhatsApp = `https://wa.me/${telefonoFinal}?text=${encodeURIComponent("Hola! Me interesa este auto que vi en la web: " + window.location.href)}`;
 
   const cont = document.getElementById("detalle-auto");
+  if (!cont) return;
 
   const imagenes = auto.imagen
     ? auto.imagen
         .split(",")
-        .map(img => safeHttpUrl(img, ""))
+        .map((img) => safeHttpUrl(img, ""))
         .filter(Boolean)
     : [FALLBACK_IMG];
 
-  let current = 0;
+  let current = 0; // Índice de la imagen que se está viendo
 
   cont.innerHTML = `
-    <div class="max-w-5xl mx-auto bg-gray-800 text-white p-6 rounded-2xl shadow-2xl">
+    <div class="detail-card p-4 md:p-6">
+      <div class="detail-layout">
 
-      <div class="relative">
+        <div>
+          <div class="relative mb-3">
+            <img id="img-principal"
+                 onclick="abrirZoom()"
+                 src="${imagenes[0] || FALLBACK_IMG}"
+                 class="detail-gallery-main transition-opacity duration-300">
 
-        <!-- 🔥 FIX CLAVE MOBILE -->
-        <img id="img-principal" 
-             onclick="abrirZoom()"
-             src="${imagenes[0] || FALLBACK_IMG}" 
-             class="w-full h-50 sm:h-80 md:h-90 object-cover rounded-lg mb-4 cursor-pointer transition-opacity duration-300">
+            ${
+              imagenes.length > 1
+                ? `
+              <button onclick="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full text-2xl backdrop-blur-sm hover:bg-black/80 transition">‹</button>
+              <button onclick="next()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full text-2xl backdrop-blur-sm hover:bg-black/80 transition">›</button>
+            `
+                : ""
+            }
+          </div>
 
-        ${imagenes.length > 1 ? `
-          <button onclick="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 text-black px-3 py-2 rounded-full text-2xl">‹</button>
-          <button onclick="next()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 text-black px-3 py-2 rounded-full text-2xl">›</button>
-        ` : ""}
+          <div class="flex gap-2 overflow-x-auto pb-1">
+            ${imagenes
+              .map(
+                (img, i) => `
+              <img src="${img}"
+                   class="detail-thumb thumb ${i === 0 ? "active" : ""}"
+                   onclick="irA(${i})">
+            `,
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="detail-sidebar">
+          <h1 class="detail-title">${marca} ${modelo}</h1>
+          <p class="text-gray-500 text-sm">Visitas: ${visitas}</p>
+
+          <p class="detail-price">
+            $${Number(precioLimpio).toLocaleString("es-AR")}
+          </p>
+
+          <div class="detail-specs">
+            <div class="detail-spec"><strong>Año</strong>${anio}</div>
+            <div class="detail-spec"><strong>Kilómetros</strong>${km}</div>
+            <div class="detail-spec"><strong>Combustible</strong>${combustible}</div>
+            <div class="detail-spec"><strong>Ubicación</strong>${ubicacion}</div>
+          </div>
+
+          <p class="mt-5 text-gray-300 text-sm leading-relaxed">${descripcion}</p>
+
+          ${auto.nombre_vendedor ? `
+          <div class="seller-card">
+            <div class="seller-avatar">
+              ${escapeHtml(auto.nombre_vendedor.charAt(0).toUpperCase())}
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Publicado por</p>
+              <p class="text-white font-semibold">${escapeHtml(auto.nombre_vendedor)}</p>
+            </div>
+          </div>` : ""}
+
+          <a href="${linkWhatsApp}" target="_blank" class="btn-whatsapp">
+            Consultar por WhatsApp
+          </a>
+        </div>
 
       </div>
-
-      <div class="flex gap-2 overflow-x-auto mb-6">
-        ${imagenes.map((img, i) => `
-          <img src="${img}" 
-               class="thumb h-20 w-28 object-cover rounded cursor-pointer border-2 ${i === 0 ? 'border-blue-500' : 'border-transparent'}"
-               onclick="irA(${i})">
-        `).join("")}
-      </div>
-
-      <h1 class="text-3xl font-bold mb-2">${marca} ${modelo}</h1>
-      <p class="text-gray-400">Visitas: ${visitas}</p>
-
-      <div class="grid grid-cols-2 gap-4 text-gray-300 mt-4">
-        <p><b>Año:</b> ${anio}</p>
-        <p><b>KM:</b> ${km}</p>
-        <p><b>Combustible:</b> ${combustible}</p>
-        <p><b>Ubicación:</b> ${ubicacion}</p>
-      </div>
-
-       <p class="mt-6">${descripcion}</p>
-
-      <p class="text-4xl text-center text-blue-400 font-bold mt-4">
-        $${Number(precioLimpio).toLocaleString("es-AR")}
-      </p>
-
-     
-
-      <a href="${linkWhatsApp}" target="_blank"
-         class="block mt-6 bg-green-500 text-white text-center py-4 rounded-lg font-bold text-lg">
-         Consultar por WhatsApp
-      </a>
     </div>
 
     <!-- 🔍 MODAL ZOOM (Aparece al tocar la imagen) -->
+    <!-- MODAL DE ZOOM (Galería a pantalla completa) -->
     <div id="modal-zoom" class="fixed inset-0 z-[3000] bg-black/95 hidden flex-col justify-center items-center p-4">
       <button onclick="cerrarZoom()" class="absolute top-5 right-5 text-white text-5xl font-light">&times;</button>
       
       <div class="relative w-full max-w-5xl flex items-center justify-center">
          <img id="img-zoom" src="" class="max-w-full max-h-[85vh] object-contain select-none shadow-2xl transition-opacity duration-300">
          
-         ${imagenes.length > 1 ? `
+         ${
+           imagenes.length > 1
+             ? `
           <button onclick="prev()" class="absolute left-0 text-white text-5xl px-4 py-10 hover:bg-white/10 transition">‹</button>
           <button onclick="next()" class="absolute right-0 text-white text-5xl px-4 py-10 hover:bg-white/10 transition">›</button>
-         ` : ""}
+         `
+             : ""
+         }
       </div>
       
       <p class="text-white/60 mt-4 text-sm hidden md:block">Usá las flechas del teclado o deslizá con el dedo</p>
@@ -232,6 +286,7 @@ function mostrarAuto(auto) {
   const modalZoom = document.getElementById("modal-zoom");
   const imgZoom = document.getElementById("img-zoom");
 
+  // Cambia la imagen actual con un efecto de transición suave
   function actualizarImagen() {
     img.style.opacity = 0;
     if (imgZoom) imgZoom.style.opacity = 0;
@@ -246,13 +301,13 @@ function mostrarAuto(auto) {
       }
 
       // Actualizar bordes de miniaturas
-      document.querySelectorAll('.thumb').forEach((t, i) => {
-        t.classList.toggle('border-blue-500', i === current);
-        t.classList.toggle('border-transparent', i !== current);
+      document.querySelectorAll(".detail-thumb").forEach((t, i) => {
+        t.classList.toggle("active", i === current);
       });
     }, 150);
   }
 
+  // Exponer funciones al objeto window para que los botones HTML las vean
   window.next = () => {
     current = (current + 1) % imagenes.length;
     actualizarImagen();
@@ -269,6 +324,7 @@ function mostrarAuto(auto) {
   };
 
   // 👉 LÓGICA DE ZOOM
+  // Lógica para el modal de pantalla completa
   window.abrirZoom = () => {
     imgZoom.src = imagenes[current];
     modalZoom.classList.remove("hidden");
@@ -283,6 +339,7 @@ function mostrarAuto(auto) {
   };
 
   // 👉 NAVEGACIÓN POR TECLADO (PC)
+  // Navegación con flechas del teclado
   const manejarTeclado = (e) => {
     if (e.key === "ArrowRight") next();
     if (e.key === "ArrowLeft") prev();
@@ -291,51 +348,66 @@ function mostrarAuto(auto) {
   document.addEventListener("keydown", manejarTeclado);
 
   // 👉 NAVEGACIÓN TÁCTIL (SWIPE MOBILE)
+  // Soporte para gestos (Swipe) en móviles
   let touchStartX = 0;
-  const manejarTouchStart = (e) => touchStartX = e.touches[0].clientX;
+  const manejarTouchStart = (e) => (touchStartX = e.touches[0].clientX);
   const manejarTouchEnd = (e) => {
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
     // Si el deslizamiento es mayor a 50px, cambia de imagen
     if (Math.abs(diff) > 50) {
-      if (diff > 0) next(); else prev();
+      if (diff > 0) next();
+      else prev();
     }
   };
 
   // Escuchar gestos en la imagen principal y en el modal de zoom
-  img.addEventListener("touchstart", manejarTouchStart, {passive: true});
+  img.addEventListener("touchstart", manejarTouchStart, { passive: true });
   img.addEventListener("touchend", manejarTouchEnd);
-  modalZoom.addEventListener("touchstart", manejarTouchStart, {passive: true});
+  modalZoom.addEventListener("touchstart", manejarTouchStart, {
+    passive: true,
+  });
   modalZoom.addEventListener("touchend", manejarTouchEnd);
 }
 
 // 👉 SIMILARES (NO TOCADO)
+// Busca y muestra vehículos de la misma categoría
 function mostrarSimilares(autoActual, lista) {
-
   const cont = document.getElementById("autos-similares");
   if (!cont) return;
 
-  cont.innerHTML = "<h2 class='text-white text-2xl mb-4'>Te puede interesar...</h2>";
+  cont.innerHTML = "<h2 class='similares-title'>Te puede interesar...</h2>";
 
-  let similares = lista.filter(a =>
-    a.tipo === autoActual.tipo && a.slug !== autoActual.slug
-  ).slice(0, 4);
+  let similares = lista
+    .filter((a) => a.tipo === autoActual.tipo && a.slug !== autoActual.slug)
+    .slice(0, 4);
+
+  const precio = (p) =>
+    Number(String(p || "0").replace(/\D/g, "")).toLocaleString("es-AR");
 
   cont.innerHTML += `
-    <div class="grid grid-cols-4 md:grid-cols-4 gap-3 md:gap-4">
-      ${similares.map(a => `
+    <div class="vehicles-grid vehicles-grid--catalog">
+      ${similares
+        .map(
+          (a) => `
         <div onclick="irAuto('${encodeURIComponent(String(a.slug || "").trim())}')"
-          class="bg-white text-black rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition">
-          
-          <img src="${safeHttpUrl(a.imagen ? a.imagen.split(',')[0].trim() : "", FALLBACK_IMG)}" class="w-full h-32 object-cover">
+          class="vehicle-card vehicle-card--listing">
 
-          <div class="p-2 text-center text-xs sm:text-sm">
-            <p class="font-bold">${escapeHtml(a.marca)} ${escapeHtml(a.modelo)}</p>
-            <p>$${Number(String(a.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR")}</p>
+          <div class="vehicle-card__media">
+            <img src="${safeHttpUrl(a.imagen ? a.imagen.split(",")[0].trim() : "", FALLBACK_IMG)}"
+              alt="${escapeHtml(a.marca)} ${escapeHtml(a.modelo)}"
+              class="vehicle-card__img">
           </div>
 
+          <div class="vehicle-card__body">
+            <h3 class="vehicle-card__title">${escapeHtml(a.marca)} ${escapeHtml(a.modelo)}</h3>
+            <p class="vehicle-card__meta">${escapeHtml(a.año)}</p>
+            <p class="vehicle-card__price">$${precio(a.precio)}</p>
+          </div>
         </div>
-      `).join("")}
+      `,
+        )
+        .join("")}
     </div>
   `;
 }

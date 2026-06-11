@@ -1,4 +1,4 @@
-const API_URL_MAIN = "https://opensheet.elk.sh/1xmNwDMZRT9z0Zhl0eOUjrk2PLzYoN3ALUX55fMNFpz4/autos";
+// Supabase reemplaza opensheet — config en js/supabase-config.js
 
 let autos = [];
 let installPromptEvent = null;
@@ -72,6 +72,93 @@ function safeHttpUrl(value, fallback = "") {
   return fallback;
 }
 
+function cardFeaturedHtml(auto) {
+  const esVendido = auto.vendido?.toUpperCase() === "SI";
+  const esReservado = auto.reservado?.toUpperCase() === "SI";
+  const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+  const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
+  const marca = escapeHtml(auto.marca);
+  const modelo = escapeHtml(auto.modelo);
+  const anio = escapeHtml(auto.año);
+  const ubicacion = escapeHtml(auto.ubicacion || "");
+  const imagenPrincipal = safeHttpUrl(
+    auto.imagen ? auto.imagen.split(",")[0].trim() : "",
+    ""
+  );
+  const soldClass = esVendido ? " vehicle-card--sold" : "";
+
+  return `
+    <div onclick="irAuto('${slugEncoded}')"
+      class="vehicle-card vehicle-card--featured${soldClass}">
+
+      <div class="vehicle-card__media">
+        <img src="${imagenPrincipal}"
+          alt="${marca} ${modelo} ${anio} en Paraná"
+          class="vehicle-card__img">
+
+        <span class="vehicle-card__badge vehicle-card__badge--featured">Destacado</span>
+
+        <span class="vehicle-card__location">📍 ${ubicacion}</span>
+
+        ${esVendido ? svgVendido : ""}
+        ${!esVendido && esReservado ? svgReservado : ""}
+      </div>
+
+      <div class="vehicle-card__body">
+        <h3 class="vehicle-card__title">${marca} ${modelo}</h3>
+        <p class="vehicle-card__meta">${anio}</p>
+        <p class="vehicle-card__price vehicle-card__price--featured precio-dest">
+          $${Number(precioLimpio).toLocaleString("es-AR")}
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+function cardListingHtml(auto) {
+  const esDestacado = auto.destacado?.toUpperCase() === "SI";
+  const esVendido = auto.vendido?.toUpperCase() === "SI";
+  const esReservado = auto.reservado?.toUpperCase() === "SI";
+  const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
+  const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
+  const marca = escapeHtml(auto.marca);
+  const modelo = escapeHtml(auto.modelo);
+  const anio = escapeHtml(auto.año);
+  const ubicacion = escapeHtml(auto.ubicacion || "");
+  const imagenPrincipal = safeHttpUrl(
+    auto.imagen ? auto.imagen.split(",")[0].trim() : "",
+    ""
+  );
+  const soldClass = esVendido ? " vehicle-card--sold" : "";
+
+  return `
+    <div onclick="irAuto('${slugEncoded}')"
+      class="vehicle-card vehicle-card--listing${soldClass}">
+
+      <div class="vehicle-card__media">
+        <img src="${imagenPrincipal}"
+          alt="${marca} ${modelo} ${anio} en Paraná"
+          class="vehicle-card__img">
+
+        ${esDestacado ? `<span class="vehicle-card__badge vehicle-card__badge--featured">★</span>` : ""}
+
+        <span class="vehicle-card__location">📍 ${ubicacion}</span>
+
+        ${esVendido ? svgVendido : ""}
+        ${!esVendido && esReservado ? svgReservado : ""}
+      </div>
+
+      <div class="vehicle-card__body">
+        <h3 class="vehicle-card__title">${marca} ${modelo}</h3>
+        <p class="vehicle-card__meta">${anio}</p>
+        <p class="vehicle-card__price">
+          $${Number(precioLimpio).toLocaleString("es-AR")}
+        </p>
+      </div>
+    </div>
+  `;
+}
+
 // 👉 VENCIMIENTO
 function estaVencido(auto) {
   const esIntermediario = String(auto.intermediario || "").trim().toUpperCase() === "SI";
@@ -89,7 +176,20 @@ function estaVencido(auto) {
   return hoy > vencimiento;
 }
 
-// 👉 DETECTAR PÁGINA (por archivo exacto, evita falsos positivos en rutas locales)
+// 👉 DESTACADO VIGENTE
+function destacadoVigente(auto) {
+  if (String(auto.destacado || "").trim().toUpperCase() !== "SI") return false;
+
+  if (auto.destacado_hasta) {
+    const hoy = new Date();
+    const hasta = new Date(auto.destacado_hasta);
+    return hoy <= hasta;
+  }
+
+  return !estaVencido(auto);
+}
+
+// 👉 DETECTAR PÁGINA
 const pagina = window.location.pathname.toLowerCase();
 const archivoActual = pagina.split("/").pop() || "index.html";
 
@@ -120,24 +220,20 @@ const svgReservado = `
 `;
 
 // 👉 FETCH
-fetch(API_URL_MAIN)
-  .then(res => res.json())
-  .then(data => {
+db.from("autos").select("*").then(({ data, error }) => {
+  if (error) { console.error("Error cargando autos:", error); return; }
     autos = data;
 
-    // 🔥 DESTACADOS GENERALES
     if (document.getElementById("destacados")) {
-      const destacados = autos.filter(a => a.destacado?.toUpperCase() === "SI");
+      const destacados = autos.filter(a => destacadoVigente(a));
       mostrarDestacados(destacados);
     }
 
-    // 🔥 DESTACADOS POR CATEGORÍA
     mostrarDestacadosPorTipo(autos, "auto", "autos-destacados");
     mostrarDestacadosPorTipo(autos, "moto", "motos-destacados");
     mostrarDestacadosPorTipo(autos, "camioneta", "camionetas-destacados");
     mostrarDestacadosPorTipo(autos, "utilitario", "utilitarios-destacados");
 
-    // 🚗 LISTADO
     if (document.getElementById("autos-container")) {
       const filtrados = autos.filter(auto => {
         if (!auto.tipo) return false;
@@ -150,60 +246,17 @@ fetch(API_URL_MAIN)
     }
   });
 
-// 🔥 DESTACADOS PRINCIPALES
 function mostrarDestacados(lista) {
   const cont = document.getElementById("destacados");
   if (!cont) return;
 
   cont.innerHTML = "";
-
   lista.forEach(auto => {
-
-    const esVendido = auto.vendido?.toUpperCase() === "SI";
-    const esReservado = auto.reservado?.toUpperCase() === "SI";
-    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
-    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
-    const marca = escapeHtml(auto.marca);
-    const modelo = escapeHtml(auto.modelo);
-    const anio = escapeHtml(auto.año);
-    const ubicacion = escapeHtml(auto.ubicacion || "");
-    const imagenPrincipal = safeHttpUrl(
-      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
-      ""
-    );
-
-    cont.innerHTML += `
-      <div onclick="irAuto('${slugEncoded}')"
-        class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
-
-        <div class="relative">
-          <img src="${imagenPrincipal}" 
-     alt="${marca} ${modelo} ${anio} en Paraná"
-     class="w-full h-50 object-cover">
-
-          <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${ubicacion}
-          </div>
-
-          ${esVendido ? svgVendido : ""}
-          ${!esVendido && esReservado ? svgReservado : ""}
-        </div>
-
-        <div class="p-5 text-center">
-          <h3 class="text-white text-xl font-bold">${marca} ${modelo}</h3>
-          <p class="text-2xl text-white">${anio}</p>
-          <p class="text-3xl text-yellow-400 font-bold">
-            $${Number(precioLimpio).toLocaleString("es-AR")}
-          </p>
-        </div>
-      </div>
-    `;
+    cont.innerHTML += cardFeaturedHtml(auto);
   });
 }
 
-// 🔥 DESTACADOS POR TIPO (MISMO ESTILO)
 function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
-
   const cont = document.getElementById(contenedorId);
   if (!cont) return;
 
@@ -215,53 +268,15 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
     const tipos = auto.tipo.toLowerCase().split(",").map(t => t.trim());
 
     return tipos.includes(tipo) &&
-           auto.destacado?.toUpperCase() === "SI" &&
+           destacadoVigente(auto) &&
            !estaVencido(auto);
   });
 
   filtrados.slice(0, 6).forEach(auto => {
-
-    const esVendido = auto.vendido?.toUpperCase() === "SI";
-    const esReservado = auto.reservado?.toUpperCase() === "SI";
-    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
-    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
-    const marca = escapeHtml(auto.marca);
-    const modelo = escapeHtml(auto.modelo);
-    const anio = escapeHtml(auto.año);
-    const ubicacion = escapeHtml(auto.ubicacion || "");
-    const imagenPrincipal = safeHttpUrl(
-      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
-      ""
-    );
-
-    cont.innerHTML += `
-      <div onclick="irAuto('${slugEncoded}')"
-        class="bg-black border border-yellow-500 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
-
-        <div class="relative">
-          <img src="${imagenPrincipal}" class="w-full h-30 object-cover">
-
-          <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${ubicacion}
-          </div>
-
-          ${esVendido ? svgVendido : ""}
-          ${!esVendido && esReservado ? svgReservado : ""}
-        </div>
-
-        <div class="p-5 text-center">
-          <h3 class="text-white text-1xl font-bold">${marca} ${modelo}</h3>
-          <p class="text-2xl text-white">${anio}</p>
-          <p class="precio-dest text-2xl text-yellow-400 font-bold">
-            $${Number(precioLimpio).toLocaleString("es-AR")}
-          </p>
-        </div>
-      </div>
-    `;
+    cont.innerHTML += cardFeaturedHtml(auto);
   });
 }
 
-// 🚗 LISTADO
 function mostrarAutos(lista) {
   const cont = document.getElementById("autos-container");
   if (!cont) return;
@@ -269,54 +284,8 @@ function mostrarAutos(lista) {
   cont.innerHTML = "";
 
   lista.forEach(auto => {
-
     if (estaVencido(auto)) return;
-
-    const esDestacado = auto.destacado?.toUpperCase() === "SI";
-    const esVendido = auto.vendido?.toUpperCase() === "SI";
-    const esReservado = auto.reservado?.toUpperCase() === "SI";
-    const precioLimpio = String(auto.precio || "0").replace(/\D/g, "");
-    const slugEncoded = encodeURIComponent(String(auto.slug || "").trim());
-    const marca = escapeHtml(auto.marca);
-    const modelo = escapeHtml(auto.modelo);
-    const anio = escapeHtml(auto.año);
-    const ubicacion = escapeHtml(auto.ubicacion || "");
-    const imagenPrincipal = safeHttpUrl(
-      auto.imagen ? auto.imagen.split(",")[0].trim() : "",
-      ""
-    );
-
-    cont.innerHTML += `
-      <div onclick="irAuto('${slugEncoded}')"
-        class="bg-white text-black border border-blue-500 rounded-lg shadow cursor-pointer hover:scale-105 transition max-w-sm mx-auto w-full ${esVendido ? 'opacity-60' : ''}">
-
-        <div class="relative">
-
-          <img src="${imagenPrincipal}" 
-     alt="${marca} ${modelo} ${anio} 
-     en Paraná" class="w-full h-35 object-cover rounded-t-lg">
-
-          <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-            📍 ${ubicacion}
-          </div>
-
-          ${esDestacado ? `<div class="absolute top-2 left-2 bg-yellow-400 text-black px-2 py-1 rounded text-xs font-bold">⭐</div>` : ""}
-
-          ${esVendido ? svgVendido : ""}
-          ${!esVendido && esReservado ? svgReservado : ""}
-
-        </div>
-
-        <div class="p-4 text-center">
-          <h3 class="font-bold text-[1rem]">${marca} ${modelo}</h3>
-          <p>${anio}</p>
-          <p class="text-blue-600 font-bold text-[1.2rem]">
-            $${Number(precioLimpio).toLocaleString("es-AR")}
-          </p>
-        </div>
-
-      </div>
-    `;
+    cont.innerHTML += cardListingHtml(auto);
   });
 }
 
@@ -337,7 +306,6 @@ if (buscador) {
 
     filtrados = filtrados.filter(auto => !estaVencido(auto));
 
-    // 🟡 👉 DETECTAR INDEX
     const esIndex =
       document.getElementById("autos-destacados") ||
       document.getElementById("motos-destacados") ||
@@ -346,7 +314,6 @@ if (buscador) {
 
     if (esIndex) {
 
-      // 👉 SI BORRA EL TEXTO → RESTAURAR
       if (texto === "") {
         mostrarDestacadosPorTipo(autos, "auto", "autos-destacados");
         mostrarDestacadosPorTipo(autos, "moto", "motos-destacados");
@@ -355,7 +322,6 @@ if (buscador) {
         return;
       }
 
-      // 👉 FILTRAR TODAS LAS SECCIONES
       mostrarDestacadosPorTipo(filtrados, "auto", "autos-destacados");
       mostrarDestacadosPorTipo(filtrados, "moto", "motos-destacados");
       mostrarDestacadosPorTipo(filtrados, "camioneta", "camionetas-destacados");
@@ -364,7 +330,6 @@ if (buscador) {
       return;
     }
 
-    // 🔵 👉 OTRAS PÁGINAS
     if (document.getElementById("autos-container")) {
 
       const filtradosTipo = filtrados.filter(auto => {
@@ -384,7 +349,6 @@ if (buscador) {
   });
 }
 
-// 👉 IR
 function irAuto(slug) {
   window.location.href = "auto.html?slug=" + slug;
 }
@@ -393,51 +357,36 @@ document.addEventListener("DOMContentLoaded", () => {
   initPwaInstallInMenu();
   registerServiceWorker();
 
-  // 👉 SLIDER (Solo si existe)
-const slides = document.querySelectorAll("#hero-slider img");
-let index = 0;
+  const slides = document.querySelectorAll("#hero-slider img");
+  let index = 0;
 
-if (slides.length > 0) {
-  setInterval(() => {
-    slides[index].classList.replace("opacity-100", "opacity-0");
-    index = (index + 1) % slides.length;
-    slides[index].classList.replace("opacity-0", "opacity-100");
-  }, 4000);
-}
-  
-  // 👉 MENU HAMBURGUESA
-  const btn = document.getElementById("menuBtn");
-  const menu = document.getElementById("menu");
-
-  if (btn && menu) {
-    btn.addEventListener("click", () => {
-      menu.classList.toggle("active");
-    });
+  if (slides.length > 0) {
+    setInterval(() => {
+      slides[index].classList.replace("opacity-100", "opacity-0");
+      index = (index + 1) % slides.length;
+      slides[index].classList.replace("opacity-0", "opacity-100");
+    }, 4000);
   }
 
-  // 👉 POPUP (Con seguridad para que no de error si no existe)
   const popup = document.getElementById("popup-publicidad");
   const cerrar = document.getElementById("cerrarPopup");
 
   if (popup && cerrar) {
-    const TIEMPO_ESPERA = 5 * 60 * 1000; // 5 minutos
+    const TIEMPO_ESPERA = 5 * 60 * 1000;
     const ultimaVez = localStorage.getItem("popupTime");
     const ahora = new Date().getTime();
 
-    // 👉 Mostrar o reset 5 minutos
     if (!ultimaVez || (ahora - ultimaVez) > TIEMPO_ESPERA) {
       setTimeout(() => {
         popup.style.display = "flex";
       }, 1000);
     }
 
-    // 👉 Cerrar popup
     cerrar.addEventListener("click", () => {
       popup.style.display = "none";
       localStorage.setItem("popupTime", ahora);
     });
 
-    // 👉 Click afuera
     popup.addEventListener("click", (e) => {
       if (e.target === popup) {
         popup.style.display = "none";
@@ -445,40 +394,4 @@ if (slides.length > 0) {
       }
     });
   }
-});
-
-
-//seccion menu activa
-document.addEventListener("DOMContentLoaded", () => {
-
-  const path = window.location.pathname.toLowerCase();
-  const archivoMenu = path.split("/").pop() || "index.html";
-
-  const map = [
-    { id: "nav-inicio", files: ["", "index.html"] },
-    { id: "nav-autos", files: ["autos.html"] },
-    { id: "nav-motos", files: ["motos.html"] },
-    { id: "nav-camionetas", files: ["camionetas.html"] },
-    { id: "nav-utilitarios", files: ["utilitarios.html"] },
-    { id: "nav-vender", files: ["vender.html"] }
-  ];
-
-  map.forEach(item => {
-    const el = document.getElementById(item.id);
-    if (!el) return;
-
-    let activo = false;
-
-    if (item.id === "nav-inicio") {
-      activo = archivoMenu === "" || archivoMenu === "index.html" || path.endsWith("/");
-    } else {
-      activo = item.files.includes(archivoMenu);
-    }
-
-    if (activo) {
-      el.style.color = "#eab308"; // yellow-500
-    } else {
-      el.style.color = "white";
-    }
-  });
 });

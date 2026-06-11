@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin | Autos Paraná</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="logoAP.ico" type="image/x-icon">
+</head>
+
+<body class="premium-body min-h-screen flex flex-col">
+
+  <nav class="navbar">
+    <div class="left">
+      <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo"></a>
+      <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+    </div>
+    <button id="menuBtn" class="menu-btn" aria-label="Menú"></button>
+    <div id="menu" class="menu">
+      <a id="nav-inicio" href="index.html">Inicio</a>
+      <a id="nav-autos" href="autos.html">Autos</a>
+      <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+      <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+      <a id="nav-motos" href="motos.html">Motos</a>
+      <a id="nav-admin" class="nav-active" href="admin.html">Admin</a>
+      <a id="nav-vender" class="nav-cta" href="mipanel.html">Mi panel</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap flex-1">
+    <div class="admin-header">
+      <div>
+        <p class="admin-badge">Panel de administración</p>
+        <h1 class="page-title" style="margin-bottom:0.25rem">Gestionar publicaciones</h1>
+        <p id="admin-email" class="text-gray-500 text-sm"></p>
+      </div>
+      <div class="admin-header__actions">
+        <a href="publicar.html" class="btn-primary">+ Nueva publicación</a>
+        <button id="btn-recargar" type="button" class="admin-btn admin-btn--ghost">Recargar</button>
+        <button id="btn-cerrar-sesion" type="button" class="admin-btn admin-btn--ghost">Salir</button>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <input
+        type="search"
+        id="buscador-admin"
+        class="search-input"
+        placeholder="Buscar por ID, slug, marca, modelo o vendedor..."
+        autocomplete="off"
+      />
+    </div>
+    <p id="contador-resultados" class="admin-contador"></p>
+
+    <div id="lista-admin" class="admin-lista"></div>
+  </main>
+
+  <div id="toast-admin" class="admin-toast hidden" role="status"></div>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <p class="footer-brand">AUTOS PARANÁ</p>
+        <p class="footer-tagline">Panel admin — uso interno</p>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; 2026 Autos Paraná</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-nav.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

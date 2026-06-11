@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar sesión | Autos Paraná</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#141418">
+  <meta name="robots" content="noindex">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="logoAP.ico" type="image/x-icon">
+</head>
+
+<body class="premium-body min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="left">
+      <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo"></a>
+      <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+    </div>
+    <button id="menuBtn" class="menu-btn">☰</button>
+    <div id="menu" class="menu">
+      <a id="nav-inicio" href="index.html">Inicio</a>
+      <a id="nav-autos" href="autos.html">Autos</a>
+      <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+      <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+      <a id="nav-motos" href="motos.html">Motos</a>
+      <a id="nav-vender" class="nav-cta nav-active" href="login.html">Publicar</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <main class="flex-1 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+
+      <!-- Logo y título -->
+      <div class="text-center mb-8">
+        <img src="logoAP.png" alt="Autos Paraná" class="h-16 mx-auto mb-3">
+        <h2 class="text-2xl font-bold text-yellow-400" id="form-titulo">Iniciá sesión</h2>
+        <p class="text-gray-400 text-sm mt-1" id="form-subtitulo">para publicar tu vehículo</p>
+      </div>
+
+      <!-- CARD -->
+      <div class="bg-black border border-yellow-500 rounded-2xl p-8 shadow-2xl">
+
+        <!-- Mensaje de error / éxito -->
+        <div id="mensaje" class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+        <!-- FORMULARIO -->
+        <div class="space-y-4">
+
+          <!-- Nombre (solo en registro) -->
+          <div id="campo-nombre" class="hidden">
+            <label class="block text-sm text-gray-400 mb-1">Nombre y apellido *</label>
+            <input id="nombre" type="text" placeholder="Juan García"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+          </div>
+
+          <!-- Teléfono (solo en registro) -->
+          <div id="campo-telefono" class="hidden">
+            <label class="block text-sm text-gray-400 mb-1">Teléfono / WhatsApp *</label>
+            <input id="telefono-registro" type="tel" placeholder="3435123456"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+            <p class="text-xs text-gray-600 mt-1">Se mostrará a los compradores en tus publicaciones</p>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Email</label>
+            <input id="email" type="email" placeholder="tu@email.com"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+          </div>
+
+          <!-- Contraseña -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Contraseña</label>
+            <input id="password" type="password" placeholder="••••••••"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+          </div>
+
+          <!-- Botón principal -->
+          <button id="btn-submit"
+            class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition text-base mt-2">
+            Iniciar sesión
+          </button>
+
+        </div>
+
+        <!-- Separador -->
+        <div class="flex items-center my-5">
+          <div class="flex-1 border-t border-gray-700"></div>
+          <span class="px-3 text-gray-500 text-xs">¿No tenés cuenta?</span>
+          <div class="flex-1 border-t border-gray-700"></div>
+        </div>
+
+        <!-- Toggle login / registro -->
+        <button id="btn-toggle"
+          class="w-full border border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-black font-semibold py-3 rounded-lg transition text-sm">
+          Crear cuenta gratis
+        </button>
+
+      </div>
+
+      <!-- Volver -->
+      <p class="text-center text-gray-500 text-sm mt-6">
+        <a href="index.html" class="hover:text-yellow-400 transition">← Volver al inicio</a>
+      </p>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="text-white text-center">
+      <p>Contacto: autosparana@gmail.com</p>
+      <p>&copy; 2026 Autos Paraná. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-nav.js"></script>
+  <script>
+    // ── Estado del formulario ──
+    let modoRegistro = false;
+
+    const titulo      = document.getElementById("form-titulo");
+    const subtitulo   = document.getElementById("form-subtitulo");
+    const campoNombre = document.getElementById("campo-nombre");
+    const btnSubmit   = document.getElementById("btn-submit");
+    const btnToggle   = document.getElementById("btn-toggle");
+    const mensaje     = document.getElementById("mensaje");
+
+    // Si ya está logueado, ir directo a publicar
+    db.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = "mipanel.html";
+    });
+
+    // ── Toggle login / registro ──
+    btnToggle.addEventListener("click", () => {
+      modoRegistro = !modoRegistro;
+
+      if (modoRegistro) {
+        titulo.textContent       = "Crear cuenta";
+        subtitulo.textContent    = "es gratis y rápido";
+        btnSubmit.textContent    = "Registrarme";
+        btnToggle.textContent    = "Ya tengo cuenta";
+        campoNombre.classList.remove("hidden");
+        document.getElementById("campo-telefono").classList.remove("hidden");
+      } else {
+        titulo.textContent       = "Iniciá sesión";
+        subtitulo.textContent    = "para publicar tu vehículo";
+        btnSubmit.textContent    = "Iniciar sesión";
+        btnToggle.textContent    = "Crear cuenta gratis";
+        campoNombre.classList.add("hidden");
+        document.getElementById("campo-telefono").classList.add("hidden");
+      }
+
+      ocultarMensaje();
+    });
+
+    // ── Acción principal ──
+    btnSubmit.addEventListener("click", async () => {
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const nombre   = document.getElementById("nombre").value.trim();
+      const telefono = document.getElementById("telefono-registro").value.trim();
+
+      if (!email || !password) {
+        mostrarMensaje("Completá email y contraseña.", "error");
+        return;
+      }
+
+      if (modoRegistro && (!nombre || !telefono)) {
+        mostrarMensaje("Nombre y teléfono son obligatorios.", "error");
+        return;
+      }
+
+      btnSubmit.disabled    = true;
+      btnSubmit.textContent = "Cargando...";
+
+      if (modoRegistro) {
+        // ── REGISTRO ──
+        const { data: signUpData, error } = await db.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: nombre, telefono } }
+          });
+
+        if (error) {
+          mostrarMensaje(traducirError(error.message), "error");
+        } else if (signUpData.session) {
+          window.location.href = "mipanel.html";
+        } else {
+          mostrarMensaje("✅ ¡Cuenta creada! Revisá tu email para confirmar.", "ok");
+        }
+
+      } else {
+        // ── LOGIN ──
+        const { error } = await db.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          mostrarMensaje(traducirError(error.message), "error");
+        } else {
+          window.location.href = "mipanel.html";
+        }
+      }
+
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = modoRegistro ? "Registrarme" : "Iniciar sesión";
+    });
+
+    // Enter para enviar
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnSubmit.click();
+    });
+
+    // ── Helpers ──
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className   = tipo === "error"
+        ? "mb-4 px-4 py-3 rounded-lg text-sm font-medium bg-red-900/50 border border-red-500 text-red-300"
+        : "mb-4 px-4 py-3 rounded-lg text-sm font-medium bg-green-900/50 border border-green-500 text-green-300";
+      mensaje.classList.remove("hidden");
+    }
+
+    function ocultarMensaje() {
+      mensaje.classList.add("hidden");
+    }
+
+    function traducirError(msg) {
+      if (msg.includes("Invalid login"))       return "Email o contraseña incorrectos.";
+      if (msg.includes("already registered"))  return "Ya existe una cuenta con ese email.";
+      if (msg.includes("Password should"))     return "La contraseña debe tener al menos 6 caracteres.";
+      if (msg.includes("valid email"))         return "Ingresá un email válido.";
+      return "Ocurrió un error. Intentá de nuevo.";
+    }
+
+  </script>
+
+</body>
+</html>
