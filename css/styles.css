@@ -1196,3 +1196,33 @@ footer {
 .admin-toast.hidden {
   display: none;
 }
+
+/* ── Cards compactas en móvil (3 columnas) ──────────────── */
+@media (max-width: 639px) {
+  .vehicles-grid .vehicle-card__body {
+    padding: 0.5rem 0.5rem 0.65rem;
+  }
+
+  .vehicles-grid .vehicle-card__title {
+    font-size: 0.72rem;
+  }
+
+  .vehicles-grid .vehicle-card__meta {
+    font-size: 0.6rem;
+    margin-top: 0.1rem;
+  }
+
+  .vehicles-grid .vehicle-card__price {
+    font-size: 0.78rem;
+    margin-top: 0.2rem;
+  }
+
+  .vehicles-grid .vehicle-card__badge {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .vehicles-grid .vehicle-card__location {
+    font-size: 0.58rem;
+  }
+}
