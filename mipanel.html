@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.0.4">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.2">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -90,8 +90,8 @@
   </div>
 
   <!-- ── MODAL DESTACAR ── -->
-  <div id="modal-destacar" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-    <div class="bg-[#1e1e24] border border-yellow-500/30 rounded-2xl p-6 max-w-md w-full">
+  <div id="modal-destacar" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-50 px-4 py-6 overflow-y-auto">
+    <div class="bg-[#1e1e24] border border-yellow-500/30 rounded-2xl p-6 max-w-md w-full my-auto">
 
       <div class="flex justify-between items-start mb-1">
         <h3 class="text-lg font-bold">⭐ Destacar publicación</h3>
@@ -140,8 +140,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.0.4"></script>
-  <script src="js/auth-nav.js?v=1.0.4"></script>
+  <script src="js/supabase-config.js?v=1.0.2"></script>
+  <script src="js/auth-nav.js?v=1.0.2"></script>
   <script>
     // ══════════════════════════════════════════
     //  ⚙️  CONFIGURACIÓN — editá estos valores
@@ -287,10 +287,22 @@
     });
 
     // ── Modal destacar ──
-    document.getElementById("btn-cerrar-destacar").addEventListener("click", () => {
+    document.getElementById("btn-cerrar-destacar").addEventListener("click", cerrarModalDestacar);
+
+    // Cerrar al hacer clic fuera del modal
+    document.getElementById("modal-destacar").addEventListener("click", (e) => {
+      if (e.target === document.getElementById("modal-destacar")) cerrarModalDestacar();
+    });
+
+    // Cerrar con Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") cerrarModalDestacar();
+    });
+
+    function cerrarModalDestacar() {
       document.getElementById("modal-destacar").classList.add("hidden");
       autoADestacar = null;
-    });
+    }
 
     document.querySelectorAll(".plan-btn").forEach(btn => {
       btn.addEventListener("click", () => {
