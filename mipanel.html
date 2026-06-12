@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.0.2">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.7">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -21,10 +21,10 @@
     <button id="menuBtn" class="menu-btn">☰</button>
     <div id="menu" class="menu">
       <a id="nav-inicio" href="index.html">Inicio</a>
-      <a id="nav-autos" href="autos.html">Autos</a>
-      <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
-      <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
-      <a id="nav-motos" href="motos.html">Motos</a>
+        <a id="nav-autos" href="autos.html">Autos</a>
+        <a id="nav-motos" href="motos.html">Motos</a>
+        <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+        <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
       <a id="nav-vender" href="mipanel.html">Mi panel</a>
     </div>
   </nav>
@@ -87,7 +87,7 @@
           <p><a href="https://wa.me/549379123456">WhatsApp: 3435311312</a></p>
         </div>
       </div>
-      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.0.5</small></p>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.0.7</small></p>
     </footer>
 
   <!-- ── MODAL ELIMINAR ── -->
@@ -104,7 +104,7 @@
   </div>
 
   <!-- ── MODAL DESTACAR ── -->
-  <div id="modal-destacar" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-50 mt-12 px-4 py-6 overflow-y-auto">
+  <div id="modal-destacar" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-[1010] mt-12 px-4 py-6 overflow-y-auto">
     <div class="bg-[#1e1e24] border border-yellow-500/30 rounded-2xl p-6 max-w-md w-full my-auto">
 
       <div class="flex justify-between items-start mb-1">
@@ -156,8 +156,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.0.2"></script>
-  <script src="js/auth-nav.js?v=1.0.2"></script>
+  <script src="js/supabase-config.js?v=1.0.7"></script>
+  <script src="js/auth-nav.js?v=1.0.7"></script>
   <script>
     // ══════════════════════════════════════════
     //  ⚙️  CONFIGURACIÓN — editá estos valores
@@ -177,6 +177,14 @@
     // ── Sesión ──
     db.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = "login.html"; return; }
+
+      // Si falta nombre o teléfono (ej: login con Google), completar perfil primero
+      const meta = session.user.user_metadata || {};
+      if (!esAdmin(session) && (!meta.telefono || !meta.full_name)) {
+        window.location.href = "completar-perfil.html";
+        return;
+      }
+
       sesion = session;
       document.getElementById("usuario-email").textContent = session.user.email;
       await cargarPublicaciones();
@@ -249,6 +257,16 @@
 
       const titulo = `${auto.marca} ${auto.modelo} ${auto.año || ""}`.trim();
 
+      // Recordatorio de vencimiento del destacado
+      let avisoDestacado = "";
+      if (esDestacado && auto.destacado_hasta) {
+        const partes = String(auto.destacado_hasta).split("-"); // YYYY-MM-DD
+        if (partes.length === 3) {
+          const fechaFormateada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+          avisoDestacado = `<p class="text-yellow-500/80 text-xs mt-1">⭐ Destacado vence el ${fechaFormateada}</p>`;
+        }
+      }
+
       const btnDestacar = esDestacado
         ? `<span class="text-xs text-yellow-500 text-center px-1">⭐ Activo</span>`
         : `<button class="btn-destacar text-xs border border-yellow-500/40 hover:border-yellow-500 text-yellow-400 px-3 py-1.5 rounded-lg transition"
@@ -267,6 +285,7 @@
             <h3 class="font-bold text-white truncate">${titulo}</h3>
             <p class="text-yellow-400 font-semibold text-sm">$${Number(auto.precio).toLocaleString("es-AR")}</p>
             <p class="text-gray-500 text-xs mt-0.5">${auto.ubicacion || ""} · ${auto.tipo || ""}</p>
+            ${avisoDestacado}
           </div>
           <div class="flex flex-col gap-2 justify-center flex-shrink-0 min-w-[80px]">
             <a href="auto.html?slug=${auto.slug}" target="_blank"

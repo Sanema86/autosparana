@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Completar perfil | Autos Paraná</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#141418">
+  <meta name="robots" content="noindex">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css?v=1.0.7">
+  <link rel="icon" href="logoAP.ico" type="image/x-icon">
+</head>
+
+<body class="premium-body min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="left">
+      <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo"></a>
+      <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+    </div>
+    <button id="menuBtn" class="menu-btn">☰</button>
+    <div id="menu" class="menu">
+      <a id="nav-inicio" href="index.html">Inicio</a>
+      <a id="nav-autos" href="autos.html">Autos</a>
+      <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+      <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+      <a id="nav-motos" href="motos.html">Motos</a>
+      <a id="nav-vender" class="nav-cta nav-active" href="login.html">Publicar</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <main class="flex-1 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+
+      <!-- Logo y título -->
+      <div class="text-center mb-8">
+        <img src="logoAP.png" alt="Autos Paraná" class="h-16 mx-auto mb-3">
+        <h2 class="text-2xl font-bold text-yellow-400">¡Ya casi!</h2>
+        <p class="text-gray-400 text-sm mt-1">Completá estos datos para terminar tu registro</p>
+      </div>
+
+      <!-- CARD -->
+      <div class="bg-black border border-yellow-500 rounded-2xl p-8 shadow-2xl">
+
+        <!-- Mensaje de error / éxito -->
+        <div id="mensaje" class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+        <div class="space-y-4">
+
+          <!-- Email (solo lectura) -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Email</label>
+            <input id="email" type="email" disabled
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-400 cursor-not-allowed">
+          </div>
+
+          <!-- Nombre -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Nombre y apellido *</label>
+            <input id="nombre" type="text" placeholder="Juan García"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+            <p class="text-xs text-gray-600 mt-1">Así te van a identificar los compradores</p>
+          </div>
+
+          <!-- Teléfono -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Teléfono / WhatsApp *</label>
+            <input id="telefono" type="tel" placeholder="3435123456"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+            <p class="text-xs text-gray-600 mt-1">Se mostrará a los compradores en tus publicaciones</p>
+          </div>
+
+          <!-- Botón principal -->
+          <button id="btn-guardar"
+            class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition text-base mt-2">
+            Continuar
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Salir -->
+      <p class="text-center text-gray-500 text-sm mt-6">
+        <a href="#" id="link-salir" class="hover:text-yellow-400 transition">Cerrar sesión</a>
+      </p>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="text-white text-center">
+      <p>Contacto: autosparana.ok@gmail.com</p>
+      <p>&copy; 2026 Autos Paraná. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=1.0.7"></script>
+  <script src="js/auth-nav.js?v=1.0.7"></script>
+  <script>
+    const mensaje    = document.getElementById("mensaje");
+    const btnGuardar = document.getElementById("btn-guardar");
+
+    let sesion = null;
+
+    // ── Verificar sesión ──
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = "login.html"; return; }
+      sesion = session;
+
+      document.getElementById("email").value = session.user.email || "";
+
+      const meta = session.user.user_metadata || {};
+
+      // Si ya tiene nombre y teléfono guardados, no necesita esta pantalla
+      if (meta.telefono && meta.full_name) {
+        window.location.href = "mipanel.html";
+        return;
+      }
+
+      // Pre-completar nombre con el de Google si existe (el usuario puede editarlo)
+      if (meta.full_name) {
+        document.getElementById("nombre").value = meta.full_name;
+      } else if (meta.name) {
+        document.getElementById("nombre").value = meta.name;
+      }
+
+      if (meta.telefono) {
+        document.getElementById("telefono").value = meta.telefono;
+      }
+    });
+
+    // ── Guardar y continuar ──
+    btnGuardar.addEventListener("click", async () => {
+      const nombre   = document.getElementById("nombre").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+
+      if (!nombre || !telefono) {
+        mostrarMensaje("Completá nombre y teléfono para continuar.", "error");
+        return;
+      }
+
+      if (telefono.replace(/\D/g, "").length < 8) {
+        mostrarMensaje("Ingresá un teléfono válido.", "error");
+        return;
+      }
+
+      btnGuardar.disabled    = true;
+      btnGuardar.textContent = "Guardando...";
+
+      const { error } = await db.auth.updateUser({
+        data: { full_name: nombre, telefono }
+      });
+
+      if (error) {
+        mostrarMensaje("Ocurrió un error. Intentá de nuevo.", "error");
+        btnGuardar.disabled    = false;
+        btnGuardar.textContent = "Continuar";
+        return;
+      }
+
+      window.location.href = "mipanel.html";
+    });
+
+    // Enter para enviar
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnGuardar.click();
+    });
+
+    // ── Cerrar sesión ──
+    document.getElementById("link-salir").addEventListener("click", async (e) => {
+      e.preventDefault();
+      await db.auth.signOut();
+      window.location.href = "login.html";
+    });
+
+    // ── Helpers ──
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className   = tipo === "error"
+        ? "mb-4 px-4 py-3 rounded-lg text-sm font-medium bg-red-900/50 border border-red-500 text-red-300"
+        : "mb-4 px-4 py-3 rounded-lg text-sm font-medium bg-green-900/50 border border-green-500 text-green-300";
+      mensaje.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>

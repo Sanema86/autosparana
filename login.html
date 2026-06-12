@@ -8,7 +8,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.0.5">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.7">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -97,8 +97,14 @@
 
         <!-- Toggle login / registro -->
         <button id="btn-toggle"
-          class="w-full border border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-black font-semibold py-3 rounded-lg transition text-sm">
+          class="w-full border border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-black font-semibold py-3 rounded-lg transition text-sm mb-4">
           Crear cuenta gratis
+        </button>
+
+        <!-- Inicio Sesion con Google -->
+        <button id="google-login"
+          class="w-full border border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-black font-semibold py-3 rounded-lg transition text-sm">
+          Continuar con Google
         </button>
 
       </div>
@@ -120,8 +126,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.0.5"></script>
-  <script src="js/auth-nav.js?v=1.0.5"></script>
+  <script src="js/supabase-config.js?v=1.0.7"></script>
+  <script src="js/auth-nav.js?v=1.0.7"></script>
   <script>
     // ── Estado del formulario ──
     let modoRegistro = false;
@@ -137,6 +143,23 @@
     db.auth.getSession().then(({ data }) => {
       if (data.session) window.location.href = "mipanel.html";
     });
+
+    // ── LOGIN CON GOOGLE ──
+document.getElementById("google-login").addEventListener("click", async () => {
+  const { error } = await db.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin + "/completar-perfil.html"
+    }
+  });
+
+  if (error) {
+    mostrarMensaje(error.message, "error");
+  }
+});
+
+// ──  ──  ──  ──  ──  ──  ──  ──  ──  ──  ──  ──  
+
 
     // ── Toggle login / registro ──
     btnToggle.addEventListener("click", () => {
