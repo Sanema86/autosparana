@@ -159,6 +159,23 @@ function cardListingHtml(auto) {
   `;
 }
 
+// 👉 ORDEN DE DESTACADOS (prioridad fija primero, resto al azar)
+function ordenarDestacados(lista) {
+  const conPrioridad = lista
+    .filter(a => Number(a.prioridad) > 0)
+    .sort((a, b) => Number(b.prioridad) - Number(a.prioridad));
+
+  const sinPrioridad = lista.filter(a => !(Number(a.prioridad) > 0));
+
+  // Mezclar al azar (Fisher-Yates)
+  for (let i = sinPrioridad.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [sinPrioridad[i], sinPrioridad[j]] = [sinPrioridad[j], sinPrioridad[i]];
+  }
+
+  return [...conPrioridad, ...sinPrioridad];
+}
+
 // 👉 VENCIMIENTO
 function estaVencido(auto) {
   const esIntermediario = String(auto.intermediario || "").trim().toUpperCase() === "SI";
@@ -226,7 +243,7 @@ db.from("autos").select("*").then(({ data, error }) => {
 
     if (document.getElementById("destacados")) {
       const destacados = autos.filter(a => destacadoVigente(a));
-      mostrarDestacados(destacados);
+      mostrarDestacados(ordenarDestacados(destacados));
     }
 
     mostrarDestacadosPorTipo(autos, "auto", "autos-destacados");
@@ -272,7 +289,7 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
            !estaVencido(auto);
   });
 
-  filtrados.slice(0, 6).forEach(auto => {
+  ordenarDestacados(filtrados).slice(0, 6).forEach(auto => {
     cont.innerHTML += cardFeaturedHtml(auto);
   });
 }

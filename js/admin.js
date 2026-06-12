@@ -166,6 +166,10 @@ function tarjetaAdmin(auto) {
           <button type="button" class="admin-btn admin-btn--sm btn-dias" data-id="${id}" data-dias="30">+30d</button>
           <button type="button" class="admin-btn admin-btn--sm btn-dias" data-id="${id}" data-dias="60">+60d</button>
         </div>
+        <div class="admin-destacado__fecha">
+          <label class="admin-label" for="prioridad-${id}">Prioridad (0 = sin prioridad)</label>
+          <input type="number" id="prioridad-${id}" class="admin-input-date" min="0" step="1" value="${Number(auto.prioridad) || 0}">
+        </div>
         <button type="button" class="admin-btn admin-btn--primary btn-guardar-destacado" data-id="${id}">
           Guardar destacado
         </button>
@@ -177,8 +181,10 @@ function tarjetaAdmin(auto) {
 async function guardarDestacado(id) {
   const chk = document.querySelector(`.chk-destacado[data-id="${id}"]`);
   const input = document.getElementById(`hasta-${id}`);
+  const inputPrioridad = document.getElementById(`prioridad-${id}`);
   const destacado = chk?.checked ? "SI" : "NO";
   const destacado_hasta = chk?.checked && input?.value ? input.value : null;
+  const prioridad = Math.max(0, parseInt(inputPrioridad?.value) || 0);
 
   if (destacado === "SI" && !destacado_hasta) {
     mostrarToast("Elegí una fecha de vencimiento o usá +15 / +30 / +60 días.", "error");
@@ -193,7 +199,7 @@ async function guardarDestacado(id) {
 
   const { error } = await db
     .from("autos")
-    .update({ destacado, destacado_hasta })
+    .update({ destacado, destacado_hasta, prioridad })
     .eq("id", id);
 
   if (btn) {
@@ -210,6 +216,7 @@ async function guardarDestacado(id) {
   if (idx >= 0) {
     autosCache[idx].destacado = destacado;
     autosCache[idx].destacado_hasta = destacado_hasta;
+    autosCache[idx].prioridad = prioridad;
   }
 
   mostrarToast(destacado === "SI" ? "Destacado activado." : "Destacado desactivado.", "ok");

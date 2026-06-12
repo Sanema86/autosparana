@@ -9,7 +9,7 @@ const CORE_ASSETS = [
   "/auto.html",
   "/vender.html",
   "/css/styles.css",
-  "/js/main.js?v=1.0.7",
+  "/js/main.js?v=1.0.8",
   "/js/auto.js",
   "/logoAP.png",
   "/logoAP.ico",
