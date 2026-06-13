@@ -58,6 +58,23 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+// 👉 COMPARTIR POR WHATSAPP
+function compartirWhatsApp(event) {
+  event.stopPropagation();
+  const btn = event.currentTarget;
+  const { slug, marca, modelo, anio, precio } = btn.dataset;
+  const precioNum = Number(precio || "0");
+  const link = `${window.location.origin}/auto.html?slug=${encodeURIComponent(slug)}`;
+  const texto = `Mirá este ${marca} ${modelo} ${anio} a $${precioNum.toLocaleString("es-AR")} en Autos Paraná 🚗\n${link}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank");
+}
+
+const WHATSAPP_SHARE_ICON = `
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.04 4C9.96 4 5.04 8.93 5.04 15c0 2.13.59 4.13 1.63 5.85L4 28l7.3-2.6A10.94 10.94 0 0 0 16.04 26c6.08 0 11-4.93 11-11s-4.92-11-11-11Zm0 19.9c-1.78 0-3.45-.5-4.87-1.36l-.35-.21-3.55 1.26 1.27-3.46-.23-.36A8.9 8.9 0 0 1 7.04 15c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 8.9-9 8.9Zm4.93-6.65c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-1.59-.79-2.63-1.41-3.68-3.2-.28-.48.28-.45.8-1.5.09-.18.04-.34-.05-.48-.09-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.46.07-.7.34-.25.27-.95.93-.95 2.26 0 1.33.97 2.62 1.11 2.8.14.18 1.9 2.9 4.66 3.95 2.32.87 2.79.7 3.3.59.5-.11 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32Z"/>
+  </svg>`;
+
+
 function safeHttpUrl(value, fallback = "") {
   const raw = String(value ?? "").trim();
   if (!raw) return fallback;
@@ -252,14 +269,7 @@ db.from("autos").select("*").then(({ data, error }) => {
     mostrarDestacadosPorTipo(autos, "utilitario", "utilitarios-destacados");
 
     if (document.getElementById("autos-container")) {
-      const filtrados = autos.filter(auto => {
-        if (!auto.tipo) return false;
-
-        const tipos = auto.tipo.toLowerCase().split(",").map(t => t.trim());
-        return tipos.includes(tipoActual);
-      });
-
-      mostrarAutos(filtrados);
+      aplicarFiltrosCatalogo();
     }
   });
 
@@ -294,6 +304,47 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
   });
 }
 
+// 🔍 FILTROS DE CATÁLOGO (precio, año, km, texto)
+function aplicarFiltrosCatalogo() {
+  const texto = (document.getElementById("buscador")?.value || "").toLowerCase().trim();
+  const precioMin = parseFloat(document.getElementById("precio-min")?.value);
+  const precioMax = parseFloat(document.getElementById("precio-max")?.value);
+  const anioMin   = parseInt(document.getElementById("anio-min")?.value);
+  const anioMax   = parseInt(document.getElementById("anio-max")?.value);
+  const kmMax     = parseFloat(document.getElementById("km-max")?.value);
+
+  const filtrados = autos.filter(auto => {
+    if (!auto.tipo) return false;
+    const tipos = auto.tipo.toLowerCase().split(",").map(t => t.trim());
+    if (!tipos.includes(tipoActual)) return false;
+    if (estaVencido(auto)) return false;
+
+    if (texto) {
+      const matchTexto =
+        (auto.marca || "").toLowerCase().includes(texto) ||
+        (auto.modelo || "").toLowerCase().includes(texto) ||
+        String(auto.año || "").includes(texto) ||
+        (auto.ubicacion || "").toLowerCase().includes(texto);
+      if (!matchTexto) return false;
+    }
+
+    const precio = Number(String(auto.precio || "0").replace(/\D/g, "")) || 0;
+    if (!isNaN(precioMin) && precio < precioMin) return false;
+    if (!isNaN(precioMax) && precio > precioMax) return false;
+
+    const anio = parseInt(auto.año) || 0;
+    if (!isNaN(anioMin) && anio < anioMin) return false;
+    if (!isNaN(anioMax) && anio > anioMax) return false;
+
+    const km = Number(String(auto.km || "0").replace(/\D/g, "")) || 0;
+    if (!isNaN(kmMax) && km > kmMax) return false;
+
+    return true;
+  });
+
+  mostrarAutos(filtrados);
+}
+
 function mostrarAutos(lista) {
   const cont = document.getElementById("autos-container");
   if (!cont) return;
@@ -306,10 +357,31 @@ function mostrarAutos(lista) {
   });
 }
 
-// 🔍 BUSCADOR
+// 🔍 BUSCADOR Y FILTROS
 const buscador = document.getElementById("buscador");
 
-if (buscador) {
+if (document.getElementById("autos-container")) {
+  // Página de catálogo (autos/motos/camionetas/utilitarios)
+  const filtroIds = ["buscador", "precio-min", "precio-max", "anio-min", "anio-max", "km-max"];
+
+  filtroIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", aplicarFiltrosCatalogo);
+  });
+
+  const btnLimpiar = document.getElementById("btn-limpiar-filtros");
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      filtroIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      aplicarFiltrosCatalogo();
+    });
+  }
+
+} else if (buscador) {
+  // Página de inicio: filtra los destacados por texto
   buscador.addEventListener("input", (e) => {
 
     const texto = e.target.value.toLowerCase().trim();
@@ -323,45 +395,18 @@ if (buscador) {
 
     filtrados = filtrados.filter(auto => !estaVencido(auto));
 
-    const esIndex =
-      document.getElementById("autos-destacados") ||
-      document.getElementById("motos-destacados") ||
-      document.getElementById("camionetas-destacados") ||
-      document.getElementById("utilitarios-destacados");
-
-    if (esIndex) {
-
-      if (texto === "") {
-        mostrarDestacadosPorTipo(autos, "auto", "autos-destacados");
-        mostrarDestacadosPorTipo(autos, "moto", "motos-destacados");
-        mostrarDestacadosPorTipo(autos, "camioneta", "camionetas-destacados");
-        mostrarDestacadosPorTipo(autos, "utilitario", "utilitarios-destacados");
-        return;
-      }
-
-      mostrarDestacadosPorTipo(filtrados, "auto", "autos-destacados");
-      mostrarDestacadosPorTipo(filtrados, "moto", "motos-destacados");
-      mostrarDestacadosPorTipo(filtrados, "camioneta", "camionetas-destacados");
-      mostrarDestacadosPorTipo(filtrados, "utilitario", "utilitarios-destacados");
-
+    if (texto === "") {
+      mostrarDestacadosPorTipo(autos, "auto", "autos-destacados");
+      mostrarDestacadosPorTipo(autos, "moto", "motos-destacados");
+      mostrarDestacadosPorTipo(autos, "camioneta", "camionetas-destacados");
+      mostrarDestacadosPorTipo(autos, "utilitario", "utilitarios-destacados");
       return;
     }
 
-    if (document.getElementById("autos-container")) {
-
-      const filtradosTipo = filtrados.filter(auto => {
-        if (!auto.tipo) return false;
-
-        const tipos = auto.tipo
-          .toLowerCase()
-          .split(",")
-          .map(t => t.trim());
-
-        return tipos.includes(tipoActual);
-      });
-
-      mostrarAutos(filtradosTipo);
-    }
+    mostrarDestacadosPorTipo(filtrados, "auto", "autos-destacados");
+    mostrarDestacadosPorTipo(filtrados, "moto", "motos-destacados");
+    mostrarDestacadosPorTipo(filtrados, "camioneta", "camionetas-destacados");
+    mostrarDestacadosPorTipo(filtrados, "utilitario", "utilitarios-destacados");
 
   });
 }

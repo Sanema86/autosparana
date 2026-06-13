@@ -9,6 +9,23 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+// 👉 COMPARTIR POR WHATSAPP
+function compartirWhatsApp(event) {
+  event.stopPropagation();
+  const btn = event.currentTarget;
+  const { slug, marca, modelo, anio, precio } = btn.dataset;
+  const precioNum = Number(precio || "0");
+  const link = `${window.location.origin}/auto.html?slug=${encodeURIComponent(slug)}`;
+  const texto = `Mirá este ${marca} ${modelo} ${anio} a $${precioNum.toLocaleString("es-AR")} en Autos Paraná 🚗\n${link}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank");
+}
+
+const WHATSAPP_SHARE_ICON = `
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="btn-compartir__icon">
+    <path d="M16.04 4C9.96 4 5.04 8.93 5.04 15c0 2.13.59 4.13 1.63 5.85L4 28l7.3-2.6A10.94 10.94 0 0 0 16.04 26c6.08 0 11-4.93 11-11s-4.92-11-11-11Zm0 19.9c-1.78 0-3.45-.5-4.87-1.36l-.35-.21-3.55 1.26 1.27-3.46-.23-.36A8.9 8.9 0 0 1 7.04 15c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 8.9-9 8.9Zm4.93-6.65c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-1.59-.79-2.63-1.41-3.68-3.2-.28-.48.28-.45.8-1.5.09-.18.04-.34-.05-.48-.09-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.46.07-.7.34-.25.27-.95.93-.95 2.26 0 1.33.97 2.62 1.11 2.8.14.18 1.9 2.9 4.66 3.95 2.32.87 2.79.7 3.3.59.5-.11 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32Z"/>
+  </svg>`;
+
+
 function safeHttpUrl(value, fallback = "") {
   const raw = String(value ?? "").trim();
   if (!raw) return fallback;
@@ -255,6 +272,13 @@ function mostrarAuto(auto) {
           <a href="${linkWhatsApp}" target="_blank" class="btn-whatsapp">
             Consultar por WhatsApp
           </a>
+
+          <button type="button" class="btn-compartir"
+            data-slug="${escapeHtml(auto.slug)}" data-marca="${marca}" data-modelo="${modelo}"
+            data-anio="${anio}" data-precio="${precioLimpio}"
+            onclick="compartirWhatsApp(event)">
+            ${WHATSAPP_SHARE_ICON} Compartir
+          </button>
         </div>
 
       </div>
