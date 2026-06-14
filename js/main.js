@@ -304,14 +304,23 @@ function mostrarDestacadosPorTipo(lista, tipo, contenedorId) {
   });
 }
 
+// ── Leer valor del input activo (mobile o desktop) ──
+function leerFiltro(idMobile, idDesktop) {
+  const m = document.getElementById(idMobile);
+  const d = document.getElementById(idDesktop);
+  if (m && m.value.trim() !== "") return m.value.trim();
+  if (d && d.value.trim() !== "") return d.value.trim();
+  return "";
+}
+
 // 🔍 FILTROS DE CATÁLOGO (precio, año, km, texto)
 function aplicarFiltrosCatalogo() {
-  const texto = (document.getElementById("buscador")?.value || "").toLowerCase().trim();
-  const precioMin = parseFloat(document.getElementById("precio-min")?.value);
-  const precioMax = parseFloat(document.getElementById("precio-max")?.value);
-  const anioMin   = parseInt(document.getElementById("anio-min")?.value);
-  const anioMax   = parseInt(document.getElementById("anio-max")?.value);
-  const kmMax     = parseFloat(document.getElementById("km-max")?.value);
+  const texto    = (document.getElementById("buscador")?.value || "").toLowerCase().trim();
+  const precioMin = parseFloat(leerFiltro("precio-min", "precio-min-d"));
+  const precioMax = parseFloat(leerFiltro("precio-max", "precio-max-d"));
+  const anioMin   = parseInt(leerFiltro("anio-min",  "anio-min-d"));
+  const anioMax   = parseInt(leerFiltro("anio-max",  "anio-max-d"));
+  const kmMax     = parseFloat(leerFiltro("km-max",   "km-max-d"));
 
   const filtrados = autos.filter(auto => {
     if (!auto.tipo) return false;
@@ -361,23 +370,71 @@ function mostrarAutos(lista) {
 const buscador = document.getElementById("buscador");
 
 if (document.getElementById("autos-container")) {
-  // Página de catálogo (autos/motos/camionetas/utilitarios)
-  const filtroIds = ["buscador", "precio-min", "precio-max", "anio-min", "anio-max", "km-max"];
+  // ── Toggle panel mobile ──
+  const btnToggle = document.getElementById("btn-toggle-filtros");
+  const panel     = document.getElementById("filtros-panel");
+  const badge     = document.getElementById("badge-filtros");
 
-  filtroIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener("input", aplicarFiltrosCatalogo);
-  });
-
-  const btnLimpiar = document.getElementById("btn-limpiar-filtros");
-  if (btnLimpiar) {
-    btnLimpiar.addEventListener("click", () => {
-      filtroIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-      });
-      aplicarFiltrosCatalogo();
+  if (btnToggle && panel) {
+    btnToggle.addEventListener("click", () => {
+      const abierto = !panel.hasAttribute("hidden");
+      if (abierto) {
+        panel.setAttribute("hidden", "");
+        btnToggle.setAttribute("aria-expanded", "false");
+      } else {
+        panel.removeAttribute("hidden");
+        btnToggle.setAttribute("aria-expanded", "true");
+      }
     });
+  }
+
+  // ── Sincronizar inputs mobile ↔ desktop ──
+  function sincronizar(idMobile, idDesktop) {
+    const m = document.getElementById(idMobile);
+    const d = document.getElementById(idDesktop);
+    if (!m || !d) return;
+    m.addEventListener("input", () => { d.value = m.value; actualizarBadge(); aplicarFiltrosCatalogo(); });
+    d.addEventListener("input", () => { m.value = d.value; actualizarBadge(); aplicarFiltrosCatalogo(); });
+  }
+
+  sincronizar("precio-min",  "precio-min-d");
+  sincronizar("precio-max",  "precio-max-d");
+  sincronizar("anio-min",    "anio-min-d");
+  sincronizar("anio-max",    "anio-max-d");
+  sincronizar("km-max",      "km-max-d");
+
+  // ── Buscador ──
+  if (buscador) buscador.addEventListener("input", aplicarFiltrosCatalogo);
+
+  // ── Limpiar (mobile y desktop) ──
+  function limpiarFiltros() {
+    ["precio-min","precio-max","anio-min","anio-max","km-max",
+     "precio-min-d","precio-max-d","anio-min-d","anio-max-d","km-max-d"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    if (buscador) buscador.value = "";
+    actualizarBadge();
+    aplicarFiltrosCatalogo();
+  }
+
+  const btnLimpiarM = document.getElementById("btn-limpiar-filtros");
+  const btnLimpiarD = document.getElementById("btn-limpiar-filtros-d");
+  if (btnLimpiarM) btnLimpiarM.addEventListener("click", limpiarFiltros);
+  if (btnLimpiarD) btnLimpiarD.addEventListener("click", limpiarFiltros);
+
+  // ── Badge: contador de filtros activos ──
+  function actualizarBadge() {
+    if (!badge) return;
+    const activos = ["precio-min","precio-max","anio-min","anio-max","km-max"]
+      .filter(id => { const el = document.getElementById(id); return el && el.value.trim() !== ""; }).length
+      + (buscador && buscador.value.trim() !== "" ? 1 : 0);
+    if (activos > 0) {
+      badge.textContent = activos;
+      badge.classList.remove("hidden");
+    } else {
+      badge.classList.add("hidden");
+    }
   }
 
 } else if (buscador) {

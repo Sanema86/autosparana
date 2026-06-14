@@ -45,7 +45,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="logoAP.png" />
-    <link rel="stylesheet" href="css/styles.css?v=1.1.1" />
+    <link rel="stylesheet" href="css/styles.css?v=1.1.3" />
     <link rel="icon" href="logoAP.ico" type="image/x-icon" />
     <script type="application/ld+json">
       {
@@ -87,36 +87,78 @@
     <div class="page-wrap">
       <h1 class="page-title">Autos usados en Paraná</h1>
 
-      <div class="search-wrap">
-        <input
-          type="text"
-          id="buscador"
-          placeholder="Buscar por marca, modelo, año o ubicación..."
-          class="search-input"
-        />
+      <div class="catalog-topbar">
+        <div class="search-wrap search-wrap--inline">
+          <input
+            type="text"
+            id="buscador"
+            placeholder="Buscar por marca, modelo, año o ubicación..."
+            class="search-input"
+          />
+        </div>
+        <button type="button" id="btn-toggle-filtros" class="filtros-toggle-btn" aria-expanded="false">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="filtros-toggle-icon">
+            <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Filtrar
+          <span id="badge-filtros" class="filtros-badge hidden">0</span>
+        </button>
       </div>
-      <div class="filtros-wrap">
-        <div class="filtro-grupo">
-          <label>Precio ($)</label>
-          <div class="filtro-rango">
-            <input type="number" id="precio-min" placeholder="Desde" class="filtro-input" min="0">
-            <input type="number" id="precio-max" placeholder="Hasta" class="filtro-input" min="0">
+
+      <!-- Panel de filtros (colapsable en mobile, sidebar en desktop) -->
+      <div id="filtros-panel" class="filtros-panel" hidden>
+        <div class="filtros-panel-inner">
+          <div class="filtro-grupo">
+            <label class="filtro-label">Precio ($)</label>
+            <div class="filtro-rango">
+              <input type="number" id="precio-min" placeholder="Desde" class="filtro-input" min="0">
+              <input type="number" id="precio-max" placeholder="Hasta" class="filtro-input" min="0">
+            </div>
           </div>
-        </div>
-        <div class="filtro-grupo">
-          <label>Año</label>
-          <div class="filtro-rango">
-            <input type="number" id="anio-min" placeholder="Desde" class="filtro-input" min="1950" max="2030">
-            <input type="number" id="anio-max" placeholder="Hasta" class="filtro-input" min="1950" max="2030">
+          <div class="filtro-grupo">
+            <label class="filtro-label">Año</label>
+            <div class="filtro-rango">
+              <input type="number" id="anio-min" placeholder="Desde" class="filtro-input" min="1950" max="2030">
+              <input type="number" id="anio-max" placeholder="Hasta" class="filtro-input" min="1950" max="2030">
+            </div>
           </div>
+          <div class="filtro-grupo">
+            <label class="filtro-label">Kilómetros (máx.)</label>
+            <input type="number" id="km-max" placeholder="Ej: 100000" class="filtro-input filtro-input--full" min="0">
+          </div>
+          <button type="button" id="btn-limpiar-filtros" class="filtro-limpiar">Limpiar filtros</button>
         </div>
-        <div class="filtro-grupo">
-          <label>Kilómetros (máx.)</label>
-          <input type="number" id="km-max" placeholder="Ej: 100000" class="filtro-input" min="0" style="width: 9rem;">
-        </div>
-        <button type="button" id="btn-limpiar-filtros" class="filtro-limpiar">Limpiar filtros</button>
       </div>
-      <div id="autos-container" class="vehicles-grid vehicles-grid--catalog"></div>
+
+      <div class="catalog-main-wrap">
+        <aside class="filtros-sidebar">
+          <p class="filtros-sidebar-title">Filtrar por</p>
+          <div class="filtros-panel-inner">
+            <div class="filtro-grupo">
+              <label class="filtro-label">Precio ($)</label>
+              <div class="filtro-rango">
+                <input type="number" id="precio-min-d" placeholder="Desde" class="filtro-input" min="0">
+                <input type="number" id="precio-max-d" placeholder="Hasta" class="filtro-input" min="0">
+              </div>
+            </div>
+            <div class="filtro-grupo">
+              <label class="filtro-label">Año</label>
+              <div class="filtro-rango">
+                <input type="number" id="anio-min-d" placeholder="Desde" class="filtro-input" min="1950" max="2030">
+                <input type="number" id="anio-max-d" placeholder="Hasta" class="filtro-input" min="1950" max="2030">
+              </div>
+            </div>
+            <div class="filtro-grupo">
+              <label class="filtro-label">Kilómetros (máx.)</label>
+              <input type="number" id="km-max-d" placeholder="Ej: 100000" class="filtro-input filtro-input--full" min="0">
+            </div>
+            <button type="button" id="btn-limpiar-filtros-d" class="filtro-limpiar">Limpiar filtros</button>
+          </div>
+        </aside>
+        <div>
+          <div id="autos-container" class="vehicles-grid vehicles-grid--catalog"></div>
+        </div>
+      </div>
     </div>
 
     <footer>
@@ -138,12 +180,12 @@
           <p><a href="https://wa.me/549379123456">WhatsApp: 3435311312</a></p>
         </div>
       </div>
-      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.1</small></p>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.3</small></p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=1.1.1"></script>
-    <script src="js/auth-nav.js?v=1.1.1"></script>
-    <script src="js/main.js?v=1.1.1"></script>
+    <script src="js/supabase-config.js?v=1.1.3"></script>
+    <script src="js/auth-nav.js?v=1.1.3"></script>
+    <script src="js/main.js?v=1.1.3"></script>
   </body>
 </html>
