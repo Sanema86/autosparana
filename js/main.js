@@ -370,11 +370,11 @@ function mostrarAutos(lista) {
 const buscador = document.getElementById("buscador");
 
 if (document.getElementById("autos-container")) {
-  // ── Toggle panel mobile ──
   const btnToggle = document.getElementById("btn-toggle-filtros");
   const panel     = document.getElementById("filtros-panel");
   const badge     = document.getElementById("badge-filtros");
 
+  // ── Toggle panel en mobile ──
   if (btnToggle && panel) {
     btnToggle.addEventListener("click", () => {
       const abierto = !panel.hasAttribute("hidden");
@@ -388,53 +388,36 @@ if (document.getElementById("autos-container")) {
     });
   }
 
-  // ── Sincronizar inputs mobile ↔ desktop ──
-  function sincronizar(idMobile, idDesktop) {
-    const m = document.getElementById(idMobile);
-    const d = document.getElementById(idDesktop);
-    if (!m || !d) return;
-    m.addEventListener("input", () => { d.value = m.value; actualizarBadge(); aplicarFiltrosCatalogo(); });
-    d.addEventListener("input", () => { m.value = d.value; actualizarBadge(); aplicarFiltrosCatalogo(); });
-  }
+  // ── Inputs de filtro ──
+  const filtroIds = ["precio-min", "precio-max", "anio-min", "anio-max", "km-max"];
 
-  sincronizar("precio-min",  "precio-min-d");
-  sincronizar("precio-max",  "precio-max-d");
-  sincronizar("anio-min",    "anio-min-d");
-  sincronizar("anio-max",    "anio-max-d");
-  sincronizar("km-max",      "km-max-d");
+  filtroIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", () => { actualizarBadge(); aplicarFiltrosCatalogo(); });
+  });
 
-  // ── Buscador ──
-  if (buscador) buscador.addEventListener("input", aplicarFiltrosCatalogo);
+  if (buscador) buscador.addEventListener("input", () => { actualizarBadge(); aplicarFiltrosCatalogo(); });
 
-  // ── Limpiar (mobile y desktop) ──
-  function limpiarFiltros() {
-    ["precio-min","precio-max","anio-min","anio-max","km-max",
-     "precio-min-d","precio-max-d","anio-min-d","anio-max-d","km-max-d"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
+  // ── Limpiar ──
+  const btnLimpiar = document.getElementById("btn-limpiar-filtros");
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      filtroIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+      if (buscador) buscador.value = "";
+      actualizarBadge();
+      aplicarFiltrosCatalogo();
     });
-    if (buscador) buscador.value = "";
-    actualizarBadge();
-    aplicarFiltrosCatalogo();
   }
 
-  const btnLimpiarM = document.getElementById("btn-limpiar-filtros");
-  const btnLimpiarD = document.getElementById("btn-limpiar-filtros-d");
-  if (btnLimpiarM) btnLimpiarM.addEventListener("click", limpiarFiltros);
-  if (btnLimpiarD) btnLimpiarD.addEventListener("click", limpiarFiltros);
-
-  // ── Badge: contador de filtros activos ──
+  // ── Badge de filtros activos ──
   function actualizarBadge() {
     if (!badge) return;
-    const activos = ["precio-min","precio-max","anio-min","anio-max","km-max"]
-      .filter(id => { const el = document.getElementById(id); return el && el.value.trim() !== ""; }).length
-      + (buscador && buscador.value.trim() !== "" ? 1 : 0);
-    if (activos > 0) {
-      badge.textContent = activos;
-      badge.classList.remove("hidden");
-    } else {
-      badge.classList.add("hidden");
-    }
+    const activos = filtroIds.filter(id => {
+      const el = document.getElementById(id);
+      return el && el.value.trim() !== "";
+    }).length + (buscador && buscador.value.trim() !== "" ? 1 : 0);
+    if (activos > 0) { badge.textContent = activos; badge.classList.remove("hidden"); }
+    else              { badge.classList.add("hidden"); }
   }
 
 } else if (buscador) {

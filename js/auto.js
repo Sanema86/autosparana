@@ -79,7 +79,7 @@ const slug = params.get("slug");
 
 if (!slug) window.location.href = "index.html";
 
-// 👉 DATA (ahora desde Supabase)
+// 👉 DATA Supabase
 db.from("autos").select("*").then(({ data, error }) => {
     if (error) {
       console.error("Error cargando auto:", error);
@@ -115,7 +115,6 @@ function mostrarAuto(auto) {
   const ubicacion = escapeHtml(auto.ubicacion || "No especificada");
   const descripcion = escapeHtml(auto.descripcion || "Sin descripción");
 
-  // 👉 SEO dinámico (no lo tocamos)
   // --- SEO DINÁMICO ---
   document.title = `${marca} ${modelo} ${anio} en Paraná | Autos Paraná`;
   const canonicalHref = `https://www.autosparana.com.ar/auto.html?slug=${encodeURIComponent(String(auto.slug || "").trim())}`;
@@ -259,7 +258,7 @@ function mostrarAuto(auto) {
           <p class="mt-5 text-gray-300 text-sm leading-relaxed">${descripcion}</p>
 
           ${auto.nombre_vendedor ? `
-          <div class="seller-card">
+          <a href="usuario.html?id=${encodeURIComponent(auto.user_id || "")}" class="seller-card seller-card--link">
             <div class="seller-avatar">
               ${escapeHtml(auto.nombre_vendedor.charAt(0).toUpperCase())}
             </div>
@@ -267,7 +266,8 @@ function mostrarAuto(auto) {
               <p class="text-xs text-gray-500">Publicado por</p>
               <p class="text-white font-semibold">${escapeHtml(auto.nombre_vendedor)}</p>
             </div>
-          </div>` : ""}
+            <span class="seller-card__arrow">›</span>
+          </a>` : ""}
 
           <a href="${linkWhatsApp}" target="_blank" class="btn-whatsapp">
             Consultar por WhatsApp

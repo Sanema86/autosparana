@@ -1,4 +1,4 @@
-const CACHE_NAME = "autosparana-v4";
+const CACHE_NAME = "autosparana-v5";
 const CORE_ASSETS = [
   "/",
   "/index.html",
@@ -7,13 +7,14 @@ const CORE_ASSETS = [
   "/camionetas.html",
   "/utilitarios.html",
   "/auto.html",
+  "/usuario.html",
   "/planes.html",
   "/login.html",
   "/mipanel.html",
   "/publicar.html",
   "/completar-perfil.html",
-  "/css/styles.css?v=1.1.3",
-  "/js/main.js?v=1.1.3",
+  "/css/styles.css?v=1.1.6",
+  "/js/main.js?v=1.1.6",
   "/js/auto.js",
   "/logoAP.png",
   "/logoAP.ico",

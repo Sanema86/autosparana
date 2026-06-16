@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Perfil de vendedor | Autos Paraná</title>
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#141418" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css?v=1.1.6" />
+    <link rel="icon" href="logoAP.ico" type="image/x-icon" />
+  </head>
+
+  <body class="premium-body">
+    <nav class="navbar">
+      <div class="left">
+        <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo" /></a>
+        <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+      </div>
+      <button id="menuBtn" class="menu-btn" aria-label="Menú">☰</button>
+      <div id="menu" class="menu">
+        <a id="nav-inicio" href="index.html">Inicio</a>
+        <a id="nav-autos" href="autos.html">Autos</a>
+        <a id="nav-motos" href="motos.html">Motos</a>
+        <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+        <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+        <a id="nav-planes" href="planes.html">Planes</a>
+        <a id="nav-vender" class="nav-cta" href="login.html">Publicar</a>
+      </div>
+    </nav>
+
+    <div class="page-wrap">
+
+      <!-- Header perfil -->
+      <div id="perfil-header" class="perfil-header">
+        <div class="perfil-avatar" id="perfil-avatar">?</div>
+        <div>
+          <p class="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Vendedor</p>
+          <h1 id="perfil-nombre" class="text-2xl font-bold text-white">Cargando...</h1>
+          <p id="perfil-cantidad" class="text-gray-400 text-sm mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div id="loading" class="text-center text-gray-500 py-12">Cargando publicaciones...</div>
+
+      <!-- Sin publicaciones -->
+      <div id="sin-publicaciones" class="hidden text-center py-16">
+        <p class="text-4xl mb-3">🚗</p>
+        <p class="text-gray-400">Este vendedor no tiene publicaciones activas.</p>
+        <a href="index.html" class="inline-block mt-5 text-yellow-400 hover:underline text-sm">← Volver al inicio</a>
+      </div>
+
+      <!-- Lista de publicaciones -->
+      <div id="lista" class="hidden space-y-3"></div>
+
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div>
+          <p class="footer-brand">AUTOS PARANÁ</p>
+          <p class="footer-tagline">Los mejores vehículos de Paraná y la región.</p>
+        </div>
+        <div class="footer-links">
+          <a href="autos.html">Autos</a>
+          <a href="camionetas.html">Camionetas</a>
+          <a href="motos.html">Motos</a>
+          <a href="utilitarios.html">Utilitarios</a>
+          <a href="planes.html">Planes</a>
+          <a href="login.html">Publicar</a>
+        </div>
+        <div class="footer-contact">
+          <p><a href="mailto:autosparana.ok@gmail.com">autosparana.ok@gmail.com</a></p>
+          <p><a href="https://wa.me/543435311312">WhatsApp: 3435311312</a></p>
+        </div>
+      </div>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.6</small></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=1.1.6"></script>
+    <script src="js/auth-nav.js?v=1.1.6"></script>
+    <script>
+      const params  = new URLSearchParams(window.location.search);
+      const userId  = params.get("id");
+
+      if (!userId) {
+        window.location.href = "index.html";
+      }
+
+      // ── Cargar publicaciones del usuario ──
+      db.from("autos")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .then(({ data, error }) => {
+          document.getElementById("loading").classList.add("hidden");
+
+          if (error || !data || data.length === 0) {
+            document.getElementById("sin-publicaciones").classList.remove("hidden");
+
+            // Intentar mostrar nombre aunque no tenga autos
+            document.getElementById("perfil-nombre").textContent = "Vendedor";
+            return;
+          }
+
+          // ── Nombre desde la primera publicación ──
+          const nombre = data[0].nombre_vendedor || "Vendedor";
+          document.getElementById("perfil-nombre").textContent = nombre;
+          document.getElementById("perfil-avatar").textContent = nombre.charAt(0).toUpperCase();
+          document.title = `${nombre} | Autos Paraná`;
+
+          // Filtrar solo activos (no vendidos)
+          const activos = data.filter(a => String(a.vendido || "").toUpperCase() !== "SI");
+          const total   = activos.length;
+
+          document.getElementById("perfil-cantidad").textContent =
+            total === 0 ? "Sin publicaciones activas"
+            : total === 1 ? "1 publicación activa"
+            : `${total} publicaciones activas`;
+
+          if (total === 0) {
+            document.getElementById("sin-publicaciones").classList.remove("hidden");
+            return;
+          }
+
+          // ── Renderizar lista ──
+          const lista = document.getElementById("lista");
+          lista.classList.remove("hidden");
+          lista.innerHTML = activos.map(tarjeta).join("");
+
+          // ── Menú hamburguesa ──
+          const btn  = document.getElementById("menuBtn");
+          const menu = document.getElementById("menu");
+          if (btn && menu) btn.addEventListener("click", () => menu.classList.toggle("active"));
+        });
+
+      // ── Tarjeta de publicación ──
+      function tarjeta(auto) {
+        const imagen   = auto.imagen ? auto.imagen.split(",")[0].trim() : "";
+        const precio   = Number(String(auto.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR");
+        const titulo   = `${auto.marca || ""} ${auto.modelo || ""} ${auto.año || ""}`.trim();
+        const km       = auto.km && auto.km !== "0" ? `${Number(String(auto.km).replace(/\D/g,"")).toLocaleString("es-AR")} km` : "";
+        const tipo     = (auto.tipo || "").charAt(0).toUpperCase() + (auto.tipo || "").slice(1);
+
+        const badgeDestacado = auto.destacado === "SI"
+          ? `<span class="perfil-card__badge">⭐ Destacado</span>` : "";
+
+        const badgeReservado = auto.reservado === "SI"
+          ? `<span class="perfil-card__badge perfil-card__badge--reservado">Reservado</span>` : "";
+
+        return `
+          <div class="perfil-card">
+            ${imagen
+              ? `<img src="${imagen}" alt="${titulo}" class="perfil-card__img">`
+              : `<div class="perfil-card__img perfil-card__img--placeholder">🚗</div>`
+            }
+            <div class="perfil-card__info">
+              <div class="perfil-card__badges">${badgeDestacado}${badgeReservado}</div>
+              <p class="perfil-card__titulo">${titulo}</p>
+              <p class="perfil-card__precio">$${precio}</p>
+              <p class="perfil-card__meta">${[tipo, km, auto.ubicacion].filter(Boolean).join(" · ")}</p>
+            </div>
+            <div class="perfil-card__actions">
+              <a href="auto.html?slug=${auto.slug}" class="perfil-card__btn">Ver</a>
+            </div>
+          </div>`;
+      }
+    </script>
+  </body>
+</html>
