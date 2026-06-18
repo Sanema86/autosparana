@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.1.6">
+  <link rel="stylesheet" href="css/styles.css?v=1.1.8">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -152,6 +152,13 @@
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition resize-none"></textarea>
       </div>
 
+      <!-- Nombre vendedor (solo admin) -->
+      <div id="campo-nombre-vendedor" class="hidden">
+        <label class="block text-sm text-gray-400 mb-1">Nombre vendedor <span class="text-gray-500">(perfil asociado)</span></label>
+        <input id="nombre-vendedor" type="text" placeholder="Ej: AutosGarcia, Juan Pérez..."
+          class="w-full bg-gray-900 border border-yellow-500/60 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+      </div>
+
       <button id="btn-publicar"
         class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition text-base">
         Publicar vehículo
@@ -179,8 +186,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.1.6"></script>
-  <script src="js/auth-nav.js?v=1.1.6"></script>
+  <script src="js/supabase-config.js?v=1.1.8"></script>
+  <script src="js/auth-nav.js?v=1.1.8"></script>
   <script>
     // ── Config ──
     const LIMITE_PUBLICACIONES = 3;
@@ -229,6 +236,15 @@
         if (volver) {
           volver.href = "admin.html";
           volver.textContent = "← Volver al admin";
+        }
+
+        // Mostrar campo nombre_vendedor solo para admin
+        document.getElementById("campo-nombre-vendedor").classList.remove("hidden");
+
+        // Pre-cargar si viene desde un perfil: /publicar.html?nombre_vendedor=AutosGarcia
+        const nombreParam = urlParams.get("nombre_vendedor");
+        if (nombreParam) {
+          document.getElementById("nombre-vendedor").value = nombreParam;
         }
       }
     });
@@ -517,7 +533,11 @@
           const slug = generarSlug(marca, modelo, anio);
           const hoy  = new Date().toISOString().split("T")[0];
           const metaUser = sesionUsuario.user.user_metadata || {};
-          const nombreVendedor = metaUser.full_name || metaUser.nombre || sesionUsuario.user.email;
+          const campoNombre = document.getElementById("nombre-vendedor");
+          const usandoPerfilFicticio = esAdmin(sesionUsuario) && campoNombre && campoNombre.value.trim();
+          const nombreVendedor = usandoPerfilFicticio
+            ? campoNombre.value.trim()
+            : (metaUser.full_name || metaUser.nombre || sesionUsuario.user.email);
 
           const { error } = await db.from("autos").insert({
             slug, tipo, marca, modelo,
@@ -525,7 +545,7 @@
             km: km || "0", combustible, ubicacion, telefono,
             imagen: imagenFinal, descripcion,
             destacado: "NO", vendido: "NO", reservado: "NO", intermediario: "NO",
-            user_id: sesionUsuario.user.id,
+            user_id: usandoPerfilFicticio ? null : sesionUsuario.user.id,
             fecha_inicio: hoy, dias: "365",
             nombre_vendedor: nombreVendedor,
           });

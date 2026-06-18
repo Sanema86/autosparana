@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=1.1.6">
+  <link rel="stylesheet" href="css/styles.css?v=1.1.8">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="premium-body min-h-screen flex flex-col">
@@ -15,7 +16,7 @@
   <nav class="navbar">
     <div class="left">
       <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo"></a>
-      <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+      <a class="H1NV" href="index.html"><span>AUTOS PARANÁ</span></a>
     </div>
     <button id="menuBtn" class="menu-btn" aria-label="Menú"></button>
     <div id="menu" class="menu">
@@ -44,19 +45,49 @@
       </div>
     </div>
 
-    <div class="search-wrap">
-      <input
-        type="search"
-        id="buscador-admin"
-        class="search-input"
-        placeholder="Buscar por ID, slug, marca, modelo o vendedor..."
-        autocomplete="off"
-      />
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid #2d2d35;">
+      <button id="tab-publicaciones" class="admin-tab admin-tab--active" type="button">Publicaciones</button>
+      <button id="tab-perfiles" class="admin-tab" type="button">Perfiles</button>
     </div>
-    <p id="contador-resultados" class="admin-contador"></p>
 
-    <div id="lista-admin" class="admin-lista"></div>
+    <!-- Sección Publicaciones -->
+    <div id="seccion-publicaciones">
+      <div class="search-wrap">
+        <input
+          type="search"
+          id="buscador-admin"
+          class="search-input"
+          placeholder="Buscar por ID, slug, marca, modelo o vendedor..."
+          autocomplete="off"
+        />
+      </div>
+      <p id="contador-resultados" class="admin-contador"></p>
+      <div id="lista-admin" class="admin-lista"></div>
+    </div>
+
+    <!-- Sección Perfiles -->
+    <div id="seccion-perfiles" class="hidden">
+      <div id="lista-perfiles" class="admin-lista"></div>
+    </div>
   </main>
+
+  <!-- Modal avatar perfil -->
+  <div id="modal-avatar" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+    <div class="bg-[#1e1e24] border border-yellow-500/30 rounded-2xl p-6 max-w-sm w-full text-center">
+      <h3 class="text-lg font-bold mb-1 text-white" id="modal-avatar-nombre"></h3>
+      <p class="text-gray-500 text-xs mb-4">Subir foto de perfil</p>
+      <div id="modal-avatar-preview" class="w-24 h-24 rounded-full bg-gray-800 border-2 border-yellow-500/40 flex items-center justify-center text-4xl font-bold text-yellow-400 overflow-hidden mx-auto mb-4"></div>
+      <input id="modal-avatar-input" type="file" accept="image/*" class="hidden">
+      <label for="modal-avatar-input" class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer transition mb-4">
+        Elegir imagen
+      </label>
+      <div class="flex gap-3 justify-center">
+        <button id="modal-avatar-cancelar" class="px-5 py-2 border border-gray-600 text-gray-400 rounded-lg text-sm cursor-pointer bg-transparent">Cancelar</button>
+        <button id="modal-avatar-guardar" class="hidden px-5 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg text-sm">Guardar</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast-admin" class="admin-toast hidden" role="status"></div>
 
@@ -71,8 +102,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.1.6"></script>
-  <script src="js/auth-nav.js?v=1.1.6"></script>
-  <script src="js/admin.js?v=1.1.6"></script>
+  <script src="js/supabase-config.js?v=1.1.8"></script>
+  <script src="js/auth-nav.js?v=1.1.8"></script>
+  <script src="js/admin.js?v=1.1.8"></script>
 </body>
 </html>

@@ -95,6 +95,8 @@ h3 {
   object-fit: cover;
 }
 
+
+
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -138,11 +140,7 @@ h3 {
   padding: 2.5rem 1.5rem;
   margin-bottom: 2.5rem;
   border-radius: var(--radius-xl);
-  background: linear-gradient(
-    135deg,
-    rgba(234, 179, 8, 0.08),
-    rgba(20, 20, 24, 0.9)
-  );
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.08), rgba(20, 20, 24, 0.9));
   border: 1px solid var(--border-gold);
 }
 
@@ -240,7 +238,7 @@ h3 {
   border-radius: var(--radius-lg);
   color: #fff;
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.70rem;
   transition: var(--transition);
 }
 
@@ -289,7 +287,7 @@ h3 {
   border-radius: var(--radius-lg);
   color: #d1d5db;
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.70rem;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
@@ -321,20 +319,12 @@ h3 {
   font-size: 0.65rem;
   font-weight: 700;
 }
-.filtros-badge.hidden {
-  display: none;
-}
+.filtros-badge.hidden { display: none; }
 
 /* ── PANEL DE FILTROS ──────────────────────────────── */
 @keyframes filtros-open {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .filtros-panel {
@@ -345,9 +335,7 @@ h3 {
   animation: filtros-open 0.18s ease;
 }
 
-.filtros-panel[hidden] {
-  display: none;
-}
+.filtros-panel[hidden] { display: none; }
 
 .filtros-sidebar-title {
   display: none; /* solo en desktop */
@@ -376,10 +364,7 @@ h3 {
   margin-bottom: 0.3rem;
 }
 
-.filtro-rango {
-  display: flex;
-  gap: 0.35rem;
-}
+.filtro-rango { display: flex; gap: 0.35rem; }
 
 .filtro-input {
   width: 5.8rem;
@@ -389,18 +374,13 @@ h3 {
   border-radius: var(--radius-lg);
   color: #fff;
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.70rem;
   transition: var(--transition);
 }
 
-.filtro-input--full {
-  width: 100%;
-  max-width: 13rem;
-}
+.filtro-input--full { width: 100%; max-width: 13rem; }
 
-.filtro-input::placeholder {
-  color: #6b7280;
-}
+.filtro-input::placeholder { color: #6b7280; }
 
 .filtro-input:focus {
   outline: none;
@@ -415,7 +395,7 @@ h3 {
   border-radius: var(--radius-lg);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.70rem;
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
@@ -429,22 +409,28 @@ h3 {
 
 /* ── DESKTOP: sidebar a la izquierda ──────────────── */
 
+
 /* --- GRID VEHÍCULOS --- */
 .vehicles-grid {
-  display: grid;
+   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
 .vehicles-grid-index {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
+
 
 .vehicles-grid--featured {
   gap: 1.5rem;
 }
+
+
+
+
 
 /* --- CARDS --- */
 .vehicle-card {
@@ -599,14 +585,13 @@ h3 {
 
 .H1NV {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--primary);
   text-decoration: none;
   letter-spacing: 0.03em;
 }
 
-.H1NV h1,
-.H1NV h2 {
+.H1NV span {
   font-size: inherit;
   font-weight: inherit;
   text-align: left;
@@ -771,6 +756,8 @@ h3 {
   padding: 1.5rem;
   box-shadow: var(--shadow-card);
 }
+
+
 
 .detail-gallery-main {
   width: 100%;
@@ -944,6 +931,7 @@ h3 {
   color: #fff;
 }
 
+
 /* ── PERFIL DE USUARIO ─────────────────────────────── */
 .perfil-header {
   display: flex;
@@ -968,6 +956,14 @@ h3 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .perfil-card {
@@ -1071,6 +1067,8 @@ h3 {
   color: #fff;
 }
 
+
+
 /* --- FOOTER --- */
 footer {
   margin-top: 4rem;
@@ -1086,6 +1084,8 @@ footer {
   gap: 2rem;
   text-align: center;
 }
+
+
 
 .footer-brand {
   font-weight: 800;
@@ -1178,6 +1178,8 @@ footer {
   background: var(--primary-muted);
 }
 
+
+
 @keyframes menu-in {
   from {
     opacity: 0;
@@ -1188,6 +1190,8 @@ footer {
     transform: translateY(0);
   }
 }
+
+
 
 /* --- ADMIN --- */
 .menu a.nav-admin {
@@ -1251,6 +1255,9 @@ footer {
   gap: 1rem;
   align-items: start;
 }
+
+
+
 
 .admin-card__img {
   width: 5.5rem;
@@ -1355,6 +1362,28 @@ footer {
   gap: 0.35rem;
 }
 
+.admin-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -1px;
+}
+
+.admin-tab:hover {
+  color: #fff;
+}
+
+.admin-tab--active {
+  color: #eab308;
+  border-bottom-color: #eab308;
+}
+
 .admin-btn {
   display: inline-flex;
   align-items: center;
@@ -1434,11 +1463,13 @@ footer {
 
 /* ── Cards compactas en móvil (3 columnas) ──────────────── */
 
+
 /* MODAL PLANES MPago movil*/
 
 /* ==========================================
    RESPONSIVE / MEDIA QUERIES
 ========================================== */
+
 
 /* ===== max-width: 480px ===== */
 
@@ -1484,11 +1515,12 @@ footer {
   }
 }
 
-@media (max-width: 639px) {
-  #modal-destacar {
-    z-index: 1010;
-  }
+@media 
+(max-width: 639px) {
+#modal-destacar{
+  z-index: 1010;
 }
+ }
 
 /* ===== max-width: 640px ===== */
 
@@ -1548,9 +1580,9 @@ footer {
 /* ===== min-width: 900px ===== */
 
 @media (min-width: 900px) {
-  #btn-toggle-filtros {
-    display: none;
-  }
+  #btn-toggle-filtros{
+  display: none;
+}
 
   .catalog-wrap {
     display: grid;
@@ -1575,6 +1607,7 @@ footer {
     margin-bottom: 0;
   }
 
+
   /* Filtros siempre visibles en desktop */
   .filtros-panel {
     display: block !important;
@@ -1596,20 +1629,10 @@ footer {
     align-items: flex-start;
   }
 
-  .filtro-input {
-    width: 100%;
-  }
-  .filtro-input--full {
-    max-width: 100%;
-  }
-  .filtro-rango {
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-  .filtro-limpiar {
-    width: 100%;
-    text-align: center;
-  }
+  .filtro-input { width: 100%; }
+  .filtro-input--full { max-width: 100%; }
+  .filtro-rango { flex-direction: column; gap: 0.35rem; }
+  .filtro-limpiar { width: 100%; text-align: center; }
 }
 
 /* ===== min-width: 1024px ===== */
@@ -1642,9 +1665,9 @@ footer {
 
 @media (max-width: 1140px) {
   .filtro-limpiar {
-    margin-top: 1.5rem;
-    padding: 0.2rem 0.6rem;
-  }
+  margin-top: 1.50rem;
+  padding: 0.2rem 0.6rem;
+}
 
   .precio-dest {
     font-size: 1.15rem !important;

@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.1.6">
+  <link rel="stylesheet" href="css/styles.css?v=1.1.8">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -42,6 +42,20 @@
         class="text-sm border border-gray-600 hover:border-red-500 hover:text-red-400 text-gray-400 px-4 py-2 rounded-lg transition w-fit">
         Cerrar sesión
       </button>
+    </div>
+
+    <!-- Avatar -->
+    <div class="bg-black border border-gray-700 rounded-2xl p-5 mb-6 flex items-center gap-5">
+      <div class="relative flex-shrink-0">
+        <div id="avatar-preview" class="w-20 h-20 rounded-full bg-gray-800 border-2 border-yellow-500/40 flex items-center justify-center text-3xl font-bold text-yellow-400 overflow-hidden">?</div>
+        <label for="avatar-input" class="absolute bottom-0 right-0 bg-yellow-500 hover:bg-yellow-400 text-black rounded-full w-6 h-6 flex items-center justify-center cursor-pointer text-xs font-bold transition" title="Cambiar foto">✎</label>
+        <input id="avatar-input" type="file" accept="image/*" class="hidden">
+      </div>
+      <div class="flex-1">
+        <p id="avatar-nombre" class="text-white font-semibold text-lg"></p>
+        <p id="avatar-estado" class="text-gray-500 text-xs mt-1">Sin foto de perfil</p>
+      </div>
+      <button id="btn-guardar-avatar" class="hidden bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg text-sm transition">Guardar</button>
     </div>
 
     <!-- Stats -->
@@ -89,7 +103,7 @@
           <p><a href="https://wa.me/549379123456">WhatsApp: 3435311312</a></p>
         </div>
       </div>
-      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.6</small></p>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.8</small></p>
     </footer>
 
   <!-- ── MODAL ELIMINAR ── -->
@@ -158,8 +172,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.1.6"></script>
-  <script src="js/auth-nav.js?v=1.1.6"></script>
+  <script src="js/supabase-config.js?v=1.1.8"></script>
+  <script src="js/auth-nav.js?v=1.1.8"></script>
   <script>
     // ══════════════════════════════════════════
     //  ⚙️  CONFIGURACIÓN — editá estos valores
@@ -189,6 +203,7 @@
 
       sesion = session;
       document.getElementById("usuario-email").textContent = session.user.email;
+      await cargarAvatar(session);
       await cargarPublicaciones();
     });
 
@@ -408,6 +423,111 @@
         document.getElementById("pago-info").classList.remove("hidden");
       });
     });
+
+
+    // ── Avatar ──
+    async function cargarAvatar(session) {
+      const meta = session.user.user_metadata || {};
+      const nombre = meta.full_name || meta.nombre || session.user.email;
+      document.getElementById("avatar-nombre").textContent = nombre;
+
+      // Buscar avatar en tabla perfiles
+      const { data } = await db
+        .from("perfiles")
+        .select("avatar_url")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (data?.avatar_url) {
+        document.getElementById("avatar-preview").innerHTML =
+          `<img src="${data.avatar_url}" class="w-full h-full object-cover">`;
+        document.getElementById("avatar-estado").textContent = "Foto de perfil activa";
+      } else {
+        document.getElementById("avatar-preview").textContent = nombre.charAt(0).toUpperCase();
+      }
+    }
+
+    // Previsualizar imagen al seleccionar
+    let archivoAvatar = null;
+    document.getElementById("avatar-input").addEventListener("change", (e) => {
+      const archivo = e.target.files[0];
+      if (!archivo) return;
+      archivoAvatar = archivo;
+      const url = URL.createObjectURL(archivo);
+      document.getElementById("avatar-preview").innerHTML =
+        `<img src="${url}" class="w-full h-full object-cover">`;
+      document.getElementById("btn-guardar-avatar").classList.remove("hidden");
+      document.getElementById("avatar-estado").textContent = "Sin guardar...";
+    });
+
+    // Guardar avatar en Supabase Storage
+    document.getElementById("btn-guardar-avatar").addEventListener("click", async () => {
+      if (!archivoAvatar || !sesion) return;
+
+      const btn = document.getElementById("btn-guardar-avatar");
+      btn.textContent = "Guardando...";
+      btn.disabled = true;
+
+      try {
+        // Convertir a WebP
+        const webpBlob = await convertirAWebP(archivoAvatar);
+        const path = `avatar-${sesion.user.id}.webp`;
+
+        // Subir a Storage
+        const { error: uploadError } = await db.storage
+          .from("avatares")
+          .upload(path, webpBlob, { upsert: true, contentType: "image/webp" });
+
+        if (uploadError) throw uploadError;
+
+        // Obtener URL pública
+        const { data: urlData } = db.storage.from("avatares").getPublicUrl(path);
+        const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+        // Guardar URL en tabla perfiles
+        const { error: upsertError } = await db.from("perfiles").upsert({
+          user_id: sesion.user.id,
+          nombre_vendedor: sesion.user.user_metadata?.full_name || sesion.user.email,
+          avatar_url: avatarUrl
+        }, { onConflict: "user_id" });
+
+        if (upsertError) throw upsertError;
+
+        document.getElementById("avatar-estado").textContent = "Foto de perfil activa";
+        btn.textContent = "Guardado ✓";
+        setTimeout(() => {
+          btn.classList.add("hidden");
+          btn.textContent = "Guardar";
+          btn.disabled = false;
+        }, 2000);
+
+      } catch (err) {
+        console.error(err);
+        alert("Error al guardar la foto. Intentá de nuevo.");
+        btn.textContent = "Guardar";
+        btn.disabled = false;
+      }
+    });
+
+    // Convertir imagen a WebP
+    function convertirAWebP(archivo) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(archivo);
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX = 400;
+          const ratio = Math.min(MAX / img.width, MAX / img.height);
+          canvas.width = img.width * ratio;
+          canvas.height = img.height * ratio;
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(blob => blob ? resolve(blob) : reject("Error WebP"), "image/webp", 0.85);
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
 
     // ── Cerrar sesión ──
     document.getElementById("btn-cerrar-sesion").addEventListener("click", async () => {

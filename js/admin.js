@@ -43,6 +43,26 @@ async function initAdmin() {
   });
 
   await cargarAutos();
+
+  // Tabs
+  let perfilesCargados = false;
+  document.getElementById("tab-publicaciones").addEventListener("click", () => {
+    document.getElementById("seccion-publicaciones").classList.remove("hidden");
+    document.getElementById("seccion-perfiles").classList.add("hidden");
+    document.getElementById("tab-publicaciones").classList.add("admin-tab--active");
+    document.getElementById("tab-perfiles").classList.remove("admin-tab--active");
+  });
+
+  document.getElementById("tab-perfiles").addEventListener("click", async () => {
+    document.getElementById("seccion-publicaciones").classList.add("hidden");
+    document.getElementById("seccion-perfiles").classList.remove("hidden");
+    document.getElementById("tab-perfiles").classList.add("admin-tab--active");
+    document.getElementById("tab-publicaciones").classList.remove("admin-tab--active");
+    if (!perfilesCargados) {
+      await cargarPerfiles();
+      perfilesCargados = true;
+    }
+  });
 }
 
 async function cargarAutos() {
@@ -249,4 +269,143 @@ function mostrarToast(texto, tipo) {
   mostrarToast._t = setTimeout(() => el.classList.add("hidden"), 3500);
 }
 
-document.addEventListener("DOMContentLoaded", initAdmin);
+
+// ── Perfiles (creados por admin, user_id = NULL) ──
+let perfilActivo = null;
+let archivoAvatarModal = null;
+
+async function cargarPerfiles() {
+  const lista = document.getElementById("lista-perfiles");
+  lista.innerHTML = `<p class="text-gray-500 text-center py-6">Cargando...</p>`;
+
+  const { data, error } = await db
+    .from("perfiles")
+    .select("*")
+    .is("user_id", null)
+    .order("created_at", { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    lista.innerHTML = `<p class="text-gray-500 text-center py-6">No hay perfiles creados.</p>`;
+    return;
+  }
+
+  lista.style.display = "grid";
+  lista.style.gridTemplateColumns = "repeat(5, 1fr)";
+  lista.style.gap = "0.75rem";
+  lista.style.paddingBottom = "1rem";
+
+  lista.innerHTML = data.map(p => {
+    const inicial = (p.nombre_vendedor || "?").charAt(0).toUpperCase();
+    const avatarInner = p.avatar_url
+      ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : inicial;
+    return `
+      <article class="admin-card btn-avatar-perfil"
+        data-id="${p.id}" data-nombre="${escapeHtml(p.nombre_vendedor)}" data-avatar="${p.avatar_url || ""}"
+        style="padding:1rem;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+        <div style="width:3rem;height:3rem;border-radius:50%;background:#1f2937;border:2px solid rgba(234,179,8,0.4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#eab308;overflow:hidden;">
+          ${avatarInner}
+        </div>
+        <p style="font-size:0.75rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${escapeHtml(p.nombre_vendedor)}</p>
+        <p style="font-size:0.7rem;color:#6b7280">${p.avatar_url ? "✓ Con foto" : "Sin foto"}</p>
+      </article>
+    `;
+  }).join("");
+
+  lista.querySelectorAll(".btn-avatar-perfil").forEach(btn => {
+    btn.addEventListener("click", () => abrirModalAvatar(btn.dataset));
+  });
+}
+
+function abrirModalAvatar({ id, nombre, avatar }) {
+  perfilActivo = id;
+  archivoAvatarModal = null;
+  document.getElementById("modal-avatar-nombre").textContent = nombre;
+  const preview = document.getElementById("modal-avatar-preview");
+  preview.innerHTML = avatar
+    ? `<img src="${avatar}" class="w-full h-full object-cover">`
+    : nombre.charAt(0).toUpperCase();
+  document.getElementById("modal-avatar-input").value = "";
+  document.getElementById("modal-avatar-guardar").classList.add("hidden");
+  document.getElementById("modal-avatar").classList.remove("hidden");
+}
+
+function initModalAvatar() {
+  document.getElementById("modal-avatar-input").addEventListener("change", (e) => {
+    const archivo = e.target.files[0];
+    if (!archivo) return;
+    archivoAvatarModal = archivo;
+    const url = URL.createObjectURL(archivo);
+    document.getElementById("modal-avatar-preview").innerHTML =
+      `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    document.getElementById("modal-avatar-guardar").classList.remove("hidden");
+  });
+
+  document.getElementById("modal-avatar-cancelar").addEventListener("click", () => {
+    document.getElementById("modal-avatar").classList.add("hidden");
+    perfilActivo = null;
+  });
+
+  document.getElementById("modal-avatar-guardar").addEventListener("click", async () => {
+  if (!archivoAvatarModal || !perfilActivo) return;
+  const btn = document.getElementById("modal-avatar-guardar");
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  try {
+    const webpBlob = await convertirAWebPAdmin(archivoAvatarModal);
+    const path = `perfil-${perfilActivo}.webp`;
+
+    const { error: uploadError } = await db.storage
+      .from("avatares")
+      .upload(path, webpBlob, { upsert: true, contentType: "image/webp" });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = db.storage.from("avatares").getPublicUrl(path);
+    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await db
+      .from("perfiles")
+      .update({ avatar_url: avatarUrl })
+      .eq("id", perfilActivo);
+
+    if (updateError) throw updateError;
+
+    mostrarToast("Foto guardada correctamente.", "ok");
+    document.getElementById("modal-avatar").classList.add("hidden");
+    await new Promise(r => setTimeout(r, 800));
+    await cargarPerfiles();
+  } catch (err) {
+    mostrarToast("Error al guardar la foto.", "error");
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Guardar";
+  }
+  });
+}
+
+function convertirAWebPAdmin(archivo) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(archivo);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const MAX = 400;
+      const ratio = Math.min(MAX / img.width, MAX / img.height);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject("Error WebP"), "image/webp", 0.85);
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initAdmin();
+  initModalAvatar();
+});

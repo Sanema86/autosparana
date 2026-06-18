@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css?v=1.1.6" />
+    <link rel="stylesheet" href="css/styles.css?v=1.1.8" />
     <link rel="icon" href="logoAP.ico" type="image/x-icon" />
   </head>
 
@@ -19,7 +19,7 @@
     <nav class="navbar">
       <div class="left">
         <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo" /></a>
-        <a class="H1NV" href="index.html"><h1>AUTOS PARANÁ</h1></a>
+        <a class="H1NV" href="index.html"><span>AUTOS PARANÁ</span></a>
       </div>
       <button id="menuBtn" class="menu-btn" aria-label="Menú">☰</button>
       <div id="menu" class="menu">
@@ -38,10 +38,18 @@
       <!-- Header perfil -->
       <div id="perfil-header" class="perfil-header">
         <div class="perfil-avatar" id="perfil-avatar">?</div>
-        <div>
+        <div class="flex-1">
           <p class="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Vendedor</p>
-          <h1 id="perfil-nombre" class="text-2xl font-bold text-white">Cargando...</h1>
+          <p id="perfil-nombre" class="text-2xl font-bold text-white">Cargando...</p>
           <p id="perfil-cantidad" class="text-gray-400 text-sm mt-1"></p>
+        </div>
+        <div id="btn-admin-acciones" class="hidden flex gap-2">
+          <button id="btn-eliminar-perfil" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg text-sm transition whitespace-nowrap">
+            Eliminar perfil
+          </button>
+          <a id="btn-crear-publicacion" href="#" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg text-sm transition whitespace-nowrap">
+            + Crear publicación
+          </a>
         </div>
       </div>
 
@@ -79,25 +87,30 @@
           <p><a href="https://wa.me/543435311312">WhatsApp: 3435311312</a></p>
         </div>
       </div>
-      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.6</small></p>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.8</small></p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=1.1.6"></script>
-    <script src="js/auth-nav.js?v=1.1.6"></script>
+    <script src="js/supabase-config.js?v=1.1.8"></script>
+    <script src="js/auth-nav.js?v=1.1.8"></script>
     <script>
-      const params  = new URLSearchParams(window.location.search);
-      const userId  = params.get("id");
+      const params       = new URLSearchParams(window.location.search);
+      const userId       = params.get("id");
+      const nombreParam  = params.get("nombre");
 
-      if (!userId) {
+      if (!userId && !nombreParam) {
         window.location.href = "index.html";
       }
 
       // ── Cargar publicaciones del usuario ──
-      db.from("autos")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
+      let query = db.from("autos").select("*");
+      if (nombreParam) {
+        query = query.eq("nombre_vendedor", nombreParam);
+      } else {
+        query = query.eq("user_id", userId);
+      }
+      query = query.order("created_at", { ascending: false });
+      query
         .then(({ data, error }) => {
           document.getElementById("loading").classList.add("hidden");
 
@@ -111,9 +124,74 @@
 
           // ── Nombre desde la primera publicación ──
           const nombre = data[0].nombre_vendedor || "Vendedor";
+          const userId2 = data[0].user_id || null;
           document.getElementById("perfil-nombre").textContent = nombre;
           document.getElementById("perfil-avatar").textContent = nombre.charAt(0).toUpperCase();
           document.title = `${nombre} | Autos Paraná`;
+
+          // ── Cargar avatar desde tabla perfiles ──
+          (async () => {
+            // Primero buscar perfil ficticio (user_id=NULL) con este nombre
+            const { data: perfilFicticio } = await db.from("perfiles")
+              .select("avatar_url")
+              .eq("nombre_vendedor", nombre)
+              .is("user_id", null)
+              .maybeSingle();
+
+            let avatarUrl = perfilFicticio?.avatar_url;
+
+            // Si no hay perfil ficticio, buscar por user_id
+            if (!avatarUrl && userId2) {
+              const { data: perfilReal } = await db.from("perfiles")
+                .select("avatar_url")
+                .eq("user_id", userId2)
+                .maybeSingle();
+              avatarUrl = perfilReal?.avatar_url;
+            }
+
+            if (avatarUrl) {
+              const el = document.getElementById("perfil-avatar");
+              el.textContent = "";
+              el.style.background = "transparent";
+              el.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+            }
+          })();
+
+          // ── Botones admin: solo para perfiles ficticios (user_id=NULL en perfiles) ──
+          db.auth.getSession().then(async ({ data: { session } }) => {
+            if (!session || !esAdmin(session)) return;
+
+            // Verificar si es un perfil ficticio
+            const { data: perfilFicticio } = await db.from("perfiles")
+              .select("id")
+              .eq("nombre_vendedor", nombre)
+              .is("user_id", null)
+              .maybeSingle();
+
+            if (perfilFicticio) {
+              document.getElementById("btn-admin-acciones").classList.remove("hidden");
+
+              document.getElementById("btn-crear-publicacion").href =
+                `publicar.html?nombre_vendedor=${encodeURIComponent(nombre)}`;
+
+              document.getElementById("btn-eliminar-perfil").addEventListener("click", async () => {
+                if (!confirm(`¿Eliminás todas las publicaciones de "${nombre}"?\nEsta acción no se puede deshacer.`)) return;
+
+                const { error } = await db
+                  .from("autos")
+                  .delete()
+                  .eq("nombre_vendedor", nombre)
+                  .eq("user_id", session.user.id);
+
+                if (error) {
+                  alert("Error al eliminar el perfil.");
+                } else {
+                  alert(`Perfil "${nombre}" eliminado.`);
+                  window.location.href = "admin.html";
+                }
+              });
+            }
+          });
 
           // Filtrar solo activos (no vendidos)
           const activos = data.filter(a => String(a.vendido || "").toUpperCase() !== "SI");

@@ -101,6 +101,36 @@ db.from("autos").select("*").then(({ data, error }) => {
 
     mostrarAuto(auto);
     mostrarSimilares(auto, data);
+
+    // ── Cargar avatar del vendedor ──
+    if (auto.nombre_vendedor) {
+      (async () => {
+        // Primero buscar si existe un perfil ficticio (user_id=NULL) con este nombre
+        const { data: perfilFicticio } = await db.from("perfiles")
+          .select("avatar_url")
+          .eq("nombre_vendedor", auto.nombre_vendedor)
+          .is("user_id", null)
+          .maybeSingle();
+
+        let avatarUrl = perfilFicticio?.avatar_url;
+
+        // Si no hay perfil ficticio, buscar por user_id del vendedor real
+        if (!avatarUrl && auto.user_id) {
+          const { data: perfilReal } = await db.from("perfiles")
+            .select("avatar_url")
+            .eq("user_id", auto.user_id)
+            .maybeSingle();
+          avatarUrl = perfilReal?.avatar_url;
+        }
+
+        if (avatarUrl) {
+          const el = document.getElementById("seller-avatar-img");
+          if (el) {
+            el.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+          }
+        }
+      })();
+    }
   });
 
 function mostrarAuto(auto) {
@@ -258,8 +288,8 @@ function mostrarAuto(auto) {
           <p class="mt-5 text-gray-300 text-sm leading-relaxed">${descripcion}</p>
 
           ${auto.nombre_vendedor ? `
-          <a href="usuario.html?id=${encodeURIComponent(auto.user_id || "")}" class="seller-card seller-card--link">
-            <div class="seller-avatar">
+          <a href="${auto.user_id ? `usuario.html?id=${encodeURIComponent(auto.user_id)}` : `usuario.html?nombre=${encodeURIComponent(auto.nombre_vendedor)}`}" class="seller-card seller-card--link" id="seller-card-link">
+            <div class="seller-avatar" id="seller-avatar-img">
               ${escapeHtml(auto.nombre_vendedor.charAt(0).toUpperCase())}
             </div>
             <div>
