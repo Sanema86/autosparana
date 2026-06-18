@@ -72,6 +72,10 @@ h3 {
   color: #fff;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* --- HERO --- */
 .hero {
   position: relative;
@@ -173,6 +177,31 @@ h3 {
   background: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(234, 179, 8, 0.35);
+}
+
+.btn-primary--sm {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+.btn-danger {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #f87171;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.625rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+  color: #fca5a5;
 }
 
 /* --- SECCIONES --- */
@@ -413,7 +442,7 @@ h3 {
 /* --- GRID VEHÍCULOS --- */
 .vehicles-grid {
    display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
@@ -916,6 +945,14 @@ h3 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.seller-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .similares-section {
@@ -933,138 +970,137 @@ h3 {
 
 
 /* ── PERFIL DE USUARIO ─────────────────────────────── */
-.perfil-header {
-  display: flex;
+.perfil-back {
+  display: inline-flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  margin-bottom: 1.75rem;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  transition: var(--transition);
 }
 
-.perfil-avatar {
-  width: 3.5rem;
-  height: 3.5rem;
+.perfil-back:hover {
+  color: var(--primary);
+}
+
+.perfil-back--inline {
+  margin-bottom: 0;
+  margin-top: 1.25rem;
+}
+
+.perfil-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1.75rem;
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(234, 179, 8, 0.05) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.perfil-hero::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -5%;
+  width: 45%;
+  height: 180%;
+  background: radial-gradient(ellipse, rgba(234, 179, 8, 0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.perfil-hero__avatar {
+  width: 5.5rem;
+  height: 5.5rem;
   border-radius: 50%;
   background: var(--primary);
   color: #0c0c0e;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
+  border: 3px solid rgba(234, 179, 8, 0.35);
+  box-shadow: 0 4px 20px rgba(234, 179, 8, 0.15);
+  position: relative;
+  z-index: 1;
 }
 
-.perfil-avatar img {
+.perfil-hero__avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.perfil-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.875rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  transition: var(--transition);
-}
-
-.perfil-card:hover {
-  border-color: var(--border-gold);
-}
-
-.perfil-card__img {
-  width: 5.5rem;
-  height: 4rem;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
-  flex-shrink: 0;
-}
-
-.perfil-card__img--placeholder {
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-}
-
-.perfil-card__info {
+.perfil-hero__info {
   flex: 1;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
-.perfil-card__badges {
-  display: flex;
-  gap: 0.4rem;
-  margin-bottom: 0.2rem;
-  flex-wrap: wrap;
-}
-
-.perfil-card__badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: var(--primary);
-  color: #0c0c0e;
-}
-
-.perfil-card__badge--reservado {
-  background: #1e3a5f;
-  color: #93c5fd;
-}
-
-.perfil-card__titulo {
+.perfil-hero__label {
+  font-size: 0.7rem;
   font-weight: 600;
-  color: #fff;
-  font-size: 0.95rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
 }
 
-.perfil-card__precio {
+.perfil-hero__nombre {
+  font-size: clamp(1.4rem, 4vw, 2rem);
   font-weight: 700;
-  color: var(--primary);
-  font-size: 0.9rem;
-  margin-top: 0.1rem;
-}
-
-.perfil-card__meta {
-  color: #6b7280;
-  font-size: 0.75rem;
-  margin-top: 0.15rem;
-}
-
-.perfil-card__actions {
-  flex-shrink: 0;
-}
-
-.perfil-card__btn {
-  display: inline-block;
-  padding: 0.5rem 1.1rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  color: #d1d5db;
-  font-size: 0.82rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.perfil-card__btn:hover {
-  border-color: var(--border-gold);
   color: #fff;
+  text-align: left;
+  margin: 0;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.perfil-hero__stats {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.perfil-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.perfil-loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 1rem;
+}
+
+.perfil-empty {
+  text-align: center;
+  padding: 3rem 1rem 4rem;
+}
+
+.perfil-empty__icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.perfil-empty__text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 
@@ -1302,6 +1338,16 @@ footer {
   color: #e5e7eb;
 }
 
+.admin-perfil-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-perfil-link:hover {
+  text-decoration: underline;
+}
+
 .admin-card__price {
   color: var(--primary);
   font-weight: 700;
@@ -1473,14 +1519,40 @@ footer {
 
 /* ===== max-width: 480px ===== */
 
-@media (max-width: 480px) {
-  .perfil-card__img {
-    width: 4rem;
-    height: 3.25rem;
+@media (max-width: 640px) {
+  .perfil-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.75rem 1.25rem;
   }
 
-  .perfil-card__titulo {
-    font-size: 0.85rem;
+  .perfil-hero__info {
+    width: 100%;
+  }
+
+  .perfil-hero__nombre {
+    text-align: center;
+  }
+
+  .perfil-hero__actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .perfil-hero__actions .btn-primary,
+  .perfil-hero__actions .btn-danger {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .perfil-hero__avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.65rem;
   }
 }
 

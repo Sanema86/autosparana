@@ -7,11 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#141418" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css?v=1.1.8" />
+    <link rel="stylesheet" href="css/styles.css?v=1.1.9" />
     <link rel="icon" href="logoAP.ico" type="image/x-icon" />
   </head>
 
@@ -21,7 +20,7 @@
         <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo" /></a>
         <a class="H1NV" href="index.html"><span>AUTOS PARANÁ</span></a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-label="Menú">☰</button>
+      <button id="menuBtn" class="menu-btn" aria-label="Menú"></button>
       <div id="menu" class="menu">
         <a id="nav-inicio" href="index.html">Inicio</a>
         <a id="nav-autos" href="autos.html">Autos</a>
@@ -34,38 +33,35 @@
     </nav>
 
     <div class="page-wrap">
+      <a href="index.html" class="perfil-back">← Volver al inicio</a>
 
-      <!-- Header perfil -->
-      <div id="perfil-header" class="perfil-header">
-        <div class="perfil-avatar" id="perfil-avatar">?</div>
-        <div class="flex-1">
-          <p class="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Vendedor</p>
-          <p id="perfil-nombre" class="text-2xl font-bold text-white">Cargando...</p>
-          <p id="perfil-cantidad" class="text-gray-400 text-sm mt-1"></p>
+      <header id="perfil-header" class="perfil-hero">
+        <div class="perfil-hero__avatar" id="perfil-avatar">?</div>
+        <div class="perfil-hero__info">
+          <p class="perfil-hero__label">Vendedor</p>
+          <h1 id="perfil-nombre" class="perfil-hero__nombre">Cargando...</h1>
+          <p id="perfil-cantidad" class="perfil-hero__stats"></p>
         </div>
-        <div id="btn-admin-acciones" class="hidden flex gap-2">
-          <button id="btn-eliminar-perfil" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg text-sm transition whitespace-nowrap">
-            Eliminar perfil
-          </button>
-          <a id="btn-crear-publicacion" href="#" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg text-sm transition whitespace-nowrap">
-            + Crear publicación
-          </a>
+        <div id="btn-admin-acciones" class="perfil-hero__actions hidden">
+          <button id="btn-eliminar-perfil" type="button" class="btn-danger">Eliminar perfil</button>
+          <a id="btn-crear-publicacion" href="#" class="btn-primary btn-primary--sm">+ Crear publicación</a>
         </div>
+      </header>
+
+      <div id="loading" class="perfil-loading">Cargando publicaciones...</div>
+
+      <div id="sin-publicaciones" class="perfil-empty hidden">
+        <p class="perfil-empty__icon">🚗</p>
+        <p class="perfil-empty__text">Este vendedor no tiene publicaciones activas.</p>
+        <a href="index.html" class="perfil-back perfil-back--inline">← Volver al inicio</a>
       </div>
 
-      <!-- Loading -->
-      <div id="loading" class="text-center text-gray-500 py-12">Cargando publicaciones...</div>
-
-      <!-- Sin publicaciones -->
-      <div id="sin-publicaciones" class="hidden text-center py-16">
-        <p class="text-4xl mb-3">🚗</p>
-        <p class="text-gray-400">Este vendedor no tiene publicaciones activas.</p>
-        <a href="index.html" class="inline-block mt-5 text-yellow-400 hover:underline text-sm">← Volver al inicio</a>
-      </div>
-
-      <!-- Lista de publicaciones -->
-      <div id="lista" class="hidden space-y-3"></div>
-
+      <section id="lista-section" class="hidden">
+        <div class="section-heading">
+          <h2>Publicaciones</h2>
+        </div>
+        <div id="lista" class="vehicles-grid vehicles-grid--catalog"></div>
+      </section>
     </div>
 
     <footer>
@@ -87,168 +83,152 @@
           <p><a href="https://wa.me/543435311312">WhatsApp: 3435311312</a></p>
         </div>
       </div>
-      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.8</small></p>
+      <p class="footer-copy">&copy; 2026 Autos Paraná. Todos los derechos reservados. <small>Versión 1.1.9</small></p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=1.1.8"></script>
-    <script src="js/auth-nav.js?v=1.1.8"></script>
+    <script src="js/supabase-config.js?v=1.1.9"></script>
+    <script src="js/auth-nav.js?v=1.1.9"></script>
+    <script src="js/main.js?v=1.1.9"></script>
     <script>
-      const params       = new URLSearchParams(window.location.search);
-      const userId       = params.get("id");
-      const nombreParam  = params.get("nombre");
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get("id");
+      const nombreParam = params.get("nombre");
 
       if (!userId && !nombreParam) {
         window.location.href = "index.html";
       }
 
-      // ── Cargar publicaciones del usuario ──
+      function mostrarNombrePerfil(nombre) {
+        document.getElementById("perfil-nombre").textContent = nombre;
+        document.getElementById("perfil-avatar").textContent = nombre.charAt(0).toUpperCase();
+        document.title = `${nombre} | Autos Paraná`;
+      }
+
+      async function cargarAvatar(nombre, userIdPerfil) {
+        const { data: perfilFicticio } = await db
+          .from("perfiles")
+          .select("avatar_url")
+          .eq("nombre_vendedor", nombre)
+          .is("user_id", null)
+          .maybeSingle();
+
+        let avatarUrl = perfilFicticio?.avatar_url;
+
+        if (!avatarUrl && userIdPerfil) {
+          const { data: perfilReal } = await db
+            .from("perfiles")
+            .select("avatar_url")
+            .eq("user_id", userIdPerfil)
+            .maybeSingle();
+          avatarUrl = perfilReal?.avatar_url;
+        }
+
+        if (!avatarUrl) return;
+
+        const el = document.getElementById("perfil-avatar");
+        el.textContent = "";
+        el.innerHTML = `<img src="${avatarUrl}" alt="">`;
+      }
+
+      async function initAdminPerfil(nombre) {
+        const { data: { session } } = await db.auth.getSession();
+        if (!session || !esAdmin(session)) return;
+
+        const { data: perfilFicticio } = await db
+          .from("perfiles")
+          .select("id")
+          .eq("nombre_vendedor", nombre)
+          .is("user_id", null)
+          .maybeSingle();
+
+        if (!perfilFicticio) return;
+
+        document.getElementById("btn-admin-acciones").classList.remove("hidden");
+        document.getElementById("btn-crear-publicacion").href =
+          `publicar.html?nombre_vendedor=${encodeURIComponent(nombre)}`;
+
+        document.getElementById("btn-eliminar-perfil").addEventListener("click", async () => {
+          if (
+            !confirm(
+              `¿Eliminar el perfil "${nombre}" y TODAS sus publicaciones?\n\nEsta acción no se puede deshacer.`
+            )
+          ) {
+            return;
+          }
+
+          try {
+            const { error: errorAutos } = await db
+              .from("autos")
+              .delete()
+              .eq("nombre_vendedor", nombre)
+              .is("user_id", null);
+
+            if (errorAutos) throw errorAutos;
+
+            const { error: errorPerfil } = await db
+              .from("perfiles")
+              .delete()
+              .eq("nombre_vendedor", nombre)
+              .is("user_id", null);
+
+            if (errorPerfil) throw errorPerfil;
+
+            alert(`Perfil "${nombre}" eliminado correctamente.`);
+            window.location.href = "admin.html";
+          } catch (err) {
+            console.error(err);
+            alert("Error al eliminar el perfil.");
+          }
+        });
+      }
+
       let query = db.from("autos").select("*");
       if (nombreParam) {
         query = query.eq("nombre_vendedor", nombreParam);
       } else {
         query = query.eq("user_id", userId);
       }
-      query = query.order("created_at", { ascending: false });
+
       query
+        .order("created_at", { ascending: false })
         .then(({ data, error }) => {
           document.getElementById("loading").classList.add("hidden");
 
           if (error || !data || data.length === 0) {
+            const nombreFallback = nombreParam || "Vendedor";
+            mostrarNombrePerfil(nombreFallback);
+            if (nombreParam) cargarAvatar(nombreFallback, null);
             document.getElementById("sin-publicaciones").classList.remove("hidden");
-
-            // Intentar mostrar nombre aunque no tenga autos
-            document.getElementById("perfil-nombre").textContent = "Vendedor";
             return;
           }
 
-          // ── Nombre desde la primera publicación ──
-          const nombre = data[0].nombre_vendedor || "Vendedor";
-          const userId2 = data[0].user_id || null;
-          document.getElementById("perfil-nombre").textContent = nombre;
-          document.getElementById("perfil-avatar").textContent = nombre.charAt(0).toUpperCase();
-          document.title = `${nombre} | Autos Paraná`;
+          const nombre = data[0].nombre_vendedor || nombreParam || "Vendedor";
+          const userIdPerfil = data[0].user_id || null;
 
-          // ── Cargar avatar desde tabla perfiles ──
-          (async () => {
-            // Primero buscar perfil ficticio (user_id=NULL) con este nombre
-            const { data: perfilFicticio } = await db.from("perfiles")
-              .select("avatar_url")
-              .eq("nombre_vendedor", nombre)
-              .is("user_id", null)
-              .maybeSingle();
+          mostrarNombrePerfil(nombre);
+          cargarAvatar(nombre, userIdPerfil);
+          initAdminPerfil(nombre);
 
-            let avatarUrl = perfilFicticio?.avatar_url;
-
-            // Si no hay perfil ficticio, buscar por user_id
-            if (!avatarUrl && userId2) {
-              const { data: perfilReal } = await db.from("perfiles")
-                .select("avatar_url")
-                .eq("user_id", userId2)
-                .maybeSingle();
-              avatarUrl = perfilReal?.avatar_url;
-            }
-
-            if (avatarUrl) {
-              const el = document.getElementById("perfil-avatar");
-              el.textContent = "";
-              el.style.background = "transparent";
-              el.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
-            }
-          })();
-
-          // ── Botones admin: solo para perfiles ficticios (user_id=NULL en perfiles) ──
-          db.auth.getSession().then(async ({ data: { session } }) => {
-            if (!session || !esAdmin(session)) return;
-
-            // Verificar si es un perfil ficticio
-            const { data: perfilFicticio } = await db.from("perfiles")
-              .select("id")
-              .eq("nombre_vendedor", nombre)
-              .is("user_id", null)
-              .maybeSingle();
-
-            if (perfilFicticio) {
-              document.getElementById("btn-admin-acciones").classList.remove("hidden");
-
-              document.getElementById("btn-crear-publicacion").href =
-                `publicar.html?nombre_vendedor=${encodeURIComponent(nombre)}`;
-
-              document.getElementById("btn-eliminar-perfil").addEventListener("click", async () => {
-                if (!confirm(`¿Eliminás todas las publicaciones de "${nombre}"?\nEsta acción no se puede deshacer.`)) return;
-
-                const { error } = await db
-                  .from("autos")
-                  .delete()
-                  .eq("nombre_vendedor", nombre)
-                  .eq("user_id", session.user.id);
-
-                if (error) {
-                  alert("Error al eliminar el perfil.");
-                } else {
-                  alert(`Perfil "${nombre}" eliminado.`);
-                  window.location.href = "admin.html";
-                }
-              });
-            }
-          });
-
-          // Filtrar solo activos (no vendidos)
-          const activos = data.filter(a => String(a.vendido || "").toUpperCase() !== "SI");
-          const total   = activos.length;
+          const activos = data.filter((a) => String(a.vendido || "").toUpperCase() !== "SI");
+          const total = activos.length;
 
           document.getElementById("perfil-cantidad").textContent =
-            total === 0 ? "Sin publicaciones activas"
-            : total === 1 ? "1 publicación activa"
-            : `${total} publicaciones activas`;
+            total === 0
+              ? "Sin publicaciones activas"
+              : total === 1
+                ? "1 publicación activa"
+                : `${total} publicaciones activas`;
 
           if (total === 0) {
             document.getElementById("sin-publicaciones").classList.remove("hidden");
             return;
           }
 
-          // ── Renderizar lista ──
           const lista = document.getElementById("lista");
-          lista.classList.remove("hidden");
-          lista.innerHTML = activos.map(tarjeta).join("");
-
-          // ── Menú hamburguesa ──
-          const btn  = document.getElementById("menuBtn");
-          const menu = document.getElementById("menu");
-          if (btn && menu) btn.addEventListener("click", () => menu.classList.toggle("active"));
+          lista.innerHTML = activos.map((auto) => cardListingHtml(auto)).join("");
+          document.getElementById("lista-section").classList.remove("hidden");
         });
-
-      // ── Tarjeta de publicación ──
-      function tarjeta(auto) {
-        const imagen   = auto.imagen ? auto.imagen.split(",")[0].trim() : "";
-        const precio   = Number(String(auto.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR");
-        const titulo   = `${auto.marca || ""} ${auto.modelo || ""} ${auto.año || ""}`.trim();
-        const km       = auto.km && auto.km !== "0" ? `${Number(String(auto.km).replace(/\D/g,"")).toLocaleString("es-AR")} km` : "";
-        const tipo     = (auto.tipo || "").charAt(0).toUpperCase() + (auto.tipo || "").slice(1);
-
-        const badgeDestacado = auto.destacado === "SI"
-          ? `<span class="perfil-card__badge">⭐ Destacado</span>` : "";
-
-        const badgeReservado = auto.reservado === "SI"
-          ? `<span class="perfil-card__badge perfil-card__badge--reservado">Reservado</span>` : "";
-
-        return `
-          <div class="perfil-card">
-            ${imagen
-              ? `<img src="${imagen}" alt="${titulo}" class="perfil-card__img">`
-              : `<div class="perfil-card__img perfil-card__img--placeholder">🚗</div>`
-            }
-            <div class="perfil-card__info">
-              <div class="perfil-card__badges">${badgeDestacado}${badgeReservado}</div>
-              <p class="perfil-card__titulo">${titulo}</p>
-              <p class="perfil-card__precio">$${precio}</p>
-              <p class="perfil-card__meta">${[tipo, km, auto.ubicacion].filter(Boolean).join(" · ")}</p>
-            </div>
-            <div class="perfil-card__actions">
-              <a href="auto.html?slug=${auto.slug}" class="perfil-card__btn">Ver</a>
-            </div>
-          </div>`;
-      }
     </script>
   </body>
 </html>

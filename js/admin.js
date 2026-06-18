@@ -36,7 +36,15 @@ async function initAdmin() {
     renderLista(filtrarAutos(e.target.value));
   });
 
-  document.getElementById("btn-recargar").addEventListener("click", cargarAutos);
+  document.getElementById("buscador-perfiles").addEventListener("input", (e) => {
+    renderListaPerfiles(filtrarPerfiles(e.target.value));
+  });
+
+  document.getElementById("btn-recargar").addEventListener("click", () => {
+    const enPerfiles = !document.getElementById("seccion-perfiles").classList.contains("hidden");
+    if (enPerfiles) cargarPerfiles();
+    else cargarAutos();
+  });
   document.getElementById("btn-cerrar-sesion").addEventListener("click", async () => {
     await db.auth.signOut();
     window.location.href = "index.html";
@@ -143,6 +151,24 @@ function renderLista(lista) {
   });
 }
 
+function urlPerfilVendedor(auto) {
+  if (auto.user_id) {
+    return `usuario.html?id=${encodeURIComponent(auto.user_id)}`;
+  }
+  if (auto.nombre_vendedor) {
+    return `usuario.html?nombre=${encodeURIComponent(auto.nombre_vendedor)}`;
+  }
+  return null;
+}
+
+function dueñoHtml(auto) {
+  const nombre = auto.nombre_vendedor || auto.user_id || "—";
+  const url = urlPerfilVendedor(auto);
+  const texto = escapeHtml(nombre);
+  if (!url) return texto;
+  return `<a href="${url}" class="admin-perfil-link" target="_blank" rel="noopener">${texto}</a>`;
+}
+
 function tarjetaAdmin(auto) {
   const id = escapeHtml(auto.id);
   const slug = escapeHtml(auto.slug);
@@ -162,7 +188,7 @@ function tarjetaAdmin(auto) {
           <h3 class="admin-card__title">${titulo}</h3>
           <p class="admin-card__meta"><span class="admin-label">ID</span> <code class="admin-code">${id}</code></p>
           <p class="admin-card__meta"><span class="admin-label">Slug</span> <code class="admin-code">${slug}</code></p>
-          <p class="admin-card__meta"><span class="admin-label">Dueño</span> ${escapeHtml(auto.nombre_vendedor || auto.user_id || "—")}</p>
+          <p class="admin-card__meta"><span class="admin-label">Dueño</span> ${dueñoHtml(auto)}</p>
           <p class="admin-card__price">$${Number(String(auto.precio || "0").replace(/\D/g, "")).toLocaleString("es-AR")}</p>
         </div>
         <div class="admin-card__actions">
@@ -271,6 +297,7 @@ function mostrarToast(texto, tipo) {
 
 
 // ── Perfiles (creados por admin, user_id = NULL) ──
+let perfilesCache = [];
 let perfilActivo = null;
 let archivoAvatarModal = null;
 
@@ -284,37 +311,73 @@ async function cargarPerfiles() {
     .is("user_id", null)
     .order("created_at", { ascending: false });
 
-  if (error || !data || data.length === 0) {
-    lista.innerHTML = `<p class="text-gray-500 text-center py-6">No hay perfiles creados.</p>`;
+  if (error) {
+    lista.innerHTML = `<p class="text-red-400 text-center py-6">Error al cargar: ${escapeHtml(error.message)}</p>`;
     return;
   }
 
-  lista.style.display = "grid";
-  lista.style.gridTemplateColumns = "repeat(5, 1fr)";
-  lista.style.gap = "0.75rem";
-  lista.style.paddingBottom = "1rem";
+  perfilesCache = data || [];
+  const q = document.getElementById("buscador-perfiles").value;
+  renderListaPerfiles(filtrarPerfiles(q));
+}
 
-  lista.innerHTML = data.map(p => {
-    const inicial = (p.nombre_vendedor || "?").charAt(0).toUpperCase();
-    const avatarInner = p.avatar_url
-      ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-      : inicial;
-    return `
-      <article class="admin-card btn-avatar-perfil"
-        data-id="${p.id}" data-nombre="${escapeHtml(p.nombre_vendedor)}" data-avatar="${p.avatar_url || ""}"
-        style="padding:1rem;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
-        <div style="width:3rem;height:3rem;border-radius:50%;background:#1f2937;border:2px solid rgba(234,179,8,0.4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#eab308;overflow:hidden;">
-          ${avatarInner}
-        </div>
-        <p style="font-size:0.75rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${escapeHtml(p.nombre_vendedor)}</p>
-        <p style="font-size:0.7rem;color:#6b7280">${p.avatar_url ? "✓ Con foto" : "Sin foto"}</p>
-      </article>
-    `;
-  }).join("");
+function filtrarPerfiles(texto) {
+  const t = String(texto || "").trim().toLowerCase();
+  if (!t) return perfilesCache;
 
-  lista.querySelectorAll(".btn-avatar-perfil").forEach(btn => {
+  return perfilesCache.filter((p) => {
+    const id = String(p.id || "").toLowerCase();
+    const nombre = String(p.nombre_vendedor || "").toLowerCase();
+    return id.includes(t) || nombre.includes(t);
+  });
+}
+
+function renderListaPerfiles(lista) {
+  const cont = document.getElementById("lista-perfiles");
+  document.getElementById("contador-perfiles").textContent =
+    `${lista.length} perfil${lista.length === 1 ? "" : "es"}`;
+
+  if (perfilesCache.length === 0) {
+    cont.innerHTML = `<p class="text-gray-500 text-center py-6">No hay perfiles creados.</p>`;
+    return;
+  }
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<p class="text-gray-500 text-center py-6">No se encontraron perfiles.</p>`;
+    return;
+  }
+
+  cont.style.display = "grid";
+  cont.style.gridTemplateColumns = "repeat(5, 1fr)";
+  cont.style.gap = "0.75rem";
+  cont.style.paddingBottom = "1rem";
+
+  cont.innerHTML = lista.map((p) => tarjetaPerfil(p)).join("");
+
+  cont.querySelectorAll(".btn-avatar-perfil").forEach((btn) => {
     btn.addEventListener("click", () => abrirModalAvatar(btn.dataset));
   });
+}
+
+function tarjetaPerfil(p) {
+  const id = escapeHtml(p.id);
+  const nombre = escapeHtml(p.nombre_vendedor);
+  const inicial = (p.nombre_vendedor || "?").charAt(0).toUpperCase();
+  const avatarInner = p.avatar_url
+    ? `<img src="${escapeHtml(p.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : inicial;
+
+  return `
+    <article class="admin-card btn-avatar-perfil"
+      data-id="${id}" data-nombre="${nombre}" data-avatar="${escapeHtml(p.avatar_url || "")}"
+      style="padding:1rem;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+      <div style="width:3rem;height:3rem;border-radius:50%;background:#1f2937;border:2px solid rgba(234,179,8,0.4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#eab308;overflow:hidden;">
+        ${avatarInner}
+      </div>
+      <p style="font-size:0.75rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${nombre}</p>
+      <p style="font-size:0.7rem;color:#6b7280">${p.avatar_url ? "✓ Con foto" : "Sin foto"}</p>
+    </article>
+  `;
 }
 
 function abrirModalAvatar({ id, nombre, avatar }) {
@@ -347,42 +410,42 @@ function initModalAvatar() {
   });
 
   document.getElementById("modal-avatar-guardar").addEventListener("click", async () => {
-  if (!archivoAvatarModal || !perfilActivo) return;
-  const btn = document.getElementById("modal-avatar-guardar");
-  btn.disabled = true;
-  btn.textContent = "Guardando...";
+    if (!archivoAvatarModal || !perfilActivo) return;
+    const btn = document.getElementById("modal-avatar-guardar");
+    btn.disabled = true;
+    btn.textContent = "Guardando...";
 
-  try {
-    const webpBlob = await convertirAWebPAdmin(archivoAvatarModal);
-    const path = `perfil-${perfilActivo}.webp`;
+    try {
+      const webpBlob = await convertirAWebPAdmin(archivoAvatarModal);
+      const path = `perfil-${perfilActivo}.webp`;
 
-    const { error: uploadError } = await db.storage
-      .from("avatares")
-      .upload(path, webpBlob, { upsert: true, contentType: "image/webp" });
+      const { error: uploadError } = await db.storage
+        .from("avatares")
+        .upload(path, webpBlob, { upsert: true, contentType: "image/webp" });
 
-    if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
-    const { data: urlData } = db.storage.from("avatares").getPublicUrl(path);
-    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+      const { data: urlData } = db.storage.from("avatares").getPublicUrl(path);
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
 
-    const { error: updateError } = await db
-      .from("perfiles")
-      .update({ avatar_url: avatarUrl })
-      .eq("id", perfilActivo);
+      const { error: updateError } = await db
+        .from("perfiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("id", perfilActivo);
 
-    if (updateError) throw updateError;
+      if (updateError) throw updateError;
 
-    mostrarToast("Foto guardada correctamente.", "ok");
-    document.getElementById("modal-avatar").classList.add("hidden");
-    await new Promise(r => setTimeout(r, 800));
-    await cargarPerfiles();
-  } catch (err) {
-    mostrarToast("Error al guardar la foto.", "error");
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Guardar";
-  }
+      mostrarToast("Foto guardada correctamente.", "ok");
+      document.getElementById("modal-avatar").classList.add("hidden");
+      await new Promise((r) => setTimeout(r, 800));
+      await cargarPerfiles();
+    } catch (err) {
+      mostrarToast("Error al guardar la foto.", "error");
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Guardar";
+    }
   });
 }
 

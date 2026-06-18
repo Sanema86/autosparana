@@ -539,6 +539,26 @@
             ? campoNombre.value.trim()
             : (metaUser.full_name || metaUser.nombre || sesionUsuario.user.email);
 
+            if (usandoPerfilFicticio) {
+  const { data: existente } = await db
+    .from("perfiles")
+    .select("id")
+    .eq("nombre_vendedor", nombreVendedor)
+    .is("user_id", null)
+    .maybeSingle();
+
+  if (!existente) {
+    const { error: perfilError } = await db
+      .from("perfiles")
+      .insert({
+        user_id: null,
+        nombre_vendedor: nombreVendedor
+      });
+
+    if (perfilError) throw perfilError;
+  }
+}
+
           const { error } = await db.from("autos").insert({
             slug, tipo, marca, modelo,
             "año": anio, precio,

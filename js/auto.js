@@ -126,7 +126,7 @@ db.from("autos").select("*").then(({ data, error }) => {
         if (avatarUrl) {
           const el = document.getElementById("seller-avatar-img");
           if (el) {
-            el.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+            el.innerHTML = `<img src="${avatarUrl}" alt="">`;
           }
         }
       })();
