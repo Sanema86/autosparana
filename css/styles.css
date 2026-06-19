@@ -89,6 +89,7 @@ h3 {
   position: relative;
   width: 100%;
   height: 14rem;
+  overflow: hidden;
 }
 
 .hero-slider img {
@@ -1155,7 +1156,8 @@ footer {
 .footer-contact p {
   color: var(--text-muted);
   font-size: 0.9rem;
-  margin-bottom: 0.25rem;
+  overflow-wrap: anywhere;
+  margin-bottom: 0.3rem;
 }
 
 .footer-contact a {
@@ -1677,6 +1679,7 @@ footer {
 .vehicle-card--featured .vehicle-card__body {
   padding: 0.1rem 0.5rem 0.1rem;
 }
+
 }
 
 /* ===== max-width: 768px ===== */
@@ -1687,7 +1690,8 @@ footer {
   }
 
   .hero-slider {
-    height: 22rem;
+    width: 100%;
+    height: 14rem;
   }
 }
 
@@ -1824,3 +1828,7 @@ footer {
     text-align: center;
   }
 }
+
+/* * {
+  outline: 1px solid red;
+} */
