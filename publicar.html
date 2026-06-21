@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.2.0">
+  <link rel="stylesheet" href="css/styles.css?v=1.1.9">
   <link rel="icon" href="logoAP.ico" type="image/x-icon">
 </head>
 
@@ -186,8 +186,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.2.0"></script>
-  <script src="js/auth-nav.js?v=1.2.0"></script>
+  <script src="js/supabase-config.js?v=1.1.9"></script>
+  <script src="js/auth-nav.js?v=1.1.9"></script>
   <script>
     // ── Config ──
     const LIMITE_PUBLICACIONES = 3;
@@ -275,7 +275,7 @@
       document.getElementById("modelo").value = data.modelo || "";
       document.getElementById("anio").value = data.año || "";
       document.getElementById("precio").value = data.precio || "";
-      document.getElementById("km").value = data.km || "0";
+      document.getElementById("km").value = data.km ?? "";
       document.getElementById("combustible").value = data.combustible || "";
       document.getElementById("ubicacion").value = data.ubicacion || "";
       document.getElementById("telefono").value = data.telefono || "";
@@ -507,7 +507,7 @@
           const { error } = await db.from("autos").update({
             tipo, marca, modelo,
             "año": anio, precio,
-            km: km || "0", combustible, ubicacion, telefono,
+            km: km, combustible, ubicacion, telefono,
             imagen: imagenFinal, descripcion,
           }).eq("id", autoEnEdicion.id);
 
@@ -562,7 +562,7 @@
           const { error } = await db.from("autos").insert({
             slug, tipo, marca, modelo,
             "año": anio, precio,
-            km: km || "0", combustible, ubicacion, telefono,
+            km: km, combustible, ubicacion, telefono,
             imagen: imagenFinal, descripcion,
             destacado: "NO", vendido: "NO", reservado: "NO", intermediario: "NO",
             user_id: usandoPerfilFicticio ? null : sesionUsuario.user.id,

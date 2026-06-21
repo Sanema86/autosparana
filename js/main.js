@@ -98,6 +98,9 @@ function cardFeaturedHtml(auto) {
   const modelo = escapeHtml(auto.modelo);
   const anio = escapeHtml(auto.año);
   const ubicacion = escapeHtml(auto.ubicacion || "");
+  const kmRaw = String(auto.km ?? "").trim();
+  const kmNum = Number(kmRaw.replace(/\D/g, ""));
+  const km = kmRaw === "" ? "" : `${kmNum.toLocaleString("es-AR")} km`;
   const imagenPrincipal = safeHttpUrl(
     auto.imagen ? auto.imagen.split(",")[0].trim() : "",
     ""
@@ -123,7 +126,7 @@ function cardFeaturedHtml(auto) {
 
       <div class="vehicle-card__body">
         <h3 class="vehicle-card__title">${marca} ${modelo}</h3>
-        <p class="vehicle-card__meta">${anio}</p>
+        <p class="vehicle-card__meta">${anio}${km !== "" ? ` · ${km}` : ""}</p>
         <p class="vehicle-card__price vehicle-card__price--featured precio-dest">
           $${Number(precioLimpio).toLocaleString("es-AR")}
         </p>
@@ -142,6 +145,9 @@ function cardListingHtml(auto) {
   const modelo = escapeHtml(auto.modelo);
   const anio = escapeHtml(auto.año);
   const ubicacion = escapeHtml(auto.ubicacion || "");
+  const kmRaw = String(auto.km ?? "").trim();
+  const kmNum = Number(kmRaw.replace(/\D/g, ""));
+  const km = kmRaw === "" ? "" : `${kmNum.toLocaleString("es-AR")} km`;
   const imagenPrincipal = safeHttpUrl(
     auto.imagen ? auto.imagen.split(",")[0].trim() : "",
     ""
@@ -167,7 +173,7 @@ function cardListingHtml(auto) {
 
       <div class="vehicle-card__body">
         <h3 class="vehicle-card__title">${marca} ${modelo}</h3>
-        <p class="vehicle-card__meta">${anio}</p>
+        <p class="vehicle-card__meta">${anio}${km !== "" ? ` · ${km}` : ""}</p>
         <p class="vehicle-card__price">
           $${Number(precioLimpio).toLocaleString("es-AR")}
         </p>
