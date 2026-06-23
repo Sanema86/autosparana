@@ -1,604 +1,795 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Publicar vehículo | Autos Paraná</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=1.1.9">
-  <link rel="icon" href="logoAP.ico" type="image/x-icon">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Publicar vehículo | Autos Paraná</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css?v=1.2.0" />
+    <link rel="icon" href="logoAP.ico" type="image/x-icon" />
+  </head>
 
-<body class="premium-body min-h-screen flex flex-col">
+  <body class="premium-body min-h-screen flex flex-col">
+    <nav class="navbar">
+      <div class="left">
+        <a href="index.html"
+          ><img src="logoAP.png" alt="Logo" class="logo"
+        /></a>
+        <a class="H1NV" href="index.html"><h2>AUTOS PARANÁ</h2></a>
+      </div>
+      <button id="menuBtn" class="menu-btn">☰</button>
+      <div id="menu" class="menu">
+        <a id="nav-inicio" href="index.html">Inicio</a>
+        <a id="nav-autos" href="autos.html">Autos</a>
+        <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
+        <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
+        <a id="nav-planes" href="planes.html">Planes</a>
+        <a id="nav-motos" href="motos.html">Motos</a>
+        <a id="nav-vender" href="mipanel.html">Mi panel</a>
+      </div>
+    </nav>
 
-  <nav class="navbar">
-    <div class="left">
-      <a href="index.html"><img src="logoAP.png" alt="Logo" class="logo"></a>
-      <a class="H1NV" href="index.html"><h2>AUTOS PARANÁ</h2></a>
-    </div>
-    <button id="menuBtn" class="menu-btn">☰</button>
-    <div id="menu" class="menu">
-      <a id="nav-inicio" href="index.html">Inicio</a>
-      <a id="nav-autos" href="autos.html">Autos</a>
-      <a id="nav-camionetas" href="camionetas.html">Camionetas</a>
-      <a id="nav-utilitarios" href="utilitarios.html">Utilitarios</a>
-      <a id="nav-planes" href="planes.html">Planes</a>
-      <a id="nav-motos" href="motos.html">Motos</a>
-      <a id="nav-vender" href="mipanel.html">Mi panel</a>
-    </div>
-  </nav>
-
-  <main class="flex-1 px-4 py-10 max-w-2xl mx-auto w-full">
-
-    <div class="mb-8">
-      <a href="mipanel.html" class="text-yellow-500 text-sm hover:underline">← Volver a mi panel</a>
-      <h1 id="titulo-pagina" class="text-2xl font-bold mt-2">Publicar vehículo</h1>
-      <p id="contador-publicaciones" class="text-gray-400 text-sm mt-1"></p>
-    </div>
-
-    <div id="mensaje" class="hidden mb-5 px-4 py-3 rounded-lg text-sm font-medium"></div>
-
-    <div id="form-container" class="bg-black border border-yellow-500/40 rounded-2xl p-6 space-y-5">
-
-      <!-- Tipo -->
-      <div>
-        <label class="block text-sm text-gray-400 mb-1">Tipo de vehículo *</label>
-        <select id="tipo" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition">
-          <option value="">Seleccioná...</option>
-          <option value="auto">Auto</option>
-          <option value="moto">Moto</option>
-          <option value="camioneta">Camioneta</option>
-          <option value="utilitario">Utilitario</option>
-        </select>
+    <main class="flex-1 px-4 py-10 max-w-2xl mx-auto w-full">
+      <div class="mb-8">
+        <a href="mipanel.html" class="text-yellow-500 text-sm hover:underline"
+          >← Volver a mi panel</a
+        >
+        <h1 id="titulo-pagina" class="text-2xl font-bold mt-2">
+          Publicar vehículo
+        </h1>
+        <p id="contador-publicaciones" class="text-gray-400 text-sm mt-1"></p>
       </div>
 
-      <!-- Marca y Modelo -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Marca *</label>
-          <input id="marca" type="text" placeholder="Toyota, Ford..."
-            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Modelo *</label>
-          <input id="modelo" type="text" placeholder="Corolla, Hilux..."
-            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-        </div>
-      </div>
+      <div
+        id="mensaje"
+        class="hidden mb-5 px-4 py-3 rounded-lg text-sm font-medium"
+      ></div>
 
-      <!-- Año y Precio -->
-      <div class="grid grid-cols-2 gap-4">
+      <div
+        id="form-container"
+        class="bg-black border border-yellow-500/40 rounded-2xl p-6 space-y-5"
+      >
+        <!-- Tipo -->
         <div>
-          <label class="block text-sm text-gray-400 mb-1">Año *</label>
-          <input id="anio" type="number" placeholder="2020" min="1950" max="2030"
-            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Precio ($) *</label>
-          <input id="precio" type="number" placeholder="5000000"
-            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-        </div>
-      </div>
-
-      <!-- KM y Combustible -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Kilómetros</label>
-          <input id="km" type="number" placeholder="85000"
-            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Combustible *</label>
-          <select id="combustible" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition">
+          <label class="block text-sm text-gray-400 mb-1"
+            >Tipo de vehículo *</label
+          >
+          <select
+            id="tipo"
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition"
+          >
             <option value="">Seleccioná...</option>
-            <option value="Nafta">Nafta</option>
-            <option value="Gasoil">Gasoil</option>
-            <option value="GNC">GNC</option>
-            <option value="Eléctrico">Eléctrico</option>
-            <option value="Híbrido">Híbrido</option>
+            <option value="auto">Auto</option>
+            <option value="moto">Moto</option>
+            <option value="camioneta">Camioneta</option>
+            <option value="utilitario">Utilitario</option>
           </select>
         </div>
-      </div>
 
-      <!-- Ubicación -->
-      <div>
-        <label class="block text-sm text-gray-400 mb-1">Ubicación *</label>
-        <input id="ubicacion" type="text" placeholder="Paraná, Concordia..."
-          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-      </div>
-
-      <!-- Teléfono -->
-      <div>
-        <label class="block text-sm text-gray-400 mb-1">Teléfono de contacto</label>
-        <input id="telefono" type="tel" placeholder="3435123456"
-          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
-      </div>
-
-      <!-- IMÁGENES -->
-      <div>
-        <label class="block text-sm text-gray-400 mb-2">Fotos del vehículo <span class="text-gray-500">(máx. 5 · se comprimen automáticamente)</span></label>
-
-        <!-- Zona de carga -->
-        <div id="zona-imagenes"
-          class="border-2 border-dashed border-gray-600 hover:border-yellow-500 rounded-xl p-6 text-center cursor-pointer transition">
-          <input id="input-imagenes" type="file" multiple accept="image/*" class="hidden">
-          <p class="text-3xl mb-2">📷</p>
-          <p class="text-gray-400 text-sm">Hacé clic o arrastrá tus fotos acá</p>
-          <p class="text-gray-600 text-xs mt-1">JPG, PNG, HEIC · Se guardan como WebP comprimido</p>
-        </div>
-
-        <!-- Previews -->
-        <div id="previews" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-3"></div>
-        <p id="contador-fotos" class="text-xs text-gray-500 mt-2">0 / 5 fotos</p>
-
-        <!-- Barra de progreso de subida -->
-        <div id="progreso-container" class="hidden mt-3">
-          <div class="flex justify-between text-xs text-gray-400 mb-1">
-            <span>Subiendo fotos...</span>
-            <span id="progreso-texto">0 / 0</span>
+        <!-- Marca y Modelo -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Marca *</label>
+            <input
+              id="marca"
+              type="text"
+              placeholder="Toyota, Ford..."
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+            />
           </div>
-          <div class="bg-gray-800 rounded-full h-2">
-            <div id="progreso-barra" class="bg-yellow-500 h-2 rounded-full transition-all" style="width:0%"></div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Modelo *</label>
+            <input
+              id="modelo"
+              type="text"
+              placeholder="Corolla, Hilux..."
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+            />
           </div>
         </div>
+
+        <!-- Año y Precio -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Año *</label>
+            <input
+              id="anio"
+              type="number"
+              placeholder="2020"
+              min="1950"
+              max="2030"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+            />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Precio ($) *</label>
+            <input
+              id="precio"
+              type="number"
+              placeholder="5000000"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+            />
+          </div>
+        </div>
+
+        <!-- KM y Combustible -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Kilómetros</label>
+            <input
+              id="km"
+              type="number"
+              placeholder="85000"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+            />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1"
+              >Combustible *</label
+            >
+            <select
+              id="combustible"
+              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition"
+            >
+              <option value="">Seleccioná...</option>
+              <option value="Nafta">Nafta</option>
+              <option value="Gasoil">Gasoil</option>
+              <option value="GNC">GNC</option>
+              <option value="Eléctrico">Eléctrico</option>
+              <option value="Híbrido">Híbrido</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ubicación -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Ubicación *</label>
+          <input
+            id="ubicacion"
+            type="text"
+            placeholder="Paraná, Concordia..."
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+          />
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-1"
+            >Teléfono de contacto</label
+          >
+          <input
+            id="telefono"
+            type="tel"
+            placeholder="3435123456"
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+          />
+        </div>
+
+        <!-- IMÁGENES -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-2"
+            >Fotos del vehículo
+            <span class="text-gray-500"
+              >(máx. 5 · se comprimen automáticamente)</span
+            ></label
+          >
+
+          <!-- Zona de carga -->
+          <div
+            id="zona-imagenes"
+            class="border-2 border-dashed border-gray-600 hover:border-yellow-500 rounded-xl p-6 text-center cursor-pointer transition"
+          >
+            <input
+              id="input-imagenes"
+              type="file"
+              multiple
+              accept="image/*"
+              class="hidden"
+            />
+            <p class="text-3xl mb-2">📷</p>
+            <p class="text-gray-400 text-sm">
+              Hacé clic o arrastrá tus fotos acá
+            </p>
+            <p class="text-gray-600 text-xs mt-1">
+              JPG, PNG, HEIC · Se guardan como WebP comprimido
+            </p>
+          </div>
+
+          <!-- Previews -->
+          <div
+            id="previews"
+            class="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-3"
+          ></div>
+          <p id="contador-fotos" class="text-xs text-gray-500 mt-2">
+            0 / 5 fotos - Click en "Fijar" para establecer la principal
+          </p>
+
+          <!-- Barra de progreso de subida -->
+          <div id="progreso-container" class="hidden mt-3">
+            <div class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Subiendo fotos...</span>
+              <span id="progreso-texto">0 / 0</span>
+            </div>
+            <div class="bg-gray-800 rounded-full h-2">
+              <div
+                id="progreso-barra"
+                class="bg-yellow-500 h-2 rounded-full transition-all"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Descripción</label>
+          <textarea
+            id="descripcion"
+            rows="3"
+            placeholder="Contá el estado del vehículo, service al día, extras, etc."
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Nombre vendedor (solo admin) -->
+        <div id="campo-nombre-vendedor" class="hidden">
+          <label class="block text-sm text-gray-400 mb-1"
+            >Nombre vendedor
+            <span class="text-gray-500">(perfil asociado)</span></label
+          >
+          <input
+            id="nombre-vendedor"
+            type="text"
+            placeholder="Ej: AutosGarcia, Juan Pérez..."
+            class="w-full bg-gray-900 border border-yellow-500/60 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition"
+          />
+        </div>
+
+        <button
+          id="btn-publicar"
+          class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition text-base"
+        >
+          Publicar vehículo
+        </button>
       </div>
 
-      <!-- Descripción -->
-      <div>
-        <label class="block text-sm text-gray-400 mb-1">Descripción</label>
-        <textarea id="descripcion" rows="3" placeholder="Contá el estado del vehículo, service al día, extras, etc."
-          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition resize-none"></textarea>
+      <!-- Límite alcanzado -->
+      <div
+        id="limite-container"
+        class="hidden bg-black border border-red-500/40 rounded-2xl p-8 text-center"
+      >
+        <p class="text-4xl mb-3">🚫</p>
+        <h2 class="text-xl font-bold text-red-400 mb-2">Límite alcanzado</h2>
+        <p class="text-gray-400 mb-5">Llegaste al máximo de 3 publicaciones.</p>
+        <a
+          href="mipanel.html"
+          class="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition"
+        >
+          Ver mis publicaciones
+        </a>
       </div>
+    </main>
 
-      <!-- Nombre vendedor (solo admin) -->
-      <div id="campo-nombre-vendedor" class="hidden">
-        <label class="block text-sm text-gray-400 mb-1">Nombre vendedor <span class="text-gray-500">(perfil asociado)</span></label>
-        <input id="nombre-vendedor" type="text" placeholder="Ej: AutosGarcia, Juan Pérez..."
-          class="w-full bg-gray-900 border border-yellow-500/60 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition">
+    <footer>
+      <div class="text-white text-center">
+        <p>Contacto: autosparana.ok@gmail.com</p>
+        <p>&copy; 2026 Autos Paraná. Todos los derechos reservados.</p>
       </div>
+    </footer>
 
-      <button id="btn-publicar"
-        class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-lg transition text-base">
-        Publicar vehículo
-      </button>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=1.2.0"></script>
+    <script src="js/auth-nav.js?v=1.2.0"></script>
+    <script>
+      // ── Config ──
+      const LIMITE_PUBLICACIONES = 3;
+      const MAX_IMAGENES = 5;
+      const MAX_ANCHO_PX = 1200;
+      const CALIDAD_WEBP = 0.82;
 
-    </div>
+      let sesionUsuario = null;
+      let archivosSeleccionados = [];
+      let autoEnEdicion = null;
+      let imagenExistentes = [];
 
-    <!-- Límite alcanzado -->
-    <div id="limite-container" class="hidden bg-black border border-red-500/40 rounded-2xl p-8 text-center">
-      <p class="text-4xl mb-3">🚫</p>
-      <h2 class="text-xl font-bold text-red-400 mb-2">Límite alcanzado</h2>
-      <p class="text-gray-400 mb-5">Llegaste al máximo de 3 publicaciones.</p>
-      <a href="mipanel.html" class="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-lg transition">
-        Ver mis publicaciones
-      </a>
-    </div>
+      function actualizarContadorFotos() {
+        const contador = document.getElementById("contador-fotos");
 
-  </main>
+        if (!contador) return;
 
-  <footer>
-    <div class="text-white text-center">
-      <p>Contacto: autosparana.ok@gmail.com</p>
-      <p>&copy; 2026 Autos Paraná. Todos los derechos reservados.</p>
-    </div>
-  </footer>
+        const total = imagenExistentes.length + archivosSeleccionados.length;
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=1.1.9"></script>
-  <script src="js/auth-nav.js?v=1.1.9"></script>
-  <script>
-    // ── Config ──
-    const LIMITE_PUBLICACIONES = 3;
-    const MAX_IMAGENES         = 5;
-    const MAX_ANCHO_PX         = 1200;
-    const CALIDAD_WEBP         = 0.82;
-
-    let sesionUsuario        = null;
-    let archivosSeleccionados = [];
-    let autoEnEdicion = null;
-    let imagenExistentes = [];
-
-    // ── Obtener parámetro de URL ──
-    const urlParams = new URLSearchParams(window.location.search);
-    const autoId = urlParams.get("edit");
-
-    // ── Sesión ──
-    db.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { window.location.href = "login.html"; return; }
-
-      // Si falta nombre o teléfono (ej: login con Google), completar perfil primero
-      const metaCheck = session.user.user_metadata || {};
-      if (!esAdmin(session) && (!metaCheck.telefono || !metaCheck.full_name)) {
-        window.location.href = "completar-perfil.html";
-        return;
+        contador.textContent = `${total} / ${MAX_IMAGENES} fotos - Click en "Fijar" para establecer la principal`;
       }
 
-      sesionUsuario = session;
+      // ── Obtener parámetro de URL ──
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoId = urlParams.get("edit");
 
-      // Auto-completar teléfono desde el perfil
-      const meta = session.user.user_metadata || {};
-      if (meta.telefono) {
-        const campoTel = document.getElementById("telefono");
-        if (campoTel) campoTel.value = meta.telefono;
-      }
-
-      // Si es edición, cargar los datos del auto
-      if (autoId) {
-        await cargarAutoParaEditar(autoId, session.user.id);
-      } else {
-        await verificarLimite();
-      }
-
-      if (esAdmin(session)) {
-        const volver = document.querySelector('a[href="mipanel.html"]');
-        if (volver) {
-          volver.href = "admin.html";
-          volver.textContent = "← Volver al admin";
+      // ── Sesión ──
+      db.auth.getSession().then(async ({ data: { session } }) => {
+        if (!session) {
+          window.location.href = "login.html";
+          return;
         }
 
-        // Mostrar campo nombre_vendedor solo para admin
-        document.getElementById("campo-nombre-vendedor").classList.remove("hidden");
-
-        // Pre-cargar si viene desde un perfil: /publicar.html?nombre_vendedor=AutosGarcia
-        const nombreParam = urlParams.get("nombre_vendedor");
-        if (nombreParam) {
-          document.getElementById("nombre-vendedor").value = nombreParam;
-        }
-      }
-    });
-
-    async function cargarAutoParaEditar(id, userId) {
-      let query = db.from("autos").select("*").eq("id", id);
-      if (!esAdmin(sesionUsuario)) {
-        query = query.eq("user_id", userId);
-      }
-      const { data, error } = await query.single();
-
-      if (error || !data) {
-        alert("No se pudo cargar el vehículo para editar");
-        window.location.href = esAdmin(sesionUsuario) ? "admin.html" : "mipanel.html";
-        return;
-      }
-
-      autoEnEdicion = data;
-      document.getElementById("titulo-pagina").textContent = esAdmin(sesionUsuario)
-        ? "Editar publicación (admin)"
-        : "Editar vehículo";
-      document.getElementById("btn-publicar").textContent = "Guardar cambios";
-      document.getElementById("contador-publicaciones").textContent = "Modo edición";
-
-      // Llenar el formulario con los datos existentes
-      document.getElementById("tipo").value = data.tipo || "";
-      document.getElementById("marca").value = data.marca || "";
-      document.getElementById("modelo").value = data.modelo || "";
-      document.getElementById("anio").value = data.año || "";
-      document.getElementById("precio").value = data.precio || "";
-      document.getElementById("km").value = data.km ?? "";
-      document.getElementById("combustible").value = data.combustible || "";
-      document.getElementById("ubicacion").value = data.ubicacion || "";
-      document.getElementById("telefono").value = data.telefono || "";
-      document.getElementById("descripcion").value = data.descripcion || "";
-
-      // Cargar imágenes existentes
-      if (data.imagen) {
-        imagenExistentes = data.imagen.split(",").filter(url => url.trim());
-        mostrarImagenesExistentes();
-      }
-    }
-
-    function mostrarImagenesExistentes() {
-      const container = document.getElementById("previews");
-      const contador  = document.getElementById("contador-fotos");
-      container.innerHTML = "";
-
-      imagenExistentes.forEach((url, i) => {
-        const div = document.createElement("div");
-        div.className = "relative";
-        div.innerHTML = `
-          <img src="${url}" alt="preview" class="w-full h-20 object-cover rounded-lg">
-          <button type="button" data-url="${url}"
-            class="btn-rm-existente absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transition">×</button>
-          ${i === 0 ? '<span class="absolute bottom-1 left-1 text-xs bg-black/70 text-yellow-400 px-1 rounded">Principal</span>' : ""}
-        `;
-        container.appendChild(div);
-      });
-
-      container.querySelectorAll(".btn-rm-existente").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const url = btn.dataset.url;
-          imagenExistentes = imagenExistentes.filter(u => u !== url);
-          mostrarImagenesExistentes();
-          actualizarContadorFotos();
-        });
-      });
-
-      actualizarContadorFotos();
-    }
-
-    function actualizarContadorFotos() {
-      const contador  = document.getElementById("contador-fotos");
-      const total = imagenExistentes.length + archivosSeleccionados.length;
-      if (contador) contador.textContent = `${total} / ${MAX_IMAGENES} fotos`;
-    }
-
-
-    async function verificarLimite() {
-      const el = document.getElementById("contador-publicaciones");
-      if (esAdmin(sesionUsuario)) {
-        if (el) el.textContent = "Admin: publicaciones ilimitadas";
-        return;
-      }
-
-      const { data } = await db.from("autos").select("id").eq("user_id", sesionUsuario.user.id);
-      const cantidad = data ? data.length : 0;
-      if (el) el.textContent = `Publicaciones: ${cantidad} / ${LIMITE_PUBLICACIONES}`;
-      if (cantidad >= LIMITE_PUBLICACIONES) {
-        document.getElementById("form-container").classList.add("hidden");
-        document.getElementById("limite-container").classList.remove("hidden");
-      }
-    }
-
-    // ── Zona de imágenes ──
-    const zona  = document.getElementById("zona-imagenes");
-    const input = document.getElementById("input-imagenes");
-
-    zona.addEventListener("click", () => input.click());
-
-    zona.addEventListener("dragover",  (e) => { e.preventDefault(); zona.classList.add("border-yellow-500"); });
-    zona.addEventListener("dragleave", ()  => zona.classList.remove("border-yellow-500"));
-    zona.addEventListener("drop", (e) => {
-      e.preventDefault();
-      zona.classList.remove("border-yellow-500");
-      agregarArchivos(Array.from(e.dataTransfer.files));
-    });
-
-    input.addEventListener("change", (e) => agregarArchivos(Array.from(e.target.files)));
-
-    function agregarArchivos(nuevos) {
-      const validos = nuevos.filter(f => f.type.startsWith("image/"));
-      const espacioDisponible = MAX_IMAGENES - imagenExistentes.length;
-      archivosSeleccionados = [...archivosSeleccionados, ...validos].slice(0, espacioDisponible);
-      mostrarPreviews();
-    }
-
-    function mostrarPreviews() {
-      const container = document.getElementById("previews");
-      const contador  = document.getElementById("contador-fotos");
-      container.innerHTML = "";
-
-      // Primero mostrar imágenes existentes
-      imagenExistentes.forEach((url, i) => {
-        const div = document.createElement("div");
-        div.className = "relative";
-        div.innerHTML = `
-          <img src="${url}" alt="preview" class="w-full h-20 object-cover rounded-lg opacity-75">
-          <button type="button" data-url="${url}"
-            class="btn-rm-existente absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transition">×</button>
-          ${i === 0 && archivosSeleccionados.length === 0 ? '<span class="absolute bottom-1 left-1 text-xs bg-black/70 text-yellow-400 px-1 rounded">Principal</span>' : ""}
-        `;
-        container.appendChild(div);
-      });
-
-      container.querySelectorAll(".btn-rm-existente").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const url = btn.dataset.url;
-          imagenExistentes = imagenExistentes.filter(u => u !== url);
-          mostrarPreviews();
-        });
-      });
-
-      // Luego mostrar archivos nuevos
-      archivosSeleccionados.forEach((file, i) => {
-        const url = URL.createObjectURL(file);
-        const div = document.createElement("div");
-        div.className = "relative";
-        div.innerHTML = `
-          <img src="${url}" alt="preview" class="w-full h-20 object-cover rounded-lg">
-          <button type="button" data-i="${i}"
-            class="btn-rm absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transition">×</button>
-          ${imagenExistentes.length === 0 && i === 0 ? '<span class="absolute bottom-1 left-1 text-xs bg-black/70 text-yellow-400 px-1 rounded">Principal</span>' : ""}
-        `;
-        container.appendChild(div);
-      });
-
-      container.querySelectorAll(".btn-rm").forEach(btn => {
-        btn.addEventListener("click", () => {
-          archivosSeleccionados.splice(parseInt(btn.dataset.i), 1);
-          mostrarPreviews();
-        });
-      });
-
-      actualizarContadorFotos();
-    }
-
-    // ── Compresión WebP ──
-    async function comprimirWebP(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const scale  = Math.min(1, MAX_ANCHO_PX / img.width);
-            const canvas = document.createElement("canvas");
-            canvas.width  = Math.round(img.width  * scale);
-            canvas.height = Math.round(img.height * scale);
-            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob(resolve, "image/webp", CALIDAD_WEBP);
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // ── Subida a Supabase Storage ──
-    async function subirImagenes(userId) {
-      const urls      = [];
-      const total     = archivosSeleccionados.length;
-      const container = document.getElementById("progreso-container");
-      const barra     = document.getElementById("progreso-barra");
-      const texto     = document.getElementById("progreso-texto");
-
-      if (total > 0) container.classList.remove("hidden");
-
-      for (let i = 0; i < total; i++) {
-        if (texto) texto.textContent = `${i + 1} / ${total}`;
-        if (barra) barra.style.width = `${Math.round(((i) / total) * 100)}%`;
-
-        const blob   = await comprimirWebP(archivosSeleccionados[i]);
-        const nombre = `${userId}/${Date.now()}-${i}.webp`;
-
-        const { error } = await db.storage.from("vehiculos").upload(nombre, blob, { contentType: "image/webp" });
-        if (error) throw error;
-
-        const { data: { publicUrl } } = db.storage.from("vehiculos").getPublicUrl(nombre);
-        urls.push(publicUrl);
-      }
-
-      if (barra) barra.style.width = "100%";
-      return urls;
-    }
-
-    // ── Generar slug ──
-    function generarSlug(marca, modelo, anio) {
-      return `${marca}-${modelo}-${anio}`
-        .toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") + `-${Date.now()}`;
-    }
-
-    // ── Publicar/Editar ──
-    document.getElementById("btn-publicar").addEventListener("click", async () => {
-      const tipo        = document.getElementById("tipo").value.trim();
-      const marca       = document.getElementById("marca").value.trim();
-      const modelo      = document.getElementById("modelo").value.trim();
-      const anio        = document.getElementById("anio").value.trim();
-      const precio      = document.getElementById("precio").value.trim();
-      const km          = document.getElementById("km").value.trim();
-      const combustible = document.getElementById("combustible").value.trim();
-      const ubicacion   = document.getElementById("ubicacion").value.trim();
-      const telefono    = document.getElementById("telefono").value.trim();
-      const descripcion = document.getElementById("descripcion").value.trim();
-
-      if (!tipo || !marca || !modelo || !anio || !precio || !combustible || !ubicacion) {
-        mostrarMensaje("Completá los campos obligatorios (*)", "error"); return;
-      }
-
-      const btn = document.getElementById("btn-publicar");
-      const esEdicion = autoEnEdicion !== null;
-      btn.disabled = true;
-      btn.textContent = esEdicion ? "Guardando..." : "Publicando...";
-
-      try {
-        // Procesar imágenes nuevas
-        let urlsNuevas = [];
-        if (archivosSeleccionados.length > 0) {
-          btn.textContent = "Subiendo fotos...";
-          urlsNuevas = await subirImagenes(sesionUsuario.user.id);
+        // Si falta nombre o teléfono (ej: login con Google), completar perfil primero
+        const metaCheck = session.user.user_metadata || {};
+        if (
+          !esAdmin(session) &&
+          (!metaCheck.telefono || !metaCheck.full_name)
+        ) {
+          window.location.href = "completar-perfil.html";
+          return;
         }
 
-        // Combinar imágenes existentes con nuevas
-        const imagenFinal = [...imagenExistentes, ...urlsNuevas].join(",");
+        sesionUsuario = session;
 
-        if (esEdicion) {
-          // Modo edición: actualizar el registro
-          const { error } = await db.from("autos").update({
-            tipo, marca, modelo,
-            "año": anio, precio,
-            km: km, combustible, ubicacion, telefono,
-            imagen: imagenFinal, descripcion,
-          }).eq("id", autoEnEdicion.id);
+        // Auto-completar teléfono desde el perfil
+        const meta = session.user.user_metadata || {};
+        if (meta.telefono) {
+          const campoTel = document.getElementById("telefono");
+          if (campoTel) campoTel.value = meta.telefono;
+        }
 
-          if (error) throw error;
-          mostrarMensaje("✅ ¡Cambios guardados con éxito!", "ok");
+        // Si es edición, cargar los datos del auto
+        if (autoId) {
+          await cargarAutoParaEditar(autoId, session.user.id);
         } else {
-          // Chequeo doble justo antes de insertar (evita bug de pestañas múltiples)
-          if (!esAdmin(sesionUsuario)) {
-            const { data: check } = await db
-              .from("autos")
-              .select("id")
-              .eq("user_id", sesionUsuario.user.id);
+          await verificarLimite();
+        }
 
-            if (check && check.length >= LIMITE_PUBLICACIONES) {
-              mostrarMensaje("Límite de publicaciones alcanzado.", "error");
-              btn.disabled    = false;
-              btn.textContent = "Publicar vehículo";
-              return;
-            }
+        if (esAdmin(session)) {
+          const volver = document.querySelector('a[href="mipanel.html"]');
+          if (volver) {
+            volver.href = "admin.html";
+            volver.textContent = "← Volver al admin";
           }
 
-          // Modo nuevo: insertar registro
-          const slug = generarSlug(marca, modelo, anio);
-          const hoy  = new Date().toISOString().split("T")[0];
-          const metaUser = sesionUsuario.user.user_metadata || {};
-          const campoNombre = document.getElementById("nombre-vendedor");
-          const usandoPerfilFicticio = esAdmin(sesionUsuario) && campoNombre && campoNombre.value.trim();
-          const nombreVendedor = usandoPerfilFicticio
-            ? campoNombre.value.trim()
-            : (metaUser.full_name || metaUser.nombre || sesionUsuario.user.email);
+          // Mostrar campo nombre_vendedor solo para admin
+          document
+            .getElementById("campo-nombre-vendedor")
+            .classList.remove("hidden");
 
-            if (usandoPerfilFicticio) {
-  const { data: existente } = await db
-    .from("perfiles")
-    .select("id")
-    .eq("nombre_vendedor", nombreVendedor)
-    .is("user_id", null)
-    .maybeSingle();
-
-  if (!existente) {
-    const { error: perfilError } = await db
-      .from("perfiles")
-      .insert({
-        user_id: null,
-        nombre_vendedor: nombreVendedor
+          // Pre-cargar si viene desde un perfil: /publicar.html?nombre_vendedor=AutosGarcia
+          const nombreParam = urlParams.get("nombre_vendedor");
+          if (nombreParam) {
+            document.getElementById("nombre-vendedor").value = nombreParam;
+          }
+        }
       });
 
-    if (perfilError) throw perfilError;
-  }
-}
+      async function cargarAutoParaEditar(id, userId) {
+        let query = db.from("autos").select("*").eq("id", id);
+        if (!esAdmin(sesionUsuario)) {
+          query = query.eq("user_id", userId);
+        }
+        const { data, error } = await query.single();
 
-          const { error } = await db.from("autos").insert({
-            slug, tipo, marca, modelo,
-            "año": anio, precio,
-            km: km, combustible, ubicacion, telefono,
-            imagen: imagenFinal, descripcion,
-            destacado: "NO", vendido: "NO", reservado: "NO", intermediario: "NO",
-            user_id: usandoPerfilFicticio ? null : sesionUsuario.user.id,
-            fecha_inicio: hoy, dias: "365",
-            nombre_vendedor: nombreVendedor,
-          });
-
-          if (error) throw error;
-          mostrarMensaje("✅ ¡Vehículo publicado con éxito!", "ok");
+        if (error || !data) {
+          alert("No se pudo cargar el vehículo para editar");
+          window.location.href = esAdmin(sesionUsuario)
+            ? "admin.html"
+            : "mipanel.html";
+          return;
         }
 
-        setTimeout(
-          () => window.location.href = esAdmin(sesionUsuario) ? "admin.html" : "mipanel.html",
-          1800
-        );
+        autoEnEdicion = data;
+        document.getElementById("titulo-pagina").textContent = esAdmin(
+          sesionUsuario,
+        )
+          ? "Editar publicación (admin)"
+          : "Editar vehículo";
+        document.getElementById("btn-publicar").textContent = "Guardar cambios";
+        document.getElementById("contador-publicaciones").textContent =
+          "Modo edición";
 
-      } catch (err) {
-        console.error(err);
-        mostrarMensaje("Error al guardar. Intentá de nuevo.", "error");
+        // Llenar el formulario con los datos existentes
+        document.getElementById("tipo").value = data.tipo || "";
+        document.getElementById("marca").value = data.marca || "";
+        document.getElementById("modelo").value = data.modelo || "";
+        document.getElementById("anio").value = data.año || "";
+        document.getElementById("precio").value = data.precio || "";
+        document.getElementById("km").value = data.km ?? "";
+        document.getElementById("combustible").value = data.combustible || "";
+        document.getElementById("ubicacion").value = data.ubicacion || "";
+        document.getElementById("telefono").value = data.telefono || "";
+        document.getElementById("descripcion").value = data.descripcion || "";
+
+        // Cargar imágenes existentes
+        if (data.imagen) {
+          imagenExistentes = data.imagen.split(",").filter((url) => url.trim());
+          mostrarPreviews();
+        }
       }
 
-      btn.disabled = false;
-      btn.textContent = esEdicion ? "Guardar cambios" : "Publicar vehículo";
-    });
 
-    function mostrarMensaje(texto, tipo) {
-      const el = document.getElementById("mensaje");
-      el.textContent = texto;
-      el.className = tipo === "error"
-        ? "mb-5 px-4 py-3 rounded-lg text-sm font-medium bg-red-900/50 border border-red-500 text-red-300"
-        : "mb-5 px-4 py-3 rounded-lg text-sm font-medium bg-green-900/50 border border-green-500 text-green-300";
-      el.classList.remove("hidden");
-      el.scrollIntoView({ behavior: "smooth" });
-    }
 
-  </script>
+      // ── Zona de imágenes ──
+      const zona = document.getElementById("zona-imagenes");
+      const input = document.getElementById("input-imagenes");
 
-</body>
+      zona.addEventListener("click", () => input.click());
+
+      zona.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        zona.classList.add("border-yellow-500");
+      });
+      zona.addEventListener("dragleave", () =>
+        zona.classList.remove("border-yellow-500"),
+      );
+      zona.addEventListener("drop", (e) => {
+        e.preventDefault();
+        zona.classList.remove("border-yellow-500");
+        agregarArchivos(Array.from(e.dataTransfer.files));
+      });
+
+      input.addEventListener("change", (e) =>
+        agregarArchivos(Array.from(e.target.files)),
+      );
+
+      function agregarArchivos(nuevos) {
+        const validos = nuevos.filter((f) => f.type.startsWith("image/"));
+
+        const espacioDisponible =
+          MAX_IMAGENES - imagenExistentes.length - archivosSeleccionados.length;
+
+        if (espacioDisponible <= 0) return;
+
+        archivosSeleccionados.push(...validos.slice(0, espacioDisponible));
+
+        mostrarPreviews();
+      }
+
+      function mostrarPreviews() {
+        const container = document.getElementById("previews");
+        container.innerHTML = "";
+
+        // ── Renderizar imágenes existentes ──
+        imagenExistentes.forEach((url, i) => {
+          const div = document.createElement("div");
+          div.className = "relative";
+
+          const esExistenteYPrimera = i === 0;
+          const esExistenteYNoFirst = i > 0;
+
+          div.innerHTML = `
+            <img src="${url}" alt="preview" class="w-full h-20 object-cover rounded-lg ${imagenExistentes.length > 0 && archivosSeleccionados.length > 0 ? 'opacity-75' : ''}">
+            <button type="button" data-url="${url}"
+              class="btn-rm-existente absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transition">×</button>
+            ${
+              esExistenteYPrimera
+                ? '<span class="absolute bottom-1 left-1 text-xs bg-black/70 text-yellow-400 px-1 rounded">⭐</span>'
+                : esExistenteYNoFirst
+                ? `<button type="button" data-i="${i}"
+                     class="btn-principal-existente absolute bottom-1 left-1 text-xs bg-black/70 text-white px-1 rounded hover:bg-yellow-500 hover:text-black">
+                     FIJAR
+                   </button>`
+                : ''
+            }
+          `;
+
+          container.appendChild(div);
+        });
+
+        // ── Listeners para imágenes existentes ──
+        container.querySelectorAll(".btn-rm-existente").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            imagenExistentes = imagenExistentes.filter((u) => u !== btn.dataset.url);
+            mostrarPreviews();
+            actualizarContadorFotos();
+          });
+        });
+
+        container.querySelectorAll(".btn-principal-existente").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const index = parseInt(btn.dataset.i);
+            const foto = imagenExistentes[index];
+            imagenExistentes.splice(index, 1);
+            imagenExistentes.unshift(foto);
+            mostrarPreviews();
+          });
+        });
+
+        // ── Renderizar archivos nuevos ──
+        archivosSeleccionados.forEach((file, i) => {
+          const url = URL.createObjectURL(file);
+          const div = document.createElement("div");
+          div.className = "relative";
+
+          const esNuevaYPrimera = imagenExistentes.length === 0 && i === 0;
+          const esNuevaYNoFirst = !(imagenExistentes.length === 0 && i === 0);
+
+          div.innerHTML = `
+            <img src="${url}" alt="preview" class="w-full h-20 object-cover rounded-lg">
+            <button type="button" data-i="${i}"
+              class="btn-rm-nueva absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transition">×</button>
+            ${
+              esNuevaYPrimera
+                ? '<span class="absolute bottom-1 left-1 text-xs bg-black/70 text-yellow-400 px-1 rounded">⭐</span>'
+                : esNuevaYNoFirst
+                ? `<button type="button" data-i="${i}"
+                     class="btn-principal-nueva absolute bottom-1 left-1 text-xs bg-black/70 text-white px-1 rounded hover:bg-yellow-500 hover:text-black">
+                     FIJAR
+                   </button>`
+                : ''
+            }
+          `;
+
+          container.appendChild(div);
+        });
+
+        // ── Listeners para archivos nuevos - eliminar ──
+        container.querySelectorAll(".btn-rm-nueva").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            archivosSeleccionados.splice(parseInt(btn.dataset.i), 1);
+            mostrarPreviews();
+            actualizarContadorFotos();
+          });
+        });
+
+        // ── Listeners para archivos nuevos - fijar como principal ──
+        container.querySelectorAll(".btn-principal-nueva").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const index = parseInt(btn.dataset.i);
+            const file = archivosSeleccionados[index];
+            const url = URL.createObjectURL(file);
+
+            // Mover a imagenExistentes como principal
+            imagenExistentes.unshift(url);
+            archivosSeleccionados.splice(index, 1);
+
+            mostrarPreviews();
+          });
+        });
+
+        actualizarContadorFotos();
+      }
+
+      // ── Compresión WebP ──
+      async function comprimirWebP(file) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const scale = Math.min(1, MAX_ANCHO_PX / img.width);
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.round(img.width * scale);
+              canvas.height = Math.round(img.height * scale);
+              canvas
+                .getContext("2d")
+                .drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob(resolve, "image/webp", CALIDAD_WEBP);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // ── Subida a Supabase Storage ──
+      async function subirImagenes(userId) {
+        const urls = [];
+        const total = archivosSeleccionados.length;
+        const container = document.getElementById("progreso-container");
+        const barra = document.getElementById("progreso-barra");
+        const texto = document.getElementById("progreso-texto");
+
+        if (total > 0) container.classList.remove("hidden");
+
+        for (let i = 0; i < total; i++) {
+          if (texto) texto.textContent = `${i + 1} / ${total}`;
+          if (barra) barra.style.width = `${Math.round((i / total) * 100)}%`;
+
+          const blob = await comprimirWebP(archivosSeleccionados[i]);
+          const nombre = `${userId}/${Date.now()}-${i}.webp`;
+
+          const { error } = await db.storage
+            .from("vehiculos")
+            .upload(nombre, blob, { contentType: "image/webp" });
+          if (error) throw error;
+
+          const {
+            data: { publicUrl },
+          } = db.storage.from("vehiculos").getPublicUrl(nombre);
+          urls.push(publicUrl);
+        }
+
+        if (barra) barra.style.width = "100%";
+        return urls;
+      }
+
+      // ── Generar slug ──
+      function generarSlug(marca, modelo, anio) {
+        return (
+          `${marca}-${modelo}-${anio}`
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9-]/g, "") + `-${Date.now()}`
+        );
+      }
+
+      // ── Publicar/Editar ──
+      document
+        .getElementById("btn-publicar")
+        .addEventListener("click", async () => {
+          const tipo = document.getElementById("tipo").value.trim();
+          const marca = document.getElementById("marca").value.trim();
+          const modelo = document.getElementById("modelo").value.trim();
+          const anio = document.getElementById("anio").value.trim();
+          const precio = document.getElementById("precio").value.trim();
+          const km = document.getElementById("km").value.trim();
+          const combustible = document
+            .getElementById("combustible")
+            .value.trim();
+          const ubicacion = document.getElementById("ubicacion").value.trim();
+          const telefono = document.getElementById("telefono").value.trim();
+          const descripcion = document
+            .getElementById("descripcion")
+            .value.trim();
+
+          if (
+            !tipo ||
+            !marca ||
+            !modelo ||
+            !anio ||
+            !precio ||
+            !combustible ||
+            !ubicacion
+          ) {
+            mostrarMensaje("Completá los campos obligatorios (*)", "error");
+            return;
+          }
+
+          const btn = document.getElementById("btn-publicar");
+          const esEdicion = autoEnEdicion !== null;
+          btn.disabled = true;
+          btn.textContent = esEdicion ? "Guardando..." : "Publicando...";
+
+          try {
+            // Procesar imágenes nuevas
+            let urlsNuevas = [];
+            if (archivosSeleccionados.length > 0) {
+              btn.textContent = "Subiendo fotos...";
+              urlsNuevas = await subirImagenes(sesionUsuario.user.id);
+            }
+
+            // Combinar imágenes existentes con nuevas
+            const imagenFinal = [...imagenExistentes, ...urlsNuevas].join(",");
+
+            if (esEdicion) {
+              // Modo edición: actualizar el registro
+              const { error } = await db
+                .from("autos")
+                .update({
+                  tipo,
+                  marca,
+                  modelo,
+                  año: anio,
+                  precio,
+                  km: km,
+                  combustible,
+                  ubicacion,
+                  telefono,
+                  imagen: imagenFinal,
+                  descripcion,
+                })
+                .eq("id", autoEnEdicion.id);
+
+              if (error) throw error;
+              mostrarMensaje("✅ ¡Cambios guardados con éxito!", "ok");
+            } else {
+              // Chequeo doble justo antes de insertar (evita bug de pestañas múltiples)
+              if (!esAdmin(sesionUsuario)) {
+                const { data: check } = await db
+                  .from("autos")
+                  .select("id")
+                  .eq("user_id", sesionUsuario.user.id);
+
+                if (check && check.length >= LIMITE_PUBLICACIONES) {
+                  mostrarMensaje("Límite de publicaciones alcanzado.", "error");
+                  btn.disabled = false;
+                  btn.textContent = "Publicar vehículo";
+                  return;
+                }
+              }
+
+              // Modo nuevo: insertar registro
+              const slug = generarSlug(marca, modelo, anio);
+              const hoy = new Date().toISOString().split("T")[0];
+              const metaUser = sesionUsuario.user.user_metadata || {};
+              const campoNombre = document.getElementById("nombre-vendedor");
+              const usandoPerfilFicticio =
+                esAdmin(sesionUsuario) &&
+                campoNombre &&
+                campoNombre.value.trim();
+              const nombreVendedor = usandoPerfilFicticio
+                ? campoNombre.value.trim()
+                : metaUser.full_name ||
+                  metaUser.nombre ||
+                  sesionUsuario.user.email;
+
+              if (usandoPerfilFicticio) {
+                const { data: existente } = await db
+                  .from("perfiles")
+                  .select("id")
+                  .eq("nombre_vendedor", nombreVendedor)
+                  .is("user_id", null)
+                  .maybeSingle();
+
+                if (!existente) {
+                  const { error: perfilError } = await db
+                    .from("perfiles")
+                    .insert({
+                      user_id: null,
+                      nombre_vendedor: nombreVendedor,
+                    });
+
+                  if (perfilError) throw perfilError;
+                }
+              }
+
+              const { error } = await db.from("autos").insert({
+                slug,
+                tipo,
+                marca,
+                modelo,
+                año: anio,
+                precio,
+                km: km,
+                combustible,
+                ubicacion,
+                telefono,
+                imagen: imagenFinal,
+                descripcion,
+                destacado: "NO",
+                vendido: "NO",
+                reservado: "NO",
+                intermediario: "NO",
+                user_id: usandoPerfilFicticio ? null : sesionUsuario.user.id,
+                fecha_inicio: hoy,
+                dias: "365",
+                nombre_vendedor: nombreVendedor,
+              });
+
+              if (error) throw error;
+              mostrarMensaje("✅ ¡Vehículo publicado con éxito!", "ok");
+            }
+
+            setTimeout(
+              () =>
+                (window.location.href = esAdmin(sesionUsuario)
+                  ? "admin.html"
+                  : "mipanel.html"),
+              1800,
+            );
+          } catch (err) {
+            console.error(err);
+            mostrarMensaje("Error al guardar. Intentá de nuevo.", "error");
+          }
+
+          btn.disabled = false;
+          btn.textContent = esEdicion ? "Guardar cambios" : "Publicar vehículo";
+        });
+
+      function mostrarMensaje(texto, tipo) {
+        const el = document.getElementById("mensaje");
+        el.textContent = texto;
+        el.className =
+          tipo === "error"
+            ? "mb-5 px-4 py-3 rounded-lg text-sm font-medium bg-red-900/50 border border-red-500 text-red-300"
+            : "mb-5 px-4 py-3 rounded-lg text-sm font-medium bg-green-900/50 border border-green-500 text-green-300";
+        el.classList.remove("hidden");
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
 </html>
