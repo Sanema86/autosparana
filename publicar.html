@@ -364,6 +364,32 @@
         }
       });
 
+      async function verificarLimite() {
+        // El admin no tiene límite de publicaciones
+        if (esAdmin(sesionUsuario)) return;
+
+        const { data, error } = await db
+          .from("autos")
+          .select("id")
+          .eq("user_id", sesionUsuario.user.id);
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        const cantidad = data ? data.length : 0;
+        const contador = document.getElementById("contador-publicaciones");
+        if (contador) {
+          contador.textContent = `${cantidad} / ${LIMITE_PUBLICACIONES} publicaciones`;
+        }
+
+        if (cantidad >= LIMITE_PUBLICACIONES) {
+          document.getElementById("form-container").classList.add("hidden");
+          document.getElementById("limite-container").classList.remove("hidden");
+        }
+      }
+
       async function cargarAutoParaEditar(id, userId) {
         let query = db.from("autos").select("*").eq("id", id);
         if (!esAdmin(sesionUsuario)) {
