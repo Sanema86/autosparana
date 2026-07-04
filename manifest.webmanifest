@@ -9,13 +9,13 @@
   "description": "Compra y venta de autos usados en Paraná.",
   "icons": [
     {
-      "src": "/logoAP.png",
+      "src": "/img/logo/logoAP.webp",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logoAP.png",
+      "src": "/img/logo/logoAP.webp",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

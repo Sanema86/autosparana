@@ -45,7 +45,7 @@ body.premium-body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url("../bground.png") repeat;
+  background: url("../img/bg/bground.webp") repeat;
   opacity: 0.04;
   pointer-events: none;
   z-index: -1;

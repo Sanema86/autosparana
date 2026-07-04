@@ -16,7 +16,7 @@ const CORE_ASSETS = [
   "/css/styles.css?v=1.2.0",
   "/js/main.js?v=1.2.0",
   "/js/auto.js",
-  "/logoAP.png",
+  "/img/logo/logoAP.webp",
   "/logoAP.ico",
   "/manifest.webmanifest"
 ];
